@@ -7,7 +7,6 @@ import 'package:app/presentations/views/company/recruitment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-
 class CompanyHome extends StatefulWidget {
   const CompanyHome({super.key});
 

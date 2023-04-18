@@ -23,4 +23,11 @@ class ImageFactory {
   static const String workExp = '${urlAssets}work-experience.svg';
   static const String work = '${urlAssets}work.svg';
   static const String chat = '${urlAssets}chat.svg';
+  static const String documentText = '${urlAssets}document-text-outline.svg';
+  static const String start = '${urlAssets}star-outline.svg';
+  static const String barChart = '${urlAssets}bar-chart-outline.svg';
+  static const String school = '${urlAssets}school-outline.svg';
+  static const String right = '${urlAssets}right.svg';
+  static const String left = '${urlAssets}left.svg';
+
 }

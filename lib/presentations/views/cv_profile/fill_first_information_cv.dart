@@ -2,10 +2,12 @@
 
 import 'package:app/configs/font_style_text.dart';
 import 'package:app/configs/image_factory.dart';
+import 'package:app/configs/route_path.dart';
 import 'package:app/configs/text_app.dart';
 import 'package:app/presentations/themes/color.dart';
 import 'package:app/presentations/views/widgets/button_app.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -178,7 +180,9 @@ class _FillFirstInformationCVState extends State<FillFirstInformationCV> {
               child: ButtonApp(
                 paddingHorizontal: 50,
                 title: 'Bắt đầu',
-                onPress: () {},
+                onPress: () {
+                  Modular.to.pushNamed(RoutePath.pdfPage);
+                },
               ),
             ),
           ],

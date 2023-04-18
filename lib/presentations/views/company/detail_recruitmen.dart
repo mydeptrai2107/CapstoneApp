@@ -1,6 +1,7 @@
 import 'package:app/configs/font_style_text.dart';
 import 'package:app/configs/image_factory.dart';
 import 'package:app/presentations/views/company/widgets/info_recuitment_item.dart';
+import 'package:app/presentations/views/company/widgets/tag_info_widget.dart';
 import 'package:app/presentations/views/widgets/button_app.dart';
 import 'package:app/presentations/views/widgets/button_outline.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,11 @@ class DetailRecruitment extends StatefulWidget {
 }
 
 class _DetailRecruitmentState extends State<DetailRecruitment> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -31,7 +37,7 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
           children: [
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10.h),
-              height: 141.h,
+              height: 140.h,
               width: size.width,
               child: Column(
                 children: [
@@ -59,7 +65,7 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                               height: 40.h,
                               width: size.width - 100.h,
                               child: const Text(
-                                'NHÂN VIÊN GIÁM SÁT KHO VẬN - HCM das',
+                                'NHÂN VIÊN GIÁM SÁT KHO VẬN - HCM CITY',
                                 style: TextStyle(
                                     fontSize: 14, fontWeight: FontWeight.w700),
                               ),
@@ -121,91 +127,115 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                 ],
               ),
             ),
-            Container(
-              padding: EdgeInsets.only(left: 25.w, right: 25, top: 10.h),
-              height: size.height - 206.h - 80,
-              width: size.width,
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  Text(
-                    'Thông tin chung',
-                    style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black.withOpacity(0.7)),
-                  ),
-                  const InfoRecuitmentItem(
-                    icon: ImageFactory.piggy,
-                    title: 'Mức lương',
-                    content: 'Thỏa thuận',
-                  ),
-                  const InfoRecuitmentItem(
-                    icon: ImageFactory.work,
-                    title: 'Hình thức làm việc',
-                    content: 'Toàn thời gian',
-                  ),
-                  const InfoRecuitmentItem(
-                    icon: ImageFactory.threePerson,
-                    title: 'Số lượng cần tuyển',
-                    content: '14 người',
-                  ),
-                  const InfoRecuitmentItem(
-                    icon: ImageFactory.sex,
-                    title: 'Giới tính',
-                    content: 'Không yêu cầu',
-                  ),
-                  const InfoRecuitmentItem(
-                    icon: ImageFactory.workExp,
-                    title: 'Kinh nghiệm',
-                    content: 'Không yêu cầu kinh nghiệm',
-                  ),
-                  const InfoRecuitmentItem(
-                    icon: ImageFactory.paper,
-                    title: 'Chức vụ',
-                    content: 'Nhân viên',
-                  ),
-                  const InfoRecuitmentItem(
-                    icon: ImageFactory.location,
-                    title: 'Địa chỉ',
-                    content:
-                        '4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang 4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang 4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang 4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang 4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang',
-                  ),
-                ],
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+                width: size.width,
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    Container(
+                      color: const Color.fromARGB(255, 236, 235, 235),
+                      padding: EdgeInsets.only(
+                          left: 15.w, right: 15.w, top: 10.h, bottom: 20.h),
+                      margin: const EdgeInsets.only(bottom: 25),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Thông tin chung',
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black.withOpacity(0.7)),
+                          ),
+                          const InfoRecuitmentItem(
+                            icon: ImageFactory.piggy,
+                            title: 'Mức lương',
+                            content: 'Thỏa thuận',
+                          ),
+                          const InfoRecuitmentItem(
+                            icon: ImageFactory.work,
+                            title: 'Hình thức làm việc',
+                            content: 'Toàn thời gian',
+                          ),
+                          const InfoRecuitmentItem(
+                            icon: ImageFactory.threePerson,
+                            title: 'Số lượng cần tuyển',
+                            content: '14 người',
+                          ),
+                          const InfoRecuitmentItem(
+                            icon: ImageFactory.sex,
+                            title: 'Giới tính',
+                            content: 'Không yêu cầu',
+                          ),
+                          const InfoRecuitmentItem(
+                            icon: ImageFactory.workExp,
+                            title: 'Kinh nghiệm',
+                            content: 'Không yêu cầu kinh nghiệm',
+                          ),
+                          const InfoRecuitmentItem(
+                            icon: ImageFactory.paper,
+                            title: 'Chức vụ',
+                            content: 'Nhân viên',
+                          ),
+                          const InfoRecuitmentItem(
+                            icon: ImageFactory.location,
+                            title: 'Địa chỉ',
+                            content:
+                                '4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang 4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang 4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang 4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang 4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang',
+                          ),
+                        ],
+                      ),
+                    ),
+                    const TagInfoWidget(
+                        title: 'Mô tả công việc',
+                        content:
+                            'Chịu trách nhiệm vể toàn bộ quy trình vận hành\nKiểm soat chất lượng xử lý hàng hóa thuộc Module phụ trách\nKiểm soát nguồn hàng xuất nhập để đảm bảo chất lượng dịch vụ của công ty\nQuản lý đội ngủ nhân viên phụ kho và tài xế xe tải'),
+                    const TagInfoWidget(
+                        title: 'Mô tả công việc',
+                        content:
+                            'Chịu trách nhiệm vể toàn bộ quy trình vận hành\nKiểm soat chất lượng xử lý hàng hóa thuộc Module phụ trách\nKiểm soát nguồn hàng xuất nhập để đảm bảo chất lượng dịch vụ của công ty\nQuản lý đội ngủ nhân viên phụ kho và tài xế xe tải'),
+                    const TagInfoWidget(
+                        title: 'Mô tả công việc',
+                        content:
+                            'Chịu trách nhiệm vể toàn bộ quy trình vận hành\nKiểm soat chất lượng xử lý hàng hóa thuộc Module phụ trách\nKiểm soát nguồn hàng xuất nhập để đảm bảo chất lượng dịch vụ của công ty\nQuản lý đội ngủ nhân viên phụ kho và tài xế xe tải')
+                  ],
+                ),
               ),
             ),
-            Container(
-              decoration: BoxDecoration(
-                  border: Border(
-                      top: BorderSide(
-                          color: Colors.black.withOpacity(0.6), width: 1))),
-              padding: EdgeInsets.all(10.h),
-              height: 64.5.h,
-              width: size.width,
-              child: Flex(
-                direction: Axis.horizontal,
-                children: [
-                  Expanded(
-                      flex: 1,
-                      child: ButtonOutline(
-                        onPress: () {},
-                        title: 'Nhắn tin',
-                        icon: ImageFactory.chat,
-                        borderRadius: 100,
-                        widthBorder: 2,
-                      )),
-                  SizedBox(
-                    width: 10.h,
-                  ),
-                  Expanded(
-                      child: ButtonApp(
-                    onPress: () {},
-                    title: 'Ứng tuyển ngay',
-                    borderRadius: 100,
-                  ))
-                ],
-              ),
-            )
+          ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+            border: Border(
+                top: BorderSide(
+                    color: Colors.black.withOpacity(0.6), width: 1))),
+        padding: EdgeInsets.all(10.h),
+        height: 65.h,
+        width: size.width,
+        child: Flex(
+          direction: Axis.horizontal,
+          children: [
+            Expanded(
+                flex: 1,
+                child: ButtonOutline(
+                  onPress: () {},
+                  title: 'Nhắn tin',
+                  icon: ImageFactory.chat,
+                  borderRadius: 100,
+                  widthBorder: 3,
+                )),
+            SizedBox(
+              width: 10.h,
+            ),
+            Expanded(
+                child: ButtonApp(
+              onPress: () {},
+              title: 'Ứng tuyển ngay',
+              borderRadius: 100,
+            ))
           ],
         ),
       ),

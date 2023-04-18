@@ -1,10 +1,12 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:app/configs/image_factory.dart';
+import 'package:app/configs/route_path.dart';
 import 'package:app/data/repositories/authen_repositories.dart';
 import 'package:app/presentations/themes/color.dart';
 import 'package:app/presentations/views/widgets/button_app.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -21,6 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 15.w),
         height: size.height,
@@ -182,7 +185,9 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const Text('Bạn chưa có tài khoản?'),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Modular.to.pushNamed(RoutePath.register);
+                  },
                   child: const Text(
                     ' Đăng ký ngay',
                     style: TextStyle(color: primaryColor),
