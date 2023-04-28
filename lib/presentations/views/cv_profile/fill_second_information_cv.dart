@@ -1,11 +1,18 @@
+import 'package:app/configs/route_path.dart';
 import 'package:app/data/models/province.dart';
 import 'package:app/data/repositories/repository_map_vn.dart';
+import 'package:app/domain/providers/provider_app.dart';
 import 'package:app/domain/use_case/get_province.dart';
 import 'package:app/presentations/themes/color.dart';
+import 'package:app/presentations/views/cv_profile/widgets/experience_item.dart';
+import 'package:app/presentations/views/cv_profile/widgets/school_item.dart';
+import 'package:app/presentations/views/cv_profile/widgets/skill_item.dart';
 import 'package:app/presentations/views/widgets/button_app.dart';
 import 'package:app/presentations/views/widgets/button_outline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class FillSecondInformationScreen extends StatefulWidget {
   const FillSecondInformationScreen({super.key});
@@ -23,10 +30,29 @@ class _FillSecondInformationScreenState
   List<Province> listProvince = [];
   final TextEditingController _provinceController = TextEditingController();
 
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _positionController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _linkController = TextEditingController();
+  final TextEditingController _gitController = TextEditingController();
+  final TextEditingController _infoController = TextEditingController();
+
+  final _myBox = Hive.box('info');
+
   @override
   void initState() {
     super.initState();
     getData();
+    _nameController.text = _myBox.get('name') ?? '';
+    _positionController.text = _myBox.get('position') ?? '';
+    _emailController.text = _myBox.get('email') ?? '';
+    _phoneNumberController.text = _myBox.get('phoneNumber') ?? '';
+    _addressController.text = _myBox.get('address') ?? '';
+    _linkController.text = _myBox.get('link') ?? '';
+    _gitController.text = _myBox.get('git') ?? '';
+    _infoController.text = _myBox.get('info') ?? '';
   }
 
   getData() async {
@@ -35,8 +61,22 @@ class _FillSecondInformationScreenState
   }
 
   @override
+  void dispose() {
+    _nameController.dispose();
+    _positionController.dispose();
+    _emailController.dispose();
+    _phoneNumberController.dispose();
+    _addressController.dispose();
+    _linkController.dispose();
+    _gitController.dispose();
+    _infoController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    final provider = context.watch<ProviderApp>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Thông tin chung'),
@@ -90,10 +130,17 @@ class _FillSecondInformationScreenState
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     margin: const EdgeInsets.only(top: 5, bottom: 15),
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.red, width: 1),
+                        border: Border.all(
+                            color: _nameController.text.isEmpty
+                                ? Colors.red
+                                : Colors.grey,
+                            width: 1),
                         borderRadius: BorderRadius.circular(10)),
                     child: TextFormField(
-                      cursorColor: Colors.red,
+                      controller: _nameController,
+                      cursorColor: _nameController.text.isEmpty
+                          ? Colors.red
+                          : Colors.grey,
                       style: const TextStyle(fontSize: 14),
                       decoration: const InputDecoration(
                         border: InputBorder.none,
@@ -111,10 +158,17 @@ class _FillSecondInformationScreenState
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     margin: const EdgeInsets.only(top: 5, bottom: 15),
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.red, width: 1),
+                        border: Border.all(
+                            color: _nameController.text.isEmpty
+                                ? Colors.red
+                                : Colors.grey,
+                            width: 1),
                         borderRadius: BorderRadius.circular(10)),
                     child: TextFormField(
-                      cursorColor: Colors.red,
+                      controller: _positionController,
+                      cursorColor: _positionController.text.isEmpty
+                          ? Colors.red
+                          : Colors.grey,
                       style: const TextStyle(fontSize: 14),
                       decoration: const InputDecoration(
                         border: InputBorder.none,
@@ -132,10 +186,17 @@ class _FillSecondInformationScreenState
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     margin: const EdgeInsets.only(top: 5, bottom: 15),
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.red, width: 1),
+                        border: Border.all(
+                            color: _emailController.text.isEmpty
+                                ? Colors.red
+                                : Colors.grey,
+                            width: 1),
                         borderRadius: BorderRadius.circular(10)),
                     child: TextFormField(
-                      cursorColor: Colors.red,
+                      controller: _emailController,
+                      cursorColor: _nameController.text.isEmpty
+                          ? Colors.red
+                          : Colors.grey,
                       style: const TextStyle(fontSize: 14),
                       decoration: const InputDecoration(
                         border: InputBorder.none,
@@ -153,10 +214,17 @@ class _FillSecondInformationScreenState
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     margin: const EdgeInsets.only(top: 5, bottom: 15),
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.red, width: 1),
+                        border: Border.all(
+                            color: _phoneNumberController.text.isEmpty
+                                ? Colors.red
+                                : Colors.grey,
+                            width: 1),
                         borderRadius: BorderRadius.circular(10)),
                     child: TextFormField(
-                      cursorColor: Colors.red,
+                      controller: _phoneNumberController,
+                      cursorColor: _phoneNumberController.text.isEmpty
+                          ? Colors.red
+                          : Colors.grey,
                       style: const TextStyle(fontSize: 14),
                       decoration: const InputDecoration(
                         border: InputBorder.none,
@@ -206,7 +274,11 @@ class _FillSecondInformationScreenState
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         margin: const EdgeInsets.only(top: 5, bottom: 15),
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.red, width: 1),
+                            border: Border.all(
+                                color: _provinceController.text.isEmpty
+                                    ? Colors.red
+                                    : Colors.grey,
+                                width: 1),
                             borderRadius: BorderRadius.circular(10)),
                         child: TextFormField(
                           controller: _provinceController,
@@ -257,6 +329,7 @@ class _FillSecondInformationScreenState
                         border: Border.all(color: Colors.grey, width: 1),
                         borderRadius: BorderRadius.circular(10)),
                     child: TextFormField(
+                      controller: _addressController,
                       cursorColor: Colors.red,
                       style: const TextStyle(fontSize: 14),
                       decoration: const InputDecoration(
@@ -278,6 +351,7 @@ class _FillSecondInformationScreenState
                         border: Border.all(color: Colors.grey, width: 1),
                         borderRadius: BorderRadius.circular(10)),
                     child: TextFormField(
+                      controller: _linkController,
                       cursorColor: Colors.red,
                       style: const TextStyle(fontSize: 14),
                       decoration: const InputDecoration(
@@ -299,6 +373,7 @@ class _FillSecondInformationScreenState
                         border: Border.all(color: Colors.grey, width: 1),
                         borderRadius: BorderRadius.circular(10)),
                     child: TextFormField(
+                      controller: _gitController,
                       cursorColor: Colors.red,
                       style: const TextStyle(fontSize: 14),
                       decoration: const InputDecoration(
@@ -333,6 +408,7 @@ class _FillSecondInformationScreenState
                         border: Border.all(color: Colors.grey, width: 1),
                         borderRadius: BorderRadius.circular(10)),
                     child: TextFormField(
+                      controller: _infoController,
                       maxLines: 10,
                       cursorColor: Colors.red,
                       style: const TextStyle(fontSize: 14),
@@ -361,19 +437,26 @@ class _FillSecondInformationScreenState
                     'Kinh nghiệm làm việc',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  Container(
-                      width: size.width,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      margin: const EdgeInsets.only(top: 15, bottom: 10),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey, width: 1),
-                          borderRadius: BorderRadius.circular(10)),
-                      child: const Center(
-                        child: Text(
-                          'Add New ✚',
-                          style: TextStyle(color: primaryColor),
-                        ),
-                      )),
+                  for (int i = 0; i < provider.listExperience.length; i++)
+                    ExperienceItem(experience: provider.listExperience[i]),
+                  GestureDetector(
+                    onTap: () {
+                      Modular.to.pushNamed(RoutePath.addWorkingExperience);
+                    },
+                    child: Container(
+                        width: size.width,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        margin: const EdgeInsets.only(top: 15, bottom: 10),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey, width: 1),
+                            borderRadius: BorderRadius.circular(10)),
+                        child: const Center(
+                          child: Text(
+                            'Add New ✚',
+                            style: TextStyle(color: primaryColor),
+                          ),
+                        )),
+                  ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     margin: const EdgeInsets.only(top: 15),
@@ -410,35 +493,25 @@ class _FillSecondInformationScreenState
                     'Kỹ năng',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  Container(
-                      width: size.width,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      margin: const EdgeInsets.only(top: 15, bottom: 10),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey, width: 1),
-                          borderRadius: BorderRadius.circular(10)),
-                      child: const Center(
-                        child: Text(
-                          'Add New ✚',
-                          style: TextStyle(color: primaryColor),
-                        ),
-                      )),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    margin: const EdgeInsets.only(top: 15),
-                    height: 150,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey, width: 1),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: TextFormField(
-                      maxLines: 10,
-                      cursorColor: Colors.red,
-                      style: const TextStyle(fontSize: 14),
-                      decoration: const InputDecoration(
-                        hintText: 'Kỹ năng khác',
-                        border: InputBorder.none,
-                      ),
-                    ),
+                  for (int i = 0; i < provider.listSkill.length; i++)
+                    SkillItem(skillModel: provider.listSkill[i]),
+                  GestureDetector(
+                    onTap: () {
+                      Modular.to.pushNamed(RoutePath.addSkill);
+                    },
+                    child: Container(
+                        width: size.width,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        margin: const EdgeInsets.only(top: 15, bottom: 10),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey, width: 1),
+                            borderRadius: BorderRadius.circular(10)),
+                        child: const Center(
+                          child: Text(
+                            'Add New ✚',
+                            style: TextStyle(color: primaryColor),
+                          ),
+                        )),
                   ),
                 ],
               ),
@@ -459,19 +532,26 @@ class _FillSecondInformationScreenState
                     'Giáo dục',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  Container(
-                      width: size.width,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      margin: const EdgeInsets.only(top: 15, bottom: 10),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey, width: 1),
-                          borderRadius: BorderRadius.circular(10)),
-                      child: const Center(
-                        child: Text(
-                          'Add New ✚',
-                          style: TextStyle(color: primaryColor),
-                        ),
-                      )),
+                  for (int i = 0; i < provider.listSchool.length; i++)
+                    SchoolItem(schoolModel: provider.listSchool[i]),
+                  GestureDetector(
+                    onTap: () {
+                      Modular.to.pushNamed(RoutePath.addEducation);
+                    },
+                    child: Container(
+                        width: size.width,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        margin: const EdgeInsets.only(top: 15, bottom: 10),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey, width: 1),
+                            borderRadius: BorderRadius.circular(10)),
+                        child: const Center(
+                          child: Text(
+                            'Add New ✚',
+                            style: TextStyle(color: primaryColor),
+                          ),
+                        )),
+                  ),
                 ],
               ),
             )
@@ -490,12 +570,16 @@ class _FillSecondInformationScreenState
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               ButtonApp(
-                onPress: () {},
+                onPress: () {
+                  saveCV();
+                },
                 title: 'Lưu CV',
                 paddingvertical: 15,
               ),
               ButtonOutline(
-                onPress: () {},
+                onPress: () {
+                  print(_myBox.get('name'));
+                },
                 title: 'Xem trước',
                 paddingvertical: 15,
               )
@@ -504,5 +588,16 @@ class _FillSecondInformationScreenState
         ),
       ),
     );
+  }
+
+  saveCV() {
+    _myBox.put('name', _nameController.text);
+    _myBox.put('position', _positionController.text);
+    _myBox.put('email', _emailController.text);
+    _myBox.put('phoneNumber', _phoneNumberController.text);
+    _myBox.put('address', _addressController.text);
+    _myBox.put('link', _linkController.text);
+    _myBox.put('git', _gitController.text);
+    _myBox.put('info', _infoController.text);
   }
 }

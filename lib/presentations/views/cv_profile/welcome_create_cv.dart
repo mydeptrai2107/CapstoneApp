@@ -26,8 +26,8 @@ class _WelcomeCreateCVState extends State<WelcomeCreateCV> {
         ),
         centerTitle: true,
       ),
-      body: SizedBox(
-        height: size.height,
+      body: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 15),
         width: size.width,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -68,8 +68,8 @@ class _WelcomeCreateCVState extends State<WelcomeCreateCV> {
               child: Container(),
             ),
             Container(
-              height: 300.h,
-              width: 300.h,
+              height: 250.h,
+              width: 250.h,
               decoration: const BoxDecoration(
                   image:
                       DecorationImage(image: AssetImage(ImageFactory.editCV))),

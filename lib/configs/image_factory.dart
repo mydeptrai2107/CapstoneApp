@@ -29,5 +29,14 @@ class ImageFactory {
   static const String school = '${urlAssets}school-outline.svg';
   static const String right = '${urlAssets}right.svg';
   static const String left = '${urlAssets}left.svg';
-
+  static const String chevronDown = '${urlAssets}chevron-down-outline.svg';
+  static const String calendar = '${urlAssets}calendar-outline.svg';
+  static const String call = '${urlAssets}call-outline.svg';
+  static const String link = '${urlAssets}link-outline.svg';
+  static const String gmail = '${urlAssets}mail-icon-outline.svg';
+  static const String locationOutline = '${urlAssets}location-outline.svg';
+  static const String home = '${urlAssets}home-outline.svg';
+  static const String chatbubbles = '${urlAssets}chatbubbles-outline.svg';
+  static const String notification = '${urlAssets}notifications-outline.svg';
+  static const String reader = '${urlAssets}reader-outline.svg';
 }
