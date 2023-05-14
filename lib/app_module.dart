@@ -1,5 +1,8 @@
 import 'package:app/configs/route_path.dart';
 import 'package:app/domain/providers/provider_app.dart';
+import 'package:app/domain/providers/provider_auth.dart';
+import 'package:app/domain/providers/provider_profile.dart';
+import 'package:app/domain/providers/provider_user.dart';
 import 'package:app/presentations/views/cv_profile/add_education_screen.dart';
 import 'package:app/presentations/views/cv_profile/add_skill_screen.dart';
 import 'package:app/presentations/views/cv_profile/add_working_experience_screen.dart';
@@ -15,7 +18,12 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 class AppModule extends Module {
   @override
-  List<Bind> get binds => [Bind.singleton((i) => ProviderApp())];
+  List<Bind> get binds => [
+    Bind.singleton((i) => ProviderApp()),
+    Bind.singleton((i) => ProviderAuth()),
+    Bind.singleton((i) => ProviderUser()),
+    Bind.singleton((i) => ProvideProfile())
+  ];
 
   @override
   List<ModularRoute> get routes => [

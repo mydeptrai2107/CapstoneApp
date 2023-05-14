@@ -1,45 +1,41 @@
 // To parse this JSON data, do
 //
-//     final welcome = welcomeFromJson(jsonString);
+//     final province = provinceFromJson(jsonString);
 
 import 'dart:convert';
 
-Province welcomeFromJson(String str) => Province.fromJson(json.decode(str));
+Province provinceFromJson(String str) => Province.fromJson(json.decode(str));
 
-String welcomeToJson(Province data) => json.encode(data.toJson());
+String provinceToJson(Province data) => json.encode(data.toJson());
 
 class Province {
-  Province({
-    required this.name,
-    required this.code,
-    required this.divisionType,
-    required this.codename,
-    required this.phoneCode,
-    required this.districts,
-  });
+    String cityCode;
+    String name;
+    String nameWithType;
+    String countryId;
+    String areaId;
 
-  String name;
-  int code;
-  String divisionType;
-  String codename;
-  int phoneCode;
-  List<dynamic> districts;
+    Province({
+        required this.cityCode,
+        required this.name,
+        required this.nameWithType,
+        required this.countryId,
+        required this.areaId,
+    });
 
-  factory Province.fromJson(Map<String, dynamic> json) => Province(
+    factory Province.fromJson(Map<String, dynamic> json) => Province(
+        cityCode: json["city_code"],
         name: json["name"],
-        code: json["code"],
-        divisionType: json["division_type"],
-        codename: json["codename"],
-        phoneCode: json["phone_code"],
-        districts: List<dynamic>.from(json["districts"].map((x) => x)),
-      );
+        nameWithType: json["name_with_type"],
+        countryId: json["country_id"],
+        areaId: json["area_id"],
+    );
 
-  Map<String, dynamic> toJson() => {
+    Map<String, dynamic> toJson() => {
+        "city_code": cityCode,
         "name": name,
-        "code": code,
-        "division_type": divisionType,
-        "codename": codename,
-        "phone_code": phoneCode,
-        "districts": List<dynamic>.from(districts.map((x) => x)),
-      };
+        "name_with_type": nameWithType,
+        "country_id": countryId,
+        "area_id": areaId,
+    };
 }

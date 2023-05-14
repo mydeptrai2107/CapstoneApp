@@ -1,7 +1,9 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:app/configs/format.dart';
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
+import 'package:app/domain/providers/provider_auth.dart';
 import 'package:app/presentations/themes/color.dart';
 import 'package:app/presentations/views/widgets/button_app.dart';
 import 'package:flutter/material.dart';
@@ -19,9 +21,16 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   bool showPassWord = true;
   bool showConfirmPW = true;
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPwController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    var provider = context.watch<ProviderAuth>();
     return Scaffold(
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 15.w),
@@ -50,6 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(20)),
               child: TextField(
+                controller: nameController,
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     icon: SvgPicture.asset(
@@ -70,6 +80,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(20)),
               child: TextField(
+                controller: emailController,
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     icon: SvgPicture.asset(
@@ -91,6 +102,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(20)),
               child: TextField(
+                controller: passwordController,
                 obscureText: showPassWord,
                 decoration: InputDecoration(
                     border: InputBorder.none,
@@ -125,6 +137,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(20)),
               child: TextField(
+                controller: confirmPwController,
                 obscureText: showConfirmPW,
                 decoration: InputDecoration(
                     border: InputBorder.none,
@@ -155,11 +168,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
             SizedBox(
               height: 15.h,
             ),
-            ButtonApp(
-              onPress: () {},
-              title: 'Đăng ký',
-              width: size.width,
-            ),
+
+            provider.isLoadingRegister
+                ? const CircularProgressIndicator()
+                : ButtonApp(
+                    onPress: () async {
+                      provider.setLoadingRegister(true);
+                      try {
+                        await provider.register(
+                            emailController.text.trim(),
+                            passwordController.text.trim(),
+                            confirmPwController.text.trim(),
+                            Format.getFirstNameByName(
+                                nameController.text.trim()),
+                            Format.getLastNameByName(
+                                nameController.text.trim()));
+                      } catch (e) {
+                        
+                      }
+                    },
+                    title: 'Đăng ký',
+                    width: size.width,
+                  ),
 
             Expanded(child: Container()),
 

@@ -3,7 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 class SkillModelAdapter extends TypeAdapter<SkillModel> {
   @override
-  final int typeId = 3;
+  final int typeId = 2;
 
   @override
   SkillModel read(BinaryReader reader) {

@@ -2,13 +2,15 @@
 
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
-import 'package:app/data/repositories/authen_repositories.dart';
+import 'package:app/data/repositories/authen_firebase_repositories.dart';
+import 'package:app/domain/providers/provider_auth.dart';
 import 'package:app/presentations/themes/color.dart';
 import 'package:app/presentations/views/widgets/button_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,9 +21,28 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool showPassWord = true;
+  bool isUser = true;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    emailController.text = 'mylam1202@gmail.com';
+    passwordController.text = '12345';
+    super.initState();
+    initData();
+  }
+
+  void initData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('account_type', 'user');
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    var provider = context.watch<ProviderAuth>();
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
@@ -50,6 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(20)),
               child: TextField(
+                controller: emailController,
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     icon: SvgPicture.asset(
@@ -71,6 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(20)),
               child: TextField(
+                controller: passwordController,
                 obscureText: showPassWord,
                 decoration: InputDecoration(
                     border: InputBorder.none,
@@ -99,8 +122,43 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
 
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                InkWell(
+                  onTap: () async {
+                    final SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    await prefs.setString('account_type', 'user');
+                    setState(() {
+                      isUser = !isUser;
+                    });
+                  },
+                  child: Text(
+                    'Tìm việc  ',
+                    style: TextStyle(
+                        color: isUser ? primaryColor : Colors.grey,
+                        fontWeight:
+                            isUser ? FontWeight.bold : FontWeight.normal),
+                  ),
+                ),
+                InkWell(
+                  onTap: () async {
+                    final SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    await prefs.setString('account_type', 'company');
+                    setState(() {
+                      isUser = !isUser;
+                    });
+                  },
+                  child: Text(
+                    '  Tuyển dụng',
+                    style: TextStyle(
+                        color: !isUser ? primaryColor : Colors.grey,
+                        fontWeight:
+                            !isUser ? FontWeight.bold : FontWeight.normal),
+                  ),
+                ),
+                Expanded(child: Container()),
                 InkWell(
                   onTap: () {},
                   child: const Text(
@@ -113,11 +171,31 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(
               height: 20.h,
             ),
-            ButtonApp(
-              onPress: () {},
-              title: 'Đăng nhập',
-              width: size.width,
-            ),
+            provider.isLoadingLogin
+                ? const CircularProgressIndicator()
+                : ButtonApp(
+                    onPress: () async {
+                      provider.setLoadingLogin(true);
+                      try {
+                        await provider.login(emailController.text.trim(),
+                            passwordController.text.trim());
+                        if (provider.isLogged) {
+                          Modular.to.navigate(RoutePath.home);
+                        }
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Row(
+                            children: [
+                              const Icon(Icons.warning),
+                              Expanded(child: Text(e.toString()))
+                            ],
+                          ),
+                        ));
+                      }
+                    },
+                    title: 'Đăng nhập',
+                    width: size.width,
+                  ),
 
             SizedBox(
               height: 20.h,
@@ -149,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 InkWell(
                   onTap: () {
-                    AuthenRepositories().signIn();
+                    AuthenFirebaseRepositories().signIn();
                   },
                   child: Container(
                       padding: const EdgeInsets.all(4),

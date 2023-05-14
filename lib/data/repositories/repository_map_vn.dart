@@ -1,20 +1,18 @@
 import 'dart:convert';
 
 import 'package:app/data/models/province.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
 
 class ReporitoryMap {
   Future getProvince() async {
-    String uri = 'https://provinces.open-api.vn/api/';
+    String uri = 'assets/data/city.json';
     try {
-      final response = await http.get(Uri.parse(uri));
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+      final response = await rootBundle.loadString(uri);
+      
+        final data = jsonDecode(response);
         Iterable it = data;
         List<Province> list = it.map((e) => Province.fromJson(e)).toList();
         return list;
-      }
-      throw Error();
     } catch (e) {
       return e;
     }

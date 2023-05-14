@@ -39,4 +39,8 @@ class ImageFactory {
   static const String chatbubbles = '${urlAssets}chatbubbles-outline.svg';
   static const String notification = '${urlAssets}notifications-outline.svg';
   static const String reader = '${urlAssets}reader-outline.svg';
+  static const String search = '${urlAssets}search-outline.svg';
+  static const String baner1 = '${urlAssets}paner1.png';
+  static const String arrowRight =
+      '${urlAssets}arrow-forward-circle-outline.svg';
 }

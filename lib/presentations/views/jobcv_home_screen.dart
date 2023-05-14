@@ -1,9 +1,14 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:app/configs/image_factory.dart';
+import 'package:app/domain/providers/provider_auth.dart';
 import 'package:app/presentations/themes/color.dart';
+import 'package:app/presentations/views/profile/account_screen.dart';
 import 'package:app/presentations/views/cv_profile/welcome_create_cv.dart';
+import 'package:app/presentations/views/home/home_screen.dart';
+import 'package:app/presentations/views/profile/account_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class JobCVHomeScreen extends StatefulWidget {
@@ -15,28 +20,23 @@ class JobCVHomeScreen extends StatefulWidget {
 
 class _JobCVHomeScreenState extends State<JobCVHomeScreen> {
   int _currentIndex = 0;
-  final tabs = [
-    const Center(
-      child: Text('Home'),
-    ),
-    const WelcomeCreateCV(),
-    const Center(
-      child: Text('Chat'),
-    ),
-    const Center(
-      child: Text('Notification'),
-    ),
-    const Center(
-      child: Text('Account'),
-    ),
-  ];
+  String a = 'sa';
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('JobCV'),
+    final providerAuth = context.watch<ProviderAuth>();
+    final tabs = [
+      const HomeScreen(),
+      const WelcomeCreateCV(),
+      const Center(
+        child: Text('Chat'),
       ),
+      const Center(
+        child: Text('Notification'),
+      ),
+      AccountScreen(avatar: a)
+    ];
+    return Scaffold(
       body: tabs[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         selectedFontSize: 12,
@@ -89,7 +89,10 @@ class _JobCVHomeScreenState extends State<JobCVHomeScreen> {
             label: 'Tài khoản',
           ),
         ],
-        onTap: (value) {
+        onTap: (value) async {
+          if (value == 4) {
+            a = await providerAuth.getAvatar();
+          }
           setState(() {
             _currentIndex = value;
           });

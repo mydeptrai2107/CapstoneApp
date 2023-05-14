@@ -1,7 +1,8 @@
 import 'package:app/configs/font_style_text.dart';
 import 'package:app/configs/image_factory.dart';
-import 'package:app/configs/route_path.dart';
 import 'package:app/configs/text_app.dart';
+import 'package:app/data/models/profile_model.dart';
+import 'package:app/domain/providers/provider_profile.dart';
 import 'package:app/presentations/views/widgets/button_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -17,6 +18,7 @@ class WelcomeCreateCV extends StatefulWidget {
 class _WelcomeCreateCVState extends State<WelcomeCreateCV> {
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<ProvideProfile>();
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -60,8 +62,10 @@ class _WelcomeCreateCVState extends State<WelcomeCreateCV> {
             SizedBox(height: 20.h),
             ButtonApp(
               title: 'Tạo CV đầu tiên',
-              onPress: () {
-                Modular.to.pushNamed(RoutePath.fillFirstInfoCV);
+              onPress: () async {
+                List<Profile> a = await provider.getListProfile();
+                print(a.length);
+                //Modular.to.pushNamed(RoutePath.fillFirstInfoCV);
               },
             ),
             Expanded(

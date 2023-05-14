@@ -127,7 +127,7 @@ class _CreateCVScreenState extends State<CreateCVScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ButtonApp(
-                  onPress: () {
+                  onPress: () async {
                     Modular.to.pushNamed(RoutePath.previewCV, arguments: [
                       _box.get('name'),
                       _box.get('position'),

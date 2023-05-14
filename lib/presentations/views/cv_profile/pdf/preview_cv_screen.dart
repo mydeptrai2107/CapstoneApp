@@ -8,7 +8,6 @@ import 'package:app/domain/providers/provider_app.dart';
 import 'package:app/presentations/themes/color.dart';
 import 'package:app/presentations/views/cv_profile/pdf/widgets/information_item.dart';
 import 'package:app/presentations/views/cv_profile/widgets/experience_item_pdf.dart';
-import 'package:app/presentations/views/cv_profile/widgets/skill_item.dart';
 import 'package:app/presentations/views/cv_profile/widgets/skill_item_pdf.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +31,8 @@ class PreviewCVScreen extends StatefulWidget {
       required this.address,
       required this.careerGoals,
       required this.experienceModel,
-      required this.schoolModell});
+      required this.schoolModell,
+      this.imageFile});
 
   final String name;
   final String position;
@@ -45,6 +45,7 @@ class PreviewCVScreen extends StatefulWidget {
   final String careerGoals;
   final List<SchoolModel> schoolModell;
   final List<ExperienceModel> experienceModel;
+  final File? imageFile;
 
   @override
   State<PreviewCVScreen> createState() => _PreviewCVScreenState();
@@ -205,7 +206,7 @@ class _PreviewCVScreenState extends State<PreviewCVScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  widget.imageFile == null ? Container(
                     margin: const EdgeInsets.only(bottom: 20),
                     width: (size.width - 170) / 2,
                     height: (size.width - 170) / 2,
@@ -214,7 +215,15 @@ class _PreviewCVScreenState extends State<PreviewCVScreen> {
                         image: DecorationImage(
                             image: NetworkImage(
                                 'https://i0.wp.com/thatnhucuocsong.com.vn/wp-content/uploads/2023/02/Hinh-anh-avatar-cute.jpg?ssl\u003d1'))),
-                  ),
+                  ) : ClipRRect(
+                                borderRadius: BorderRadius.circular(150),
+                                child: Image.file(
+                                  widget.imageFile!,
+                                  height: (size.width - 170) / 2,
+                                  width: (size.width - 170) / 2,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
                   Text(
                     widget.name,
                     style: const TextStyle(

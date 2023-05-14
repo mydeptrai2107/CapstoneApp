@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app/configs/route_path.dart';
 import 'package:app/data/models/province.dart';
 import 'package:app/data/repositories/repository_map_vn.dart';
@@ -13,6 +15,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class FillSecondInformationScreen extends StatefulWidget {
   const FillSecondInformationScreen({super.key});
@@ -40,6 +45,9 @@ class _FillSecondInformationScreenState
   final TextEditingController _infoController = TextEditingController();
 
   final _myBox = Hive.box('info');
+
+  File? imageFile;
+  final picker = ImagePicker();
 
   @override
   void initState() {
@@ -73,6 +81,131 @@ class _FillSecondInformationScreenState
     super.dispose();
   }
 
+  _imgFromCamera() async {
+    await picker
+        .pickImage(source: ImageSource.camera, imageQuality: 50)
+        .then((value) {
+      if (value != null) {
+        _cropImage(File(value.path));
+      }
+    });
+  }
+
+  _imgFromGallery() async {
+    await picker
+        .pickImage(source: ImageSource.gallery, imageQuality: 50)
+        .then((value) {
+      if (value != null) {
+        _cropImage(File(value.path));
+      }
+    });
+  }
+
+  _cropImage(File imgFile) async {
+    final croppedFile = await ImageCropper().cropImage(
+        sourcePath: imgFile.path,
+        aspectRatioPresets: Platform.isAndroid
+            ? [
+                CropAspectRatioPreset.square,
+                CropAspectRatioPreset.ratio3x2,
+                CropAspectRatioPreset.original,
+                CropAspectRatioPreset.ratio4x3,
+                CropAspectRatioPreset.ratio16x9
+              ]
+            : [
+                CropAspectRatioPreset.original,
+                CropAspectRatioPreset.square,
+                CropAspectRatioPreset.ratio3x2,
+                CropAspectRatioPreset.ratio4x3,
+                CropAspectRatioPreset.ratio5x3,
+                CropAspectRatioPreset.ratio5x4,
+                CropAspectRatioPreset.ratio7x5,
+                CropAspectRatioPreset.ratio16x9
+              ],
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarTitle: "Image Cropper",
+              toolbarColor: Colors.deepOrange,
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: CropAspectRatioPreset.original,
+              lockAspectRatio: false),
+          IOSUiSettings(
+            title: "Image Cropper",
+          )
+        ]);
+    if (croppedFile != null) {
+      imageCache.clear();
+      setState(() {
+        imageFile = File(croppedFile.path);
+      });
+      // reload();
+    }
+  }
+
+  void showImagePicker(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (builder) {
+          return Card(
+            child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height / 5.2,
+                margin: const EdgeInsets.only(top: 8.0),
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                        child: InkWell(
+                      child: Column(
+                        children: const [
+                          Icon(
+                            Icons.image,
+                            size: 60.0,
+                          ),
+                          SizedBox(height: 12.0),
+                          Text(
+                            "Gallery",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 16, color: Colors.black),
+                          )
+                        ],
+                      ),
+                      onTap: () {
+                        _imgFromGallery();
+                        Navigator.pop(context);
+                      },
+                    )),
+                    Expanded(
+                        child: InkWell(
+                      child: SizedBox(
+                        child: Column(
+                          children: const [
+                            Icon(
+                              Icons.camera_alt,
+                              size: 60.0,
+                            ),
+                            SizedBox(height: 12.0),
+                            Text(
+                              "Camera",
+                              textAlign: TextAlign.center,
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.black),
+                            )
+                          ],
+                        ),
+                      ),
+                      onTap: () {
+                        _imgFromCamera();
+                        Navigator.pop(context);
+                      },
+                    ))
+                  ],
+                )),
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -98,22 +231,47 @@ class _FillSecondInformationScreenState
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
 
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(
-                            right: 20.w, bottom: 15.h, top: 15.h),
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.amber[50]),
-                      ),
-                      const Text(
-                        'Chạm 2 lần để chỉnh sửa ảnh',
-                        style: TextStyle(fontSize: 14),
-                      )
-                    ],
+                  GestureDetector(
+                    onDoubleTap: () async {
+                      Map<Permission, PermissionStatus> statuses = await [
+                        Permission.storage,
+                        Permission.camera
+                      ].request();
+
+                      if (statuses[Permission.storage]!.isGranted &&
+                          statuses[Permission.camera]!.isGranted) {
+                        // ignore: use_build_context_synchronously
+                        showImagePicker(context);
+                      }
+                    },
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        imageFile == null
+                            ? Container(
+                                margin: EdgeInsets.only(
+                                    right: 20.w, bottom: 15.h, top: 15.h),
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.amber[50]),
+                              )
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(150),
+                                child: Image.file(
+                                  imageFile!,
+                                  height: 50,
+                                  width: 50,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                        const Text(
+                          'Chạm 2 lần để chỉnh sửa ảnh',
+                          style: TextStyle(fontSize: 14),
+                        )
+                      ],
+                    ),
                   ),
 
                   const Divider(
@@ -570,7 +728,7 @@ class _FillSecondInformationScreenState
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               ButtonApp(
-                onPress: () {
+                onPress: () async {
                   saveCV();
                 },
                 title: 'Lưu CV',
