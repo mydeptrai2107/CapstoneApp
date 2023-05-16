@@ -43,4 +43,7 @@ class ImageFactory {
   static const String baner1 = '${urlAssets}paner1.png';
   static const String arrowRight =
       '${urlAssets}arrow-forward-circle-outline.svg';
+  static const String delete = '${urlAssets}delete.svg';
+  static const String time = '${urlAssets}time-outline.svg';
+  static const String information = '${urlAssets}information-circle.svg';
 }

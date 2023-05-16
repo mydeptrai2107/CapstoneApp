@@ -1,4 +1,4 @@
-import 'package:app/presentations/themes/color.dart';
+import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:flutter/material.dart';
 
 const textStyleTitleAppBar = TextStyle(

@@ -1,29 +1,32 @@
 import 'package:app/configs/route_path.dart';
-import 'package:app/domain/providers/provider_app.dart';
-import 'package:app/domain/providers/provider_auth.dart';
-import 'package:app/domain/providers/provider_profile.dart';
-import 'package:app/domain/providers/provider_user.dart';
-import 'package:app/presentations/views/cv_profile/add_education_screen.dart';
-import 'package:app/presentations/views/cv_profile/add_skill_screen.dart';
-import 'package:app/presentations/views/cv_profile/add_working_experience_screen.dart';
-import 'package:app/presentations/views/cv_profile/create_cv_screen.dart';
-import 'package:app/presentations/views/cv_profile/fill_first_information_cv.dart';
-import 'package:app/presentations/views/cv_profile/fill_second_information_cv.dart';
-import 'package:app/presentations/views/cv_profile/pdf/preview_cv_screen.dart';
-import 'package:app/presentations/views/cv_profile/welcome_create_cv.dart';
-import 'package:app/presentations/views/jobcv_home_screen.dart';
-import 'package:app/presentations/views/login_register/login.dart';
-import 'package:app/presentations/views/login_register/register.dart';
+import 'package:app/modules/candidate/domain/providers/provider_app.dart';
+import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
+import 'package:app/modules/candidate/domain/providers/provider_profile.dart';
+import 'package:app/modules/candidate/domain/providers/provider_user.dart';
+
+import 'package:app/modules/candidate/presentations/views/cv_profile/add_education_screen.dart';
+import 'package:app/modules/candidate/presentations/views/cv_profile/add_skill_screen.dart';
+import 'package:app/modules/candidate/presentations/views/cv_profile/add_working_experience_screen.dart';
+import 'package:app/modules/candidate/presentations/views/cv_profile/create_cv_screen.dart';
+import 'package:app/modules/candidate/presentations/views/cv_profile/fill_first_information_cv.dart';
+import 'package:app/modules/candidate/presentations/views/cv_profile/fill_second_information_cv.dart';
+import 'package:app/modules/candidate/presentations/views/cv_profile/list_profilea_screen.dart';
+import 'package:app/modules/candidate/presentations/views/cv_profile/pdf/preview_cv_screen.dart';
+import 'package:app/modules/candidate/presentations/views/cv_profile/pdf_viewer_screen.dart';
+import 'package:app/modules/candidate/presentations/views/cv_profile/welcome_create_cv.dart';
+import 'package:app/modules/candidate/presentations/views/jobcv_home_screen.dart';
+import 'package:app/modules/candidate/presentations/views/login_register/login.dart';
+import 'package:app/modules/candidate/presentations/views/login_register/register.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 class AppModule extends Module {
   @override
   List<Bind> get binds => [
-    Bind.singleton((i) => ProviderApp()),
-    Bind.singleton((i) => ProviderAuth()),
-    Bind.singleton((i) => ProviderUser()),
-    Bind.singleton((i) => ProvideProfile())
-  ];
+        Bind.singleton((i) => ProviderApp()),
+        Bind.singleton((i) => ProviderAuth()),
+        Bind.singleton((i) => ProviderUser()),
+        Bind.singleton((i) => ProvideProfile())
+      ];
 
   @override
   List<ModularRoute> get routes => [
@@ -38,9 +41,9 @@ class AppModule extends Module {
         ChildRoute(RoutePath.fillFirstInfoCV,
             child: (context, args) => const FillFirstInformationCV()),
         ChildRoute(RoutePath.pdfPage,
-            child: (context, args) => const CreateCVScreen()),
+            child: (context, args) => CreateCVScreen(id: args.data[0], name: args.data[1],)),
         ChildRoute(RoutePath.fillSecondInfoCV,
-            child: (context, args) => const FillSecondInformationScreen()),
+            child: (context, args) => FillSecondInformationScreen(id: args.data[0], name: args.data[1],)),
         ChildRoute(
           RoutePath.addWorkingExperience,
           child: (context, args) => const AddWorkingExperienceScreen(),
@@ -67,7 +70,17 @@ class AppModule extends Module {
             careerGoals: args.data[8],
             experienceModel: args.data[9],
             schoolModell: args.data[10],
+            idCV: args.data[11],
+            nameCV: args.data[12],
           ),
-        )
+        ),
+        ChildRoute(
+          RoutePath.listProfile,
+          child: (context, args) => const ListProfileScreen(),
+        ),
+        ChildRoute(
+          RoutePath.pdfViewer,
+          child: (context, args) => PDFViewerScreen(name: args.data[0], pathCV: args.data[1],),
+        ),
       ];
 }

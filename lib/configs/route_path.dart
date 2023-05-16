@@ -11,4 +11,6 @@ class RoutePath {
   static const String addEducation = '/fillSecondInfoCV/addEducation';
   static const String addSkill = '/fillSecondInfoCV/addSkill';
   static const String previewCV = '/previewCV';
+  static const String listProfile = '/listProfile';
+  static const String pdfViewer = '/pdfViewer';
 }
