@@ -1,14 +1,19 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:app/configs/image_factory.dart';
+import 'package:app/modules/candidate/data/models/company_model.dart';
+import 'package:app/modules/candidate/data/repositories/company_repositories.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/company/intro_company.dart';
-import 'package:app/modules/candidate/presentations/views/company/recruitment.dart';
+import 'package:app/modules/candidate/presentations/views/company/recruitment_page_company.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+
 class CompanyHome extends StatefulWidget {
-  const CompanyHome({super.key});
+  const CompanyHome({super.key, required this.company});
+
+  final Company company;
 
   @override
   State<CompanyHome> createState() => _CompanyHomeState();
@@ -36,10 +41,16 @@ class _CompanyHomeState extends State<CompanyHome> {
                 child: Stack(
                   children: [
                     Positioned.fill(
-                        child: Image.asset(
-                      'assets/images/my.jpeg',
-                      fit: BoxFit.cover,
-                    )),
+                        child: widget.company.avatar == ''
+                            ? Image.asset(
+                                ImageFactory.editCV,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.network(
+                                CompanyRepository.getAvatar(
+                                    widget.company.avatar!),
+                                fit: BoxFit.cover,
+                              )),
                     Positioned.fill(
                         child: Container(
                       color: Colors.black.withOpacity(0.5),
@@ -53,11 +64,15 @@ class _CompanyHomeState extends State<CompanyHome> {
                             Container(
                               height: 70,
                               width: 70,
-                              decoration: const BoxDecoration(
-                                  image: DecorationImage(
-                                      image: NetworkImage(
-                                          'https://dulichhoangnguyen.com/upload/images/dai%20dien%201(1).jpg'),
-                                      fit: BoxFit.cover)),
+                              decoration: BoxDecoration(
+                                  image: widget.company.avatar == ''
+                                      ? const DecorationImage(
+                                          image:
+                                              AssetImage(ImageFactory.editCV))
+                                      : DecorationImage(
+                                          image: NetworkImage(
+                                              CompanyRepository.getAvatar(
+                                                  widget.company.avatar!)))),
                             ),
                             Container(
                               padding: EdgeInsets.only(left: 10.w),
@@ -67,8 +82,7 @@ class _CompanyHomeState extends State<CompanyHome> {
                                   SizedBox(
                                     width: size.width - 100,
                                     child: Text(
-                                      'Công ty trách nhiệm hữu hạn FreeMind'
-                                          .toUpperCase(),
+                                      widget.company.name.toUpperCase(),
                                       style: const TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w700,
@@ -118,11 +132,15 @@ class _CompanyHomeState extends State<CompanyHome> {
                 indicatorColor: primaryColor,
                 labelColor: primaryColor,
               ),
-              const Expanded(
+              Expanded(
                 child: TabBarView(children: [
-                  IntroCompany(),
-                  Recruitment(),
-                  Center(
+                  IntroCompany(
+                    company: widget.company,
+                  ),
+                  RecruitmentPageCompany(
+                    company: widget.company,
+                  ),
+                  const Center(
                     child: Text('11123'),
                   ),
                 ]),

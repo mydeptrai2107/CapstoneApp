@@ -65,7 +65,7 @@ class _PreviewCVScreenState extends State<PreviewCVScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    final provider = context.watch<ProvideProfile>();
+    final provider = context.watch<ProviderProfile>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('PDF'),
@@ -103,7 +103,7 @@ class _PreviewCVScreenState extends State<PreviewCVScreen> {
       final dir = await getExternalStorageDirectory();
       final file = File('${dir?.path}/file.pdf');
       await file.writeAsBytes(await pdf.save());
-      Modular.get<ProvideProfile>().updateProfile(
+      Modular.get<ProviderProfile>().updateProfile(
           id: widget.idCV, name: widget.nameCV, pathCV: file.path);
       showPrintedMessage('success', 'saved to document');
     } catch (e) {

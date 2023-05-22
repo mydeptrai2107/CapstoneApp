@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
 import 'package:app/modules/candidate/domain/providers/provider_profile.dart';
@@ -32,114 +34,124 @@ class _ItemProfileWidgetState extends State<ItemProfileWidget> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    final provider = context.watch<ProvideProfile>();
-    return Container(
-      width: size.width,
-      height: 150,
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-          border: Border.all(width: 1, color: Colors.grey),
-          borderRadius: BorderRadius.circular(10)),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
+    final provider = context.watch<ProviderProfile>();
+    return Row(
+      children: [
+        Container(
+          width: size.width - 30,
+          height: 150,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(width: 1, color: Colors.grey),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: const [
+              BoxShadow(blurRadius: 8, color: Colors.grey, offset: Offset(5, 5))
+            ],
+          ),
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                widget.name,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              ),
-              GestureDetector(
-                onTap: () async {
-                  try {
-                    OverlayEntry? overlayEntry;
-                    overlayEntry = OverlayEntry(
-                      builder: (BuildContext context) {
-                        return GetEntry(
-                          entry: overlayEntry,
-                          nameCV: widget.name,
-                          onTap: () {
-                            provider.deleteProfile(widget.id);
-                            widget.reLoadList();
-                            overlayEntry!.remove();
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    widget.name,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      try {
+                        OverlayEntry? overlayEntry;
+                        overlayEntry = OverlayEntry(
+                          builder: (BuildContext context) {
+                            return GetEntry(
+                              entry: overlayEntry,
+                              nameCV: widget.name,
+                              onTap: () {
+                                provider.deleteProfile(widget.id);
+                                widget.reLoadList();
+                                overlayEntry!.remove();
+                              },
+                            );
                           },
                         );
+                        Overlay.of(context).insert(overlayEntry);
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
+                    child: !provider.isLoadingDelete
+                        ? const CircularProgressIndicator()
+                        : SvgPicture.asset(
+                            ImageFactory.delete,
+                            color: Colors.red,
+                            width: 25,
+                            height: 25,
+                          ),
+                  )
+                ],
+              ),
+              Row(
+                children: [
+                  SvgPicture.asset(
+                    ImageFactory.time,
+                    width: 20,
+                    height: 20,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    Format.formatDateTimeToYYYYmmHHmm(widget.updateAt),
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  SvgPicture.asset(
+                    ImageFactory.information,
+                    width: 20,
+                    height: 20,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  const Text(
+                    'Create on JobCV  ',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ButtonOutline(
+                      fontSize: 15,
+                      title: 'PREVIEW',
+                      onPress: () {
+                        if (widget.pathCV != null) {
+                          Modular.to.pushNamed(RoutePath.pdfViewer,
+                              arguments: [widget.name, widget.pathCV]);
+                        }
                       },
-                    );
-                    Overlay.of(context).insert(overlayEntry);
-                  } catch (e) {
-                    print(e);
-                  }
-                },
-                child: !provider.isLoadingDelete
-                    ? const CircularProgressIndicator()
-                    : SvgPicture.asset(
-                        ImageFactory.delete,
-                        width: 25,
-                        height: 25,
-                      ),
+                      borderRadius: 5,
+                      width: (size.width - 70) / 2),
+                  ButtonOutline(
+                    fontSize: 15,
+                    title: 'EDIT',
+                    onPress: () {},
+                    borderRadius: 5,
+                    width: (size.width - 70) / 2,
+                  )
+                ],
               )
             ],
           ),
-          Row(
-            children: [
-              SvgPicture.asset(
-                ImageFactory.time,
-                width: 20,
-                height: 20,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Text(
-                Format.formatDateTimeToYYYYmmHHmm(widget.updateAt),
-                style: const TextStyle(fontSize: 14),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              SvgPicture.asset(
-                ImageFactory.information,
-                width: 20,
-                height: 20,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              const Text(
-                'Create on JobCV  ',
-                style: TextStyle(fontSize: 14),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ButtonOutline(
-                  fontSize: 15,
-                  title: 'PREVIEW',
-                  onPress: () {
-                    if (widget.pathCV != null) {
-                      Modular.to.pushNamed(RoutePath.pdfViewer,
-                          arguments: [widget.name, widget.pathCV]);
-                    }
-                  },
-                  borderRadius: 5,
-                  width: (size.width - 70) / 2),
-              ButtonOutline(
-                fontSize: 15,
-                title: 'EDIT',
-                onPress: () {},
-                borderRadius: 5,
-                width: (size.width - 70) / 2,
-              )
-            ],
-          )
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

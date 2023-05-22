@@ -33,6 +33,7 @@ class _CreateCVScreenState extends State<CreateCVScreen> {
         appBar: AppBar(
           title: const Text('Tạo CV'),
           centerTitle: true,
+          
         ),
         body: SizedBox(
           height: size.height,
@@ -152,7 +153,9 @@ class _CreateCVScreenState extends State<CreateCVScreen> {
                   paddingvertical: 15,
                 ),
                 ButtonOutline(
-                  onPress: () {},
+                  onPress: () {
+                    Modular.to.navigate(RoutePath.listProfile);
+                  },
                   title: 'Quay Lại',
                   paddingvertical: 15,
                 )

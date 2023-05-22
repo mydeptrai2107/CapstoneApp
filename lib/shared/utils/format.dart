@@ -5,6 +5,10 @@ class Format {
     return DateFormat('MM/yyyy').format(dateTime).toString();
   }
 
+  static String formatDateTimeToYYYYmmdd(DateTime dateTime) {
+    return DateFormat('dd/MM/yyyy').format(dateTime).toString();
+  }
+
   static String formatDateTimeToYYYYmmHHmm(DateTime dateTime) {
     return DateFormat.yMd().add_jm().format(dateTime).toString();
   }
