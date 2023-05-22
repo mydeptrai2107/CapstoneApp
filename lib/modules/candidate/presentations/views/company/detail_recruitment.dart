@@ -1,14 +1,22 @@
 import 'package:app/configs/font_style_text.dart';
 import 'package:app/configs/image_factory.dart';
+import 'package:app/configs/route_path.dart';
+import 'package:app/modules/candidate/data/models/company_model.dart';
+import 'package:app/modules/candidate/data/models/recruitment_model.dart';
 import 'package:app/modules/candidate/presentations/views/company/widgets/info_recuitment_item.dart';
 import 'package:app/modules/candidate/presentations/views/company/widgets/tag_info_widget.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_outline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DetailRecruitment extends StatefulWidget {
-  const DetailRecruitment({super.key});
+  const DetailRecruitment(
+      {super.key, required this.recruitment, required this.company});
+
+  final Recruitment recruitment;
+  final Company company;
 
   @override
   State<DetailRecruitment> createState() => _DetailRecruitmentState();
@@ -64,9 +72,9 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                               alignment: AlignmentDirectional.bottomStart,
                               height: 40.h,
                               width: size.width - 100.h,
-                              child: const Text(
-                                'NHÂN VIÊN GIÁM SÁT KHO VẬN - HCM CITY',
-                                style: TextStyle(
+                              child: Text(
+                                '${widget.recruitment.title.toUpperCase()} - ${widget.recruitment.address.toUpperCase()}',
+                                style: const TextStyle(
                                     fontSize: 14, fontWeight: FontWeight.w700),
                               ),
                             ),
@@ -75,7 +83,7 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                               height: 40.h,
                               width: size.width - 100.h,
                               child: Text(
-                                'CÔNG TY CỔ PHẦN GIAO HÀNG TIẾT KIỆM dasd',
+                                widget.company.name.toUpperCase(),
                                 style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
@@ -135,7 +143,9 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                   shrinkWrap: true,
                   children: [
                     Container(
-                      color: const Color.fromARGB(255, 236, 235, 235),
+                      decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 236, 235, 235),
+                          borderRadius: BorderRadius.circular(10)),
                       padding: EdgeInsets.only(
                           left: 15.w, right: 15.w, top: 10.h, bottom: 20.h),
                       margin: const EdgeInsets.only(bottom: 25),
@@ -149,57 +159,53 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                                 fontWeight: FontWeight.w700,
                                 color: Colors.black.withOpacity(0.7)),
                           ),
-                          const InfoRecuitmentItem(
+                          InfoRecuitmentItem(
                             icon: ImageFactory.piggy,
                             title: 'Mức lương',
-                            content: 'Thỏa thuận',
+                            content: widget.recruitment.salary,
                           ),
-                          const InfoRecuitmentItem(
+                          InfoRecuitmentItem(
                             icon: ImageFactory.work,
                             title: 'Hình thức làm việc',
-                            content: 'Toàn thời gian',
+                            content: widget.recruitment.workingForm,
                           ),
-                          const InfoRecuitmentItem(
+                          InfoRecuitmentItem(
                             icon: ImageFactory.threePerson,
                             title: 'Số lượng cần tuyển',
-                            content: '14 người',
+                            content:
+                                widget.recruitment.numberOfRecruits.toString(),
                           ),
-                          const InfoRecuitmentItem(
+                          InfoRecuitmentItem(
                             icon: ImageFactory.sex,
                             title: 'Giới tính',
-                            content: 'Không yêu cầu',
+                            content: widget.recruitment.gender,
                           ),
-                          const InfoRecuitmentItem(
+                          InfoRecuitmentItem(
                             icon: ImageFactory.workExp,
                             title: 'Kinh nghiệm',
-                            content: 'Không yêu cầu kinh nghiệm',
+                            content: widget.recruitment.experience,
                           ),
-                          const InfoRecuitmentItem(
+                          InfoRecuitmentItem(
                             icon: ImageFactory.paper,
                             title: 'Chức vụ',
-                            content: 'Nhân viên',
+                            content: widget.recruitment.position,
                           ),
-                          const InfoRecuitmentItem(
+                          InfoRecuitmentItem(
                             icon: ImageFactory.location,
                             title: 'Địa chỉ',
-                            content:
-                                '4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang 4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang 4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang 4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang 4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang',
+                            content: widget.recruitment.address,
                           ),
                         ],
                       ),
                     ),
-                    const TagInfoWidget(
+                    TagInfoWidget(
                         title: 'Mô tả công việc',
-                        content:
-                            'Chịu trách nhiệm vể toàn bộ quy trình vận hành\nKiểm soat chất lượng xử lý hàng hóa thuộc Module phụ trách\nKiểm soát nguồn hàng xuất nhập để đảm bảo chất lượng dịch vụ của công ty\nQuản lý đội ngủ nhân viên phụ kho và tài xế xe tải'),
-                    const TagInfoWidget(
-                        title: 'Mô tả công việc',
-                        content:
-                            'Chịu trách nhiệm vể toàn bộ quy trình vận hành\nKiểm soat chất lượng xử lý hàng hóa thuộc Module phụ trách\nKiểm soát nguồn hàng xuất nhập để đảm bảo chất lượng dịch vụ của công ty\nQuản lý đội ngủ nhân viên phụ kho và tài xế xe tải'),
-                    const TagInfoWidget(
-                        title: 'Mô tả công việc',
-                        content:
-                            'Chịu trách nhiệm vể toàn bộ quy trình vận hành\nKiểm soat chất lượng xử lý hàng hóa thuộc Module phụ trách\nKiểm soát nguồn hàng xuất nhập để đảm bảo chất lượng dịch vụ của công ty\nQuản lý đội ngủ nhân viên phụ kho và tài xế xe tải')
+                        content: widget.recruitment.descriptionWorking),
+                    TagInfoWidget(
+                        title: 'Yêu cầu ứng viên',
+                        content: widget.recruitment.request),
+                    TagInfoWidget(
+                        title: 'Quyền lợi', content: widget.recruitment.benefit)
                   ],
                 ),
               ),
@@ -232,7 +238,9 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
             ),
             Expanded(
                 child: ButtonApp(
-              onPress: () {},
+              onPress: () {
+                Modular.to.pushNamed(RoutePath.applyScreen);
+              },
               title: 'Ứng tuyển ngay',
               borderRadius: 100,
             ))

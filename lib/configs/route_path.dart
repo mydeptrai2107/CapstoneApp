@@ -13,4 +13,10 @@ class RoutePath {
   static const String previewCV = '/previewCV';
   static const String listProfile = '/listProfile';
   static const String pdfViewer = '/pdfViewer';
+  static const String createCV = '/createCV';
+  static const String homeCompany = '/homeCompany';
+  static const String detailRecruitment = '/detailRecruitment';
+  static const String applyScreen = '/applyScreen';
+  static const String listCompanyScreen = '/listCompanyScreen';
+  static const String searchScreen = '/searchScreen';
 }

@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 class UserRepositories {
   final String urlUpdateUser = '${uriApiApp}api/user/';
-  final String urlAvatar = '${uriApiApp}static/cv/';
+  final String urlAvatarUser = '${uriApiApp}static/cv/';
 
   Future<void> updateUser(
       {required String firsName,
@@ -34,6 +34,6 @@ class UserRepositories {
   }
 
   String getAvatar(String image) {
-    return urlAvatar + image;
+    return urlAvatarUser + image;
   }
 }

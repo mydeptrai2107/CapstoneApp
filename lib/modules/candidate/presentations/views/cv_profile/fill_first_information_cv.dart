@@ -29,7 +29,7 @@ class _FillFirstInformationCVState extends State<FillFirstInformationCV> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    final provider = context.watch<ProvideProfile>();
+    final provider = context.watch<ProviderProfile>();
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 231, 229, 229),
       appBar: AppBar(
@@ -136,8 +136,10 @@ class _FillFirstInformationCVState extends State<FillFirstInformationCV> {
                       paddingHorizontal: 50,
                       title: 'Bắt đầu',
                       onPress: () async {
-                        Profile profile = await provider.createProfile(nameCvController.text);
-                        Modular.to.pushNamed(RoutePath.pdfPage, arguments: [profile.id, profile.name]);
+                        Profile profile =
+                            await provider.createProfile(nameCvController.text);
+                        Modular.to.navigate(RoutePath.createCV,
+                            arguments: [profile.id, profile.name]);
                       },
                     ),
                   )

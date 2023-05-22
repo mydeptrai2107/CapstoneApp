@@ -46,4 +46,6 @@ class ImageFactory {
   static const String delete = '${urlAssets}delete.svg';
   static const String time = '${urlAssets}time-outline.svg';
   static const String information = '${urlAssets}information-circle.svg';
+  static const String warning = '${urlAssets}warning.svg';
+
 }

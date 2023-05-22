@@ -1,3 +1,4 @@
+import 'package:app/modules/candidate/data/models/company_model.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/plugin_api.dart';
@@ -12,7 +13,8 @@ const accessTokenMap =
 const styleMap = 'clfc7v51b000i01lixp9ser9u';
 
 class IntroCompany extends StatefulWidget {
-  const IntroCompany({super.key});
+  const IntroCompany({super.key, required this.company});
+  final Company company;
 
   @override
   State<IntroCompany> createState() => _IntroCompanyState();
@@ -65,9 +67,11 @@ class _IntroCompanyState extends State<IntroCompany> {
               Container(
                 padding: EdgeInsets.only(left: 10.w),
                 width: size.width - 40.w,
-                child: const Text(
-                  '4th Floor, Xuan Can Building, 482/15/2 Trung Nu Vuong, Hai Chau, Da Nang',
-                  style: TextStyle(fontSize: 14),
+                child: Text(
+                  widget.company.address == ''
+                      ? 'Chưa cập nhật'
+                      : widget.company.address.toString(),
+                  style: const TextStyle(fontSize: 14),
                 ),
               )
             ],

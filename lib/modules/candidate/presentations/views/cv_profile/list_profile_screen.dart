@@ -22,21 +22,26 @@ class _ListProfileScreenState extends State<ListProfileScreen> {
   }
 
   void initData() async {
-    listProvider = await Modular.get<ProvideProfile>().getListProfile();
+    listProvider = await Modular.get<ProviderProfile>().getListProfile();
   }
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<ProvideProfile>();
+    final provider = context.watch<ProviderProfile>();
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: const Text('JobCV'),
+        leading: IconButton(
+            onPressed: () {
+              Modular.to.pushNamed(RoutePath.welcomeCreateCV);
+            },
+            icon: const Icon(Icons.arrow_back)),
       ),
       body: !provider.isLoading
           ? const CircularProgressIndicator()
           : Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
+              padding: const EdgeInsets.only(left: 15),
               height: size.height,
               width: size.width,
               child: ListView.separated(

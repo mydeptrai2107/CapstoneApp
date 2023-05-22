@@ -4,7 +4,7 @@ import 'package:app/modules/candidate/data/repositories/profile_repository.dart'
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-class ProvideProfile extends ChangeNotifier {
+class ProviderProfile extends ChangeNotifier {
   ProfileRepository profileRepository = ProfileRepository();
   final _myBoxUser = Hive.box<UserModel>('user');
 

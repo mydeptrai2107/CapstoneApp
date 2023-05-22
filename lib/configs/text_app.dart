@@ -19,4 +19,12 @@ class TextApp {
 
   static const String fillExperience =
       'Vui lòng điền dự án của riêng bạn vào thông tin bổ sung trong trường hợp bạn chưa có kinh nghiệm';
+  static const String introMyself =
+      'Viết giới thiệu gắn gọn về bản thân (điểm mạnh điểm yếu) và nêu rõ mong muốn, lý do làm việc tại công ty này. Đây là cách gây ấn tượng với nhà tuyển dụng nếu  bạn chưa có kinh nghiệm làm việc (hoặc CV không tốt)';
+  static const String warningApply1 =
+      '1. Ứng viên nên lựa chọn ứng tuyển bằng CV Online & viết thêm mong muốn tại phần giới thiệu để được Nhà tuyển dụng xem CV sớm hơn.';
+  static const String warningApply2 =
+      '2. JobCV khuyên tất cả các bạn hãy luôn cẩn trọng trong quá trình làm việc và chủ đông nghiên cứu thông tin của công ty, vị trí làm việc trước khi ứng tuyển. Ứng viên cần có trách nhiệm với hành vi ứng tuyển của mình. Nếu bạn nhận được tin tuyển dụng hoặc nhận được liên lạc đáng ngờ của nhà tuyển dụng, hãy báo ngay qua JobCV qua mail hotro@jobcv.vn để được hỗ trợ kịp thời.';
+  static const String warningApply3 =
+      '3. Tìm hiểu thêm kinh nghiệm phòng tránh lừa đảo tại đây';
 }

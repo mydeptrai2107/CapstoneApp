@@ -25,6 +25,11 @@ class _WelcomeCreateCVState extends State<WelcomeCreateCV> {
           style: textStyleTitleAppBar,
         ),
         centerTitle: true,
+        leading: IconButton(
+            onPressed: () {
+              Modular.to.pushNamed(RoutePath.home);
+            },
+            icon: const Icon(Icons.arrow_back)),
       ),
       body: Container(
         margin: const EdgeInsets.symmetric(horizontal: 15),
