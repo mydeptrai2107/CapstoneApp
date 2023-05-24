@@ -43,6 +43,15 @@ class ProviderCompany extends ChangeNotifier {
     }
   }
 
+  Future<Company> getCompanyById(String id) async {
+    try {
+      Map<String, dynamic> responseBody = await companyRepository.getCompanyById(id);
+      return Company.fromJson(responseBody['company']);
+    } catch(e) {
+      rethrow;
+    }
+  }
+
   Future<int> getQuantityCompany() async {
     try {
       List<dynamic> responseBody = await companyRepository.getListCompany();

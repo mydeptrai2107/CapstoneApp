@@ -52,7 +52,10 @@ class _ExperienceItemState extends State<ExperienceItem> {
                 widget.experience.delete();
                 provider.fetchAllExperience();
               },
-              icon: const Icon(Icons.delete_outline))
+              icon: const Icon(
+                Icons.delete_outline,
+                color: Colors.red,
+              ))
         ],
       ),
     );

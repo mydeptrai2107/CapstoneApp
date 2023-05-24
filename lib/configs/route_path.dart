@@ -18,5 +18,6 @@ class RoutePath {
   static const String detailRecruitment = '/detailRecruitment';
   static const String applyScreen = '/applyScreen';
   static const String listCompanyScreen = '/listCompanyScreen';
-  static const String searchScreen = '/searchScreen';
+  static const String searchCompanyScreen = '/searchCompanyScreen';
+  static const String searchRecruitmentScreen = '/searchRecruitmentScreen';
 }

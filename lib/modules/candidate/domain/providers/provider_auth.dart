@@ -48,8 +48,8 @@ class ProviderAuth extends ChangeNotifier {
       Map<String, dynamic> responseBody =
           await authenRepositoris.login(email, password);
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('accessToken', responseBody['accessToken']);
-      prefs.setString('refreshToken', responseBody['refreshToken']);
+      await prefs.setString('accessToken', responseBody['accessToken']);
+      await prefs.setString('refreshToken', responseBody['refreshToken']);
 
       _accessToken = responseBody['accessToken'];
       _refreshToken = responseBody['refreshToken'];
@@ -86,7 +86,7 @@ class ProviderAuth extends ChangeNotifier {
 
   Future<String> getAvatar() async {
     try {
-      authenRepositoris.checkTokenExpiration();
+      await authenRepositoris.checkTokenExpiration();
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String accessToken = prefs.getString('accessToken')!;
       Map<String, dynamic> responseBody =

@@ -1,3 +1,4 @@
+import 'package:app/configs/image_factory.dart';
 import 'package:app/modules/candidate/data/models/company_model.dart';
 import 'package:app/modules/candidate/data/models/recruitment_model.dart';
 import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
@@ -30,26 +31,43 @@ class _RecruitmentPageCompanyState extends State<RecruitmentPageCompany> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     final provider = context.watch<ProviderRecruitment>();
     return provider.isLoadingGetListRecruit
         ? const CircularProgressIndicator()
-        : Container(
-            margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10),
-            child: ListView.separated(
-              itemCount: listRecruitment.length,
-              itemBuilder: (context, index) {
-                return RecruitmentItem(
-                  recruitment: listRecruitment[index],
-                  company: widget.company,
-                );
-              },
-              separatorBuilder: (context, index) {
-                return const SizedBox(
-                  height: 14,
-                );
-              },
-            ),
-          );
+        : listRecruitment.isEmpty
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: const BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage(ImageFactory.box),
+                            fit: BoxFit.fill)),
+                  ),
+                  const Text(
+                    'Danh sách tin tuyển dụng trống',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                  )
+                ],
+              )
+            : Container(
+                margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10),
+                child: ListView.separated(
+                  itemCount: listRecruitment.length,
+                  itemBuilder: (context, index) {
+                    return RecruitmentItem(
+                      recruitment: listRecruitment[index],
+                      company: widget.company,
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(
+                      height: 14,
+                    );
+                  },
+                ),
+              );
   }
 }

@@ -3,11 +3,12 @@ import 'dart:io';
 import 'package:app/configs/image_factory.dart';
 import 'package:app/modules/candidate/data/models/hive_models/user_model_hive.dart';
 import 'package:app/modules/candidate/domain/providers/provider_user.dart';
+import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/compulsory_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -186,7 +187,16 @@ class _AccountScreenState extends State<AccountScreen> {
                     child: Container(
                       height: 120,
                       width: size.width,
-                      decoration: const BoxDecoration(color: Colors.black),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            primaryColor,
+                            primaryColor.withOpacity(0.1),
+                          ],
+                        ),
+                      ),
                     )),
                 Positioned(
                     top: 60,
@@ -205,23 +215,43 @@ class _AccountScreenState extends State<AccountScreen> {
                             onTap: () {
                               showImagePicker(context);
                             },
-                            child: Container(
-                              height: 80,
-                              width: 80,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                  border:
-                                      Border.all(width: 2, color: Colors.red),
-                                  image: imageFile != null
-                                      ? DecorationImage(
-                                          image: FileImage(imageFile!))
-                                      : widget.avatar != null
+                            child: Stack(
+                              children: [
+                                Container(
+                                  height: 80,
+                                  width: 80,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(100),
+                                      border: Border.all(
+                                          width: 2, color: Colors.red),
+                                      image: imageFile != null
                                           ? DecorationImage(
-                                              image:
-                                                  NetworkImage(widget.avatar!))
-                                          : const DecorationImage(
-                                              image: AssetImage(
-                                                  ImageFactory.editCV))),
+                                              image: FileImage(imageFile!))
+                                          : widget.avatar != null
+                                              ? DecorationImage(
+                                                  image: NetworkImage(
+                                                      widget.avatar!))
+                                              : const DecorationImage(
+                                                  image: AssetImage(
+                                                      ImageFactory.editCV))),
+                                ),
+                                Positioned(
+                                    top: 50,
+                                    left: 50,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              width: 1, color: Colors.black),
+                                          borderRadius:
+                                              BorderRadius.circular(100)),
+                                      child: SvgPicture.asset(
+                                          ImageFactory.camera,
+                                          height: 20,
+                                          width: 20),
+                                    ))
+                              ],
                             ),
                           ),
                           const SizedBox(

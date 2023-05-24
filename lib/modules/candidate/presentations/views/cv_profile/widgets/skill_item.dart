@@ -46,7 +46,10 @@ class _SkillItemState extends State<SkillItem> {
                 widget.skillModel.delete();
                 provider.fetchAllSchool();
               },
-              icon: const Icon(Icons.delete_outline))
+              icon: const Icon(
+                Icons.delete_outline,
+                color: Colors.red,
+              ))
         ],
       ),
     );

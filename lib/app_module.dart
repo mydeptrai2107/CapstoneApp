@@ -21,6 +21,7 @@ import 'package:app/modules/candidate/presentations/views/cv_profile/pdf_viewer_
 import 'package:app/modules/candidate/presentations/views/cv_profile/welcome_create_cv.dart';
 import 'package:app/modules/candidate/presentations/views/home/list_company_screen.dart';
 import 'package:app/modules/candidate/presentations/views/home/search_company_screen.dart';
+import 'package:app/modules/candidate/presentations/views/home/search_recruitment_screen.dart';
 import 'package:app/modules/candidate/presentations/views/jobcv_home_screen.dart';
 import 'package:app/modules/candidate/presentations/views/login_register/login.dart';
 import 'package:app/modules/candidate/presentations/views/login_register/register.dart';
@@ -120,6 +121,12 @@ class AppModule extends Module {
           child: (context, args) => const ListCompanyScreen(),
         ),
         ChildRoute(
-          RoutePath.searchScreen, child: (context, args) => const SearchScreen(),)
+          RoutePath.searchCompanyScreen,
+          child: (context, args) => const SearchScreen(),
+        ),
+        ChildRoute(
+          RoutePath.searchRecruitmentScreen,
+          child: (context, args) => const SearchRecruitmentScreen(),
+        )
       ];
 }

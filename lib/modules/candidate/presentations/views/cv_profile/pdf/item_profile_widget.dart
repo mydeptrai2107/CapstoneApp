@@ -79,7 +79,6 @@ class _ItemProfileWidgetState extends State<ItemProfileWidget> {
                         );
                         Overlay.of(context).insert(overlayEntry);
                       } catch (e) {
-                        print(e);
                       }
                     },
                     child: !provider.isLoadingDelete

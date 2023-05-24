@@ -35,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    final provider = context.watch<ProviderCompany>();
+    context.watch<ProviderCompany>();
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -44,45 +44,65 @@ class _HomeScreenState extends State<HomeScreen> {
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
                 centerTitle: true,
-                title: Container(
-                  height: 30,
-                  width: size.width,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: Colors.grey),
-                      borderRadius: BorderRadius.circular(7)),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        ImageFactory.search,
-                        color: primaryColor,
-                        width: 20,
-                        height: 20,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            'Bạn muốn tìm việc',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 10),
-                          ),
-                          Text(
-                            'Công ty - Vị trí - Địa điểm',
-                            style: TextStyle(color: Colors.grey, fontSize: 10),
-                          )
-                        ],
-                      )
-                    ],
+                title: GestureDetector(
+                  onTap: () {
+                    Modular.to.pushNamed(RoutePath.searchRecruitmentScreen);
+                  },
+                  child: Container(
+                    height: 30,
+                    width: size.width,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                        border: Border.all(width: 1, color: Colors.grey),
+                        borderRadius: BorderRadius.circular(7)),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          ImageFactory.search,
+                          color: primaryColor,
+                          width: 20,
+                          height: 20,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              'Bạn muốn tìm việc',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10),
+                            ),
+                            Text(
+                              'Công ty - Vị trí - Địa điểm',
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 10),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
-                background: Row()),
+                background: Container(
+                  height: 200,
+                  width: size.width,
+                  decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          primaryColor,
+                          Colors.white,
+                        ],
+                      ),
+                      image: DecorationImage(
+                          image: AssetImage(ImageFactory.editCV))),
+                )),
           ),
           SliverToBoxAdapter(
             child: SizedBox(

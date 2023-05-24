@@ -1,29 +1,31 @@
 import 'package:app/configs/image_factory.dart';
-import 'package:app/modules/candidate/data/models/company_model.dart';
+import 'package:app/modules/candidate/data/models/recruitment_model.dart';
 import 'package:app/modules/candidate/domain/providers/provider_company.dart';
+import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
-import 'package:app/modules/candidate/presentations/views/home/widgets/item_company_horizontal.dart';
+import 'package:app/modules/candidate/presentations/views/home/widgets/item_recruitment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+class SearchRecruitmentScreen extends StatefulWidget {
+  const SearchRecruitmentScreen({super.key});
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  State<SearchRecruitmentScreen> createState() =>
+      _SearchRecruitmentScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _SearchRecruitmentScreenState extends State<SearchRecruitmentScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  List<Company> listCompany = [];
+  List<Recruitment> listRecruitment = [];
 
   initData() async {
     isSearched = true;
     _searchController.text == ''
-        ? listCompany = []
-        : listCompany = await Modular.get<ProviderCompany>()
-            .getCompanyByName(_searchController.text);
+        ? listRecruitment = []
+        : listRecruitment = await Modular.get<ProviderRecruitment>()
+            .getListRecruitByName(_searchController.text);
   }
 
   bool isSearched = false;
@@ -52,7 +54,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ),
       ),
-      body: isSearched && listCompany.isEmpty
+      body: isSearched && listRecruitment.isEmpty
           ? SizedBox(
               width: size.width,
               child: Column(
@@ -76,14 +78,14 @@ class _SearchScreenState extends State<SearchScreen> {
             )
           : ListView.separated(
               itemBuilder: (context, index) {
-                return ItemCompanyHorizontal(company: listCompany[index]);
+                return ItemRecuitment(recruitment: listRecruitment[index]);
               },
               separatorBuilder: (context, index) {
                 return const SizedBox(
                   height: 20,
                 );
               },
-              itemCount: listCompany.length),
+              itemCount: listRecruitment.length),
     );
   }
 }
