@@ -6,6 +6,7 @@ import 'package:app/modules/candidate/data/models/hive_models/experience_model.d
 import 'package:app/modules/candidate/data/models/hive_models/school_model.dart';
 import 'package:app/modules/candidate/data/models/hive_models/skill_model.dart';
 import 'package:app/modules/candidate/domain/providers/provider_app.dart';
+import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
 import 'package:app/modules/candidate/domain/providers/provider_profile.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/cv_profile/pdf/widgets/information_item.dart';
@@ -61,17 +62,30 @@ class _PreviewCVScreenState extends State<PreviewCVScreen> {
   WidgetsToImageController controller = WidgetsToImageController();
   Uint8List? bytes;
   final pdf = pw.Document();
+  String avatar = '';
+
+  void init() async {
+    avatar = await Modular.get<ProviderAuth>().getAvatar();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    init();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     final provider = context.watch<ProviderProfile>();
+    context.watch<ProviderAuth>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('PDF'),
       ),
-      body:
-          WidgetsToImage(controller: controller, child: buildCV(size, context)),
+      body: WidgetsToImage(
+          controller: controller, child: buildCV(size, context, avatar)),
       floatingActionButton: FloatingActionButton(
         child: provider.isLoadingUpdateProfile
             ? const CircularProgressIndicator()
@@ -81,14 +95,14 @@ class _PreviewCVScreenState extends State<PreviewCVScreen> {
           final bytes = await controller.capture();
           this.bytes = bytes;
           createPDF(bytes!);
-          savePDF();
-          Modular.to.pushNamed(RoutePath.listProfile);
+          await savePDF();
+          Modular.to.navigate(RoutePath.listProfile);
         },
       ),
     );
   }
 
-  createPDF(Uint8List bytes) async {
+  createPDF(Uint8List bytes) {
     final image = pw.MemoryImage(bytes);
     pdf.addPage(pw.Page(
       pageFormat: PdfPageFormat.a4,
@@ -103,7 +117,7 @@ class _PreviewCVScreenState extends State<PreviewCVScreen> {
       final dir = await getExternalStorageDirectory();
       final file = File('${dir?.path}/file.pdf');
       await file.writeAsBytes(await pdf.save());
-      Modular.get<ProviderProfile>().updateProfile(
+      await Modular.get<ProviderProfile>().updateProfile(
           id: widget.idCV, name: widget.nameCV, pathCV: file.path);
       showPrintedMessage('success', 'saved to document');
     } catch (e) {
@@ -123,7 +137,7 @@ class _PreviewCVScreenState extends State<PreviewCVScreen> {
     ).show(context);
   }
 
-  Widget buildCV(Size size, BuildContext context) {
+  Widget buildCV(Size size, BuildContext context, String avatar) {
     final provider = context.watch<ProviderApp>();
     List<ExperienceModel> listExperience = provider.listExperience;
     List<SchoolModel> listSchool = provider.listSchool;
@@ -224,11 +238,10 @@ class _PreviewCVScreenState extends State<PreviewCVScreen> {
                           margin: const EdgeInsets.only(bottom: 20),
                           width: (size.width - 170) / 2,
                           height: (size.width - 170) / 2,
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              image: DecorationImage(
-                                  image: NetworkImage(
-                                      'https://i0.wp.com/thatnhucuocsong.com.vn/wp-content/uploads/2023/02/Hinh-anh-avatar-cute.jpg?ssl\u003d1'))),
+                              image:
+                                  DecorationImage(image: NetworkImage(avatar))),
                         )
                       : ClipRRect(
                           borderRadius: BorderRadius.circular(150),

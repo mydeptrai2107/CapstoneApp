@@ -2,9 +2,9 @@ class TextApp {
   //welcom create CV
   static const String createFirstCV = "Tạo CV đầu tiên trên TopCV";
   static const String youWantHave =
-      'Bạn muốn có công việc phù hợp với bản \n thân?';
+      'Bạn muốn có công việc phù hợp với bản  thân?';
   static const String letisCreateCvNow =
-      'Hãy tạo ngay CV trên TopCV \n chúng tôi sẽ gợi ý cho bạn \n những công việc phù hợp \n nhất.';
+      'Hãy tạo ngay CV trên TopCV chúng tôi sẽ gợi ý cho bạn những công việc phù hợp nhất.';
   static const String fillInfor = 'Điền thông tin để nhận gợi ý phù hợp';
 
   //note create cv
@@ -27,4 +27,6 @@ class TextApp {
       '2. JobCV khuyên tất cả các bạn hãy luôn cẩn trọng trong quá trình làm việc và chủ đông nghiên cứu thông tin của công ty, vị trí làm việc trước khi ứng tuyển. Ứng viên cần có trách nhiệm với hành vi ứng tuyển của mình. Nếu bạn nhận được tin tuyển dụng hoặc nhận được liên lạc đáng ngờ của nhà tuyển dụng, hãy báo ngay qua JobCV qua mail hotro@jobcv.vn để được hỗ trợ kịp thời.';
   static const String warningApply3 =
       '3. Tìm hiểu thêm kinh nghiệm phòng tránh lừa đảo tại đây';
+  static const String inputName =
+      'Giúp JobCV và các Công ty dễ dàng nhận ra bạn bằng cách nhập họ và tên của bạn vào bên dưới.';
 }

@@ -64,7 +64,7 @@ class _ListCompanyScreenState extends State<ListCompanyScreen> {
         actions: [
           GestureDetector(
             onTap: () {
-              Modular.to.pushNamed(RoutePath.searchScreen);
+              Modular.to.pushNamed(RoutePath.searchCompanyScreen);
             },
             child: SvgPicture.asset(
               ImageFactory.search,
@@ -74,7 +74,9 @@ class _ListCompanyScreenState extends State<ListCompanyScreen> {
           )
         ],
       ),
-      body: SafeArea(
+      body: Container(
+          color: Colors.grey.withOpacity(0.2),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: ListView.separated(
               controller: _scrollController,
               itemBuilder: (context, index) {

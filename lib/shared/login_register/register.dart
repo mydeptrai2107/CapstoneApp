@@ -1,4 +1,6 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
+import 'dart:convert';
 
 import 'package:app/shared/utils/format.dart';
 import 'package:app/configs/image_factory.dart';
@@ -6,6 +8,8 @@ import 'package:app/configs/route_path.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
+import 'package:elegant_notification/elegant_notification.dart';
+import 'package:elegant_notification/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -32,6 +36,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     Size size = MediaQuery.of(context).size;
     var provider = context.watch<ProviderAuth>();
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 15.w),
         height: size.height,
@@ -173,22 +178,43 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ? const CircularProgressIndicator()
                 : ButtonApp(
                     onPress: () async {
-                      provider.setLoadingRegister(true);
                       try {
                         await provider.register(
-                            emailController.text.trim(),
-                            passwordController.text.trim(),
-                            confirmPwController.text.trim(),
+                            emailController.text.toString().trim(),
+                            passwordController.text.toString().trim(),
+                            confirmPwController.text.toString().trim(),
                             Format.getFirstNameByName(
-                                nameController.text.trim()),
+                                nameController.text.toString().trim()),
                             Format.getLastNameByName(
-                                nameController.text.trim()));
+                                nameController.text.toString().trim()));
+                        ElegantNotification.success(
+                          width: 360,
+                          notificationPosition: NotificationPosition.topCenter,
+                          animation: AnimationType.fromTop,
+                          title: const Text('Đăng ký'),
+                          description:
+                              const Text('Đăng ký thành công. Đăng nhập ngay.'),
+                          onDismiss: () {},
+                        ).show(context);
+                        await Future.delayed(
+                          const Duration(milliseconds: 3000),
+                          () => Modular.to.pushNamed(RoutePath.login),
+                        );
                       } catch (e) {
-                        
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Row(
+                            children: [
+                              const Icon(Icons.warning),
+                              Expanded(
+                                  child:
+                                      Text(jsonDecode(e.toString())['message']))
+                            ],
+                          ),
+                        ));
                       }
                     },
                     title: 'Đăng ký',
-                    width: size.width,
+                    //width: size.width,
                   ),
 
             Expanded(child: Container()),

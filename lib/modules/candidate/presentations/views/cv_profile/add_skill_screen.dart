@@ -98,8 +98,8 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
           child: ButtonApp(
-            onPress: () {
-              saveSkill();
+            onPress: ()async {
+              await saveSkill();
               provider.fetchAllSkill();
               Modular.to.pop();
             },
@@ -112,8 +112,8 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
     );
   }
 
-  saveSkill() {
-    _skillBox.add(SkillModel(
+  saveSkill() async {
+    await _skillBox.add(SkillModel(
         nameSkill: _skillController.text,
         description: _descriptionController.text));
   }

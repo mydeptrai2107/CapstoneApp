@@ -1,5 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:convert';
+
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
 import 'package:app/modules/candidate/domain/providers/provider_profile.dart';
@@ -7,6 +9,7 @@ import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_outline.dart';
 import 'package:app/shared/utils/format.dart';
+import 'package:app/shared/utils/notiface_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -43,11 +46,7 @@ class _ItemProfileWidgetState extends State<ItemProfileWidget> {
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(10),
-            boxShadow: const [
-              BoxShadow(blurRadius: 8, color: Colors.grey, offset: Offset(5, 5))
-            ],
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -79,7 +78,8 @@ class _ItemProfileWidgetState extends State<ItemProfileWidget> {
                         );
                         Overlay.of(context).insert(overlayEntry);
                       } catch (e) {
-                        print(e);
+                        notifaceError(
+                            context, jsonDecode(e.toString())['message']);
                       }
                     },
                     child: !provider.isLoadingDelete

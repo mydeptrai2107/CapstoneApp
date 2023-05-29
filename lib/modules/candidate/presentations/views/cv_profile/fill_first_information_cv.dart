@@ -5,6 +5,8 @@ import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
 import 'package:app/configs/text_app.dart';
 import 'package:app/modules/candidate/data/models/profile_model.dart';
+import 'package:app/modules/candidate/data/models/user_model.dart';
+import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
 import 'package:app/modules/candidate/domain/providers/provider_profile.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
@@ -29,7 +31,9 @@ class _FillFirstInformationCVState extends State<FillFirstInformationCV> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    final provider = context.watch<ProviderProfile>();
+    final providerProfile = context.watch<ProviderProfile>();
+    final providerAuth = context.watch<ProviderAuth>();
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 231, 229, 229),
       appBar: AppBar(
@@ -130,16 +134,17 @@ class _FillFirstInformationCVState extends State<FillFirstInformationCV> {
             SizedBox(
               height: 20.h,
             ),
-            provider.isLoadignCreate
+            providerProfile.isLoadignCreate
                 ? Center(
                     child: ButtonApp(
                       paddingHorizontal: 50,
                       title: 'Bắt đầu',
                       onPress: () async {
-                        Profile profile =
-                            await provider.createProfile(nameCvController.text);
+                        User user = await providerAuth.getUser();
+                        Profile profile = await providerProfile.createProfile(
+                            nameCvController.text, user.userId);
                         Modular.to.navigate(RoutePath.createCV,
-                            arguments: [profile.id, profile.name]);
+                            arguments: [profile.id, profile.name, user.userId]);
                       },
                     ),
                   )

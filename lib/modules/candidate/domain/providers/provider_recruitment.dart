@@ -26,6 +26,24 @@ class ProviderRecruitment extends ChangeNotifier {
     }
   }
 
+  Future<List<Recruitment>> getListRecruitByName(String name) async {
+    try {
+      _isLoadingGetListRecruit = true;
+
+      List<dynamic> responseBody =
+          await recruitmentRepository.getListRecruitmentByName(name);
+      Iterable it = responseBody;
+      List<Recruitment> list = it.map((e) => Recruitment.fromJson(e)).toList();
+      _isLoadingGetListRecruit = false;
+      notifyListeners();
+      return list;
+    } catch (e) {
+      _isLoadingGetListRecruit = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
   Future<int> getQuantityRecruitByCompany(String idCompany) async {
     try {
       List<dynamic> responseBody =
@@ -33,6 +51,27 @@ class ProviderRecruitment extends ChangeNotifier {
       notifyListeners();
       return responseBody.length;
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Recruitment>> getListRecruitment() async {
+    try {
+      _isLoadingGetListRecruit = true;
+
+      List<dynamic> responseBody =
+          await recruitmentRepository.getListRecruitment();
+      Iterable it = responseBody;
+      List<Recruitment> list = it.map((e) => Recruitment.fromJson(e)).toList();
+      // list.sort(
+      //   (a, b) => a.salary!.compareTo(b.salary!),
+      // );
+      _isLoadingGetListRecruit = false;
+      notifyListeners();
+      return list;
+    } catch (e) {
+      _isLoadingGetListRecruit = false;
+      notifyListeners();
       rethrow;
     }
   }

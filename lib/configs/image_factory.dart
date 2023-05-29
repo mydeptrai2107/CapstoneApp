@@ -47,5 +47,15 @@ class ImageFactory {
   static const String time = '${urlAssets}time-outline.svg';
   static const String information = '${urlAssets}information-circle.svg';
   static const String warning = '${urlAssets}warning.svg';
-
+  static const String camera = '${urlAssets}camera-outline.svg';
+  static const String searchCV = '${urlAssets}search_cv.jpg';
+  static const String box = '${urlAssets}box.png';
+  static const String searchNotFound = '${urlAssets}search-not-found.png';
+  static const String locationColor = '${urlAssets}location-color.svg';
+  static const String earth = '${urlAssets}earth.svg';
+  static const String bookmarkoutline = '${urlAssets}bookmark-outline.svg';
+  static const String bookmark = '${urlAssets}bookmark.svg';
+  static const String logout = '${urlAssets}log-out-outline.svg';
+  static const String login = '${urlAssets}log-in-outline.svg';
+  static const String checkmark = '${urlAssets}checkmark-outline.svg';
 }

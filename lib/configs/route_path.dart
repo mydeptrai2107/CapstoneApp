@@ -1,6 +1,7 @@
 class RoutePath {
+  static const String loading = '/';
   static const String home = '/home';
-  static const String login = '/';
+  static const String login = '/login';
   static const String register = '/register';
   static const String welcomeCreateCV = '/welcomeCreateCV';
   static const String fillFirstInfoCV = '/welcomeCreateCV/fillFirstInfoCV';
@@ -18,5 +19,6 @@ class RoutePath {
   static const String detailRecruitment = '/detailRecruitment';
   static const String applyScreen = '/applyScreen';
   static const String listCompanyScreen = '/listCompanyScreen';
-  static const String searchScreen = '/searchScreen';
+  static const String searchCompanyScreen = '/searchCompanyScreen';
+  static const String searchRecruitmentScreen = '/searchRecruitmentScreen';
 }

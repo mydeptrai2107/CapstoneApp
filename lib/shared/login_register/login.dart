@@ -1,5 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:convert';
+
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
 import 'package:app/modules/candidate/data/repositories/authen_firebase_repositories.dart';
@@ -27,8 +29,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    emailController.text = 'mylam1202@gmail.com';
-    passwordController.text = '12345';
+    emailController.text = 'example@example.com';
+    passwordController.text = 'your_password';
     super.initState();
     initData();
   }
@@ -187,7 +189,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           content: Row(
                             children: [
                               const Icon(Icons.warning),
-                              Expanded(child: Text(e.toString()))
+                              Expanded(
+                                  child:
+                                      Text(jsonDecode(e.toString())['message']))
                             ],
                           ),
                         ));

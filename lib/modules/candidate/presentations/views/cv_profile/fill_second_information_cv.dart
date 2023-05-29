@@ -1,8 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 import 'package:app/configs/route_path.dart';
 import 'package:app/modules/candidate/data/models/province.dart';
 import 'package:app/modules/candidate/data/repositories/repository_map_vn.dart';
 import 'package:app/modules/candidate/domain/providers/provider_app.dart';
+import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
+import 'package:app/modules/candidate/domain/providers/provider_user.dart';
 import 'package:app/modules/candidate/domain/use_case/get_province.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/cv_profile/widgets/experience_item.dart';
@@ -10,6 +14,8 @@ import 'package:app/modules/candidate/presentations/views/cv_profile/widgets/sch
 import 'package:app/modules/candidate/presentations/views/cv_profile/widgets/skill_item.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_outline.dart';
+import 'package:elegant_notification/elegant_notification.dart';
+import 'package:elegant_notification/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,10 +29,11 @@ import 'package:pdf/widgets.dart' as pw;
 
 class FillSecondInformationScreen extends StatefulWidget {
   const FillSecondInformationScreen(
-      {super.key, required this.id, required this.name});
+      {super.key, required this.id, required this.name, required this.idUser});
 
   final String id;
   final String name;
+  final String idUser;
 
   @override
   State<FillSecondInformationScreen> createState() =>
@@ -37,6 +44,7 @@ class _FillSecondInformationScreenState
     extends State<FillSecondInformationScreen> {
   List<String> gender = ['Nam', 'Nữ'];
   String selectGender = 'Nam';
+  String avatar = '';
   GetProvince getProvince = GetProvince(reporitpryMap: ReporitoryMap());
   List<Province> listProvince = [];
   final TextEditingController _provinceController = TextEditingController();
@@ -74,6 +82,7 @@ class _FillSecondInformationScreenState
 
   getData() async {
     listProvince = await getProvince.get();
+    avatar = await Modular.get<ProviderAuth>().getAvatar();
     setState(() {});
   }
 
@@ -218,7 +227,8 @@ class _FillSecondInformationScreenState
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    final provider = context.watch<ProviderApp>();
+    final providerApp = context.watch<ProviderApp>();
+    final providerUser = context.watch<ProviderUser>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Thông tin chung'),
@@ -249,7 +259,6 @@ class _FillSecondInformationScreenState
 
                       if (statuses[Permission.storage]!.isGranted &&
                           statuses[Permission.camera]!.isGranted) {
-                        // ignore: use_build_context_synchronously
                         showImagePicker(context);
                       }
                     },
@@ -257,15 +266,26 @@ class _FillSecondInformationScreenState
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         imageFile == null
-                            ? Container(
-                                margin: EdgeInsets.only(
-                                    right: 20.w, bottom: 15.h, top: 15.h),
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.amber[50]),
-                              )
+                            ? avatar == ''
+                                ? Container(
+                                    margin: EdgeInsets.only(
+                                        right: 20.w, bottom: 15.h, top: 15.h),
+                                    width: 50,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.amber[50]),
+                                  )
+                                : Container(
+                                    margin: EdgeInsets.only(
+                                        right: 20.w, bottom: 15.h, top: 15.h),
+                                    width: 50,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: NetworkImage(avatar)),
+                                      shape: BoxShape.circle,
+                                    ))
                             : ClipRRect(
                                 borderRadius: BorderRadius.circular(150),
                                 child: Image.file(
@@ -388,6 +408,7 @@ class _FillSecondInformationScreenState
                             width: 1),
                         borderRadius: BorderRadius.circular(10)),
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       controller: _phoneNumberController,
                       cursorColor: _phoneNumberController.text.isEmpty
                           ? Colors.red
@@ -605,8 +626,8 @@ class _FillSecondInformationScreenState
                     'Kinh nghiệm làm việc',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  for (int i = 0; i < provider.listExperience.length; i++)
-                    ExperienceItem(experience: provider.listExperience[i]),
+                  for (int i = 0; i < providerApp.listExperience.length; i++)
+                    ExperienceItem(experience: providerApp.listExperience[i]),
                   GestureDetector(
                     onTap: () {
                       Modular.to.pushNamed(RoutePath.addWorkingExperience);
@@ -661,8 +682,8 @@ class _FillSecondInformationScreenState
                     'Kỹ năng',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  for (int i = 0; i < provider.listSkill.length; i++)
-                    SkillItem(skillModel: provider.listSkill[i]),
+                  for (int i = 0; i < providerApp.listSkill.length; i++)
+                    SkillItem(skillModel: providerApp.listSkill[i]),
                   GestureDetector(
                     onTap: () {
                       Modular.to.pushNamed(RoutePath.addSkill);
@@ -700,8 +721,8 @@ class _FillSecondInformationScreenState
                     'Giáo dục',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  for (int i = 0; i < provider.listSchool.length; i++)
-                    SchoolItem(schoolModel: provider.listSchool[i]),
+                  for (int i = 0; i < providerApp.listSchool.length; i++)
+                    SchoolItem(schoolModel: providerApp.listSchool[i]),
                   GestureDetector(
                     onTap: () {
                       Modular.to.pushNamed(RoutePath.addEducation);
@@ -739,7 +760,18 @@ class _FillSecondInformationScreenState
             children: [
               ButtonApp(
                 onPress: () async {
-                  saveCV();
+                  await saveCV();
+                  providerUser.updateAvatar(
+                      id: widget.idUser, avatar: imageFile);
+                  ElegantNotification.success(
+                    width: 360,
+                    notificationPosition: NotificationPosition.topCenter,
+                    animation: AnimationType.fromTop,
+                    title: const Text('Lưu thông tin'),
+                    description:
+                        const Text('Thông tin của bạn đã lưu thành công'),
+                    onDismiss: () {},
+                  ).show(context);
                 },
                 title: 'Lưu CV',
                 paddingvertical: 15,
@@ -756,14 +788,14 @@ class _FillSecondInformationScreenState
     );
   }
 
-  saveCV() {
-    _box.put('name', _nameController.text);
-    _box.put('position', _positionController.text);
-    _box.put('email', _emailController.text);
-    _box.put('phoneNumber', _phoneNumberController.text);
-    _box.put('address', _addressController.text);
-    _box.put('link', _linkController.text);
-    _box.put('git', _gitController.text);
-    _box.put('info', _infoController.text);
+  saveCV() async {
+    await _box.put('name', _nameController.text);
+    await _box.put('position', _positionController.text);
+    await _box.put('email', _emailController.text);
+    await _box.put('phoneNumber', _phoneNumberController.text);
+    await _box.put('address', _addressController.text);
+    await _box.put('link', _linkController.text);
+    await _box.put('git', _gitController.text);
+    await _box.put('info', _infoController.text);
   }
 }

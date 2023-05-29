@@ -53,7 +53,10 @@ class _SchoolItemState extends State<SchoolItem> {
                 widget.schoolModel.delete();
                 provider.fetchAllSchool();
               },
-              icon: const Icon(Icons.delete_outline))
+              icon: const Icon(
+                Icons.delete_outline,
+                color: Colors.red,
+              ))
         ],
       ),
     );

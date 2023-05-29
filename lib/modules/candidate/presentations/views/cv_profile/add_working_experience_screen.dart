@@ -285,8 +285,8 @@ class _AddWorkingExperienceScreenState
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
           child: ButtonApp(
-            onPress: () {
-              saveExperience();
+            onPress: () async {
+              await saveExperience();
               provider.fetchAllExperience();
               Modular.to.pop();
             },
@@ -299,8 +299,8 @@ class _AddWorkingExperienceScreenState
     );
   }
 
-  saveExperience() {
-    _experienceBox.add(ExperienceModel(
+  saveExperience() async{
+    await _experienceBox.add(ExperienceModel(
         nameCompany: _nameCompanyController.text,
         to: setToDate,
         from: setFromDate,

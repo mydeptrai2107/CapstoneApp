@@ -9,41 +9,45 @@ User userFromJson(String str) => User.fromJson(json.decode(str));
 String userToJson(User data) => json.encode(data.toJson());
 
 class User {
-    String firstName;
-    String lastName;
-    DateTime? createdAt;
-    DateTime? updatedAt;
-    String phone;
-    String id;
-    String avatar;
+  String userId;
+  String accountId;
+  String email;
+  String firstName;
+  String lastName;
+  String? phone;
+  String? gender;
+  String? avatar;
 
-    User({
-        required this.firstName,
-        required this.lastName,
-        this.createdAt,
-        this.updatedAt,
-        required this.phone,
-        required this.id,
-        required this.avatar,
-    });
+  User({
+    required this.userId,
+    required this.accountId,
+    required this.email,
+    required this.firstName,
+    required this.lastName,
+    this.phone,
+    this.gender,
+    this.avatar,
+  });
 
-    factory User.fromJson(Map<String, dynamic> json) => User(
-        firstName: json["first_name"],
-        lastName: json["last_name"],
-        createdAt: DateTime.parse(json["createdAt"]),
-        updatedAt: DateTime.parse(json["updatedAt"]),
-        phone: json["phone"],
-        id: json["id"],
-        avatar: json["avatar"],
-    );
+  factory User.fromJson(Map<String, dynamic> json) => User(
+        userId: json["userId"],
+        accountId: json["accountId"],
+        email: json["email"],
+        firstName: json["firstName"],
+        lastName: json["lastName"],
+        phone: json["phone"] ?? '',
+        gender: json["gender"] ?? '',
+        avatar: json["avatar"] ?? '',
+      );
 
-    Map<String, dynamic> toJson() => {
-        "first_name": firstName,
-        "last_name": lastName,
-        "createdAt": createdAt?.toIso8601String(),
-        "updatedAt": updatedAt?.toIso8601String(),
+  Map<String, dynamic> toJson() => {
+        "userId": userId,
+        "accountId": accountId,
+        "email": email,
+        "firstName": firstName,
+        "lastName": lastName,
         "phone": phone,
-        "id": id,
+        "gender": gender,
         "avatar": avatar,
-    };
+      };
 }

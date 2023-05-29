@@ -1,12 +1,14 @@
 import 'dart:io';
 
+import 'package:app/modules/candidate/data/repositories/authen_repositories.dart';
 import 'package:app/modules/candidate/data/repositories/user_repositories.dart';
 import 'package:flutter/material.dart';
 
 class ProviderUser extends ChangeNotifier {
   UserRepositories userRepositories = UserRepositories();
+  AuthenRepositoris authenRepositoris = AuthenRepositoris();
 
-  bool _isLoadingUpdateUser = true;
+  bool _isLoadingUpdateUser = false;
 
   bool get isLoadingUpdateUser => _isLoadingUpdateUser;
 
@@ -18,6 +20,7 @@ class ProviderUser extends ChangeNotifier {
       File? avatar,
       required String id}) async {
     try {
+      _isLoadingUpdateUser = true;
       await userRepositories.updateUser(
           firsName: firsName,
           lastName: lastName,
@@ -25,6 +28,37 @@ class ProviderUser extends ChangeNotifier {
           gender: gender,
           avatar: avatar,
           id: id);
+      authenRepositoris.refreshToken();
+      _isLoadingUpdateUser = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoadingUpdateUser = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<void> updateAvatar({File? avatar, required String id}) async {
+    try {
+      _isLoadingUpdateUser = true;
+      await userRepositories.updateAvatar(avatar: avatar, id: id);
+      authenRepositoris.refreshToken();
+      _isLoadingUpdateUser = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoadingUpdateUser = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<void> updateUserAttribute(
+      {required String key, required String value, required String id}) async {
+    try {
+      _isLoadingUpdateUser = true;
+      await userRepositories.updateUserAttribute(
+          key: key, value: value, id: id);
+      authenRepositoris.refreshToken();
       _isLoadingUpdateUser = false;
       notifyListeners();
     } catch (e) {

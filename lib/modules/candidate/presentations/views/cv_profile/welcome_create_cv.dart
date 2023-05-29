@@ -27,7 +27,7 @@ class _WelcomeCreateCVState extends State<WelcomeCreateCV> {
         centerTitle: true,
         leading: IconButton(
             onPressed: () {
-              Modular.to.pushNamed(RoutePath.home);
+              Modular.to.navigate(RoutePath.home);
             },
             icon: const Icon(Icons.arrow_back)),
       ),

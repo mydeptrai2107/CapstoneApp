@@ -14,12 +14,12 @@ class Format {
   }
 
   static String getFirstNameByName(String name) {
-    List<String> value = name.split("\\s+");
+    List<String> value = name.split(" ");
     return value[0];
   }
 
   static String getLastNameByName(String name) {
-    List<String> value = name.split("\\s+");
+    List<String> value = name.split(" ");
     return value[1];
   }
 }

@@ -60,7 +60,7 @@ class AuthenRepositoris {
       DateTime expirationDate =
           DateTime.fromMillisecondsSinceEpoch(decodedToken['exp'] * 1000);
       if (expirationDate.isBefore(DateTime.now())) {
-        refreshToken();
+        await refreshToken();
       }
     }
   }
@@ -76,8 +76,8 @@ class AuthenRepositoris {
         }));
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
-      prefs.setString('accessToken', jsonResponse['accessToken']);
-      prefs.setString('refreshToken', jsonResponse['refreshToken']);
+      await prefs.setString('accessToken', jsonResponse['accessToken']);
+      //await prefs.setString('refreshToken', jsonResponse['refreshToken']);
     }
   }
 
