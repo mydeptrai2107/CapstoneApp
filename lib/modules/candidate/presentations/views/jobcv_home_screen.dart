@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:app/configs/image_factory.dart';
+import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/cv_profile/welcome_create_cv.dart';
@@ -20,6 +21,8 @@ class JobCVHomeScreen extends StatefulWidget {
 class _JobCVHomeScreenState extends State<JobCVHomeScreen> {
   int _currentIndex = 0;
   String avatar = '';
+  User user =
+      User(userId: '', accountId: '', email: '', firstName: '', lastName: '');
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +36,7 @@ class _JobCVHomeScreenState extends State<JobCVHomeScreen> {
       const Center(
         child: Text('Notification'),
       ),
-      AccountScreen(avatar: avatar)
+      AccountScreen(user: user, avatar: avatar)
     ];
     return Scaffold(
       body: tabs[_currentIndex],
@@ -91,6 +94,7 @@ class _JobCVHomeScreenState extends State<JobCVHomeScreen> {
         onTap: (value) async {
           if (value == 4) {
             avatar = await providerAuth.getAvatar();
+            user = await providerAuth.getUser();
           }
           setState(() {
             _currentIndex = value;

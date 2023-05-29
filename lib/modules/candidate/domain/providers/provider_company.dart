@@ -30,7 +30,8 @@ class ProviderCompany extends ChangeNotifier {
   Future<List<Company>> getCompanyByName(String name) async {
     try {
       _isLoadingSearch = true;
-      List<dynamic> responseBody = await companyRepository.getListCompanyByName(name);
+      List<dynamic> responseBody =
+          await companyRepository.getListCompanyByName(name);
       Iterable it = responseBody;
       List<Company> listCompany = it.map((e) => Company.fromJson(e)).toList();
       _isLoadingSearch = false;
@@ -45,9 +46,11 @@ class ProviderCompany extends ChangeNotifier {
 
   Future<Company> getCompanyById(String id) async {
     try {
-      Map<String, dynamic> responseBody = await companyRepository.getCompanyById(id);
+      Map<String, dynamic> responseBody =
+          await companyRepository.getCompanyById(id);
+      notifyListeners();
       return Company.fromJson(responseBody['company']);
-    } catch(e) {
+    } catch (e) {
       rethrow;
     }
   }

@@ -248,8 +248,8 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
           child: ButtonApp(
-            onPress: () {
-              saveSchool();
+            onPress: () async {
+              await saveSchool();
               provider.fetchAllSchool();
               Modular.to.pop();
             },
@@ -262,8 +262,8 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
     );
   }
 
-  saveSchool() {
-    _boxSchool.add(SchoolModel(
+  saveSchool() async {
+    await _boxSchool.add(SchoolModel(
         nameSchool: _schoolNameController.text,
         to: setToDate,
         from: setFromDate,

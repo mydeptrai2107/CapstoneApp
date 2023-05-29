@@ -54,4 +54,25 @@ class ProviderRecruitment extends ChangeNotifier {
       rethrow;
     }
   }
+
+  Future<List<Recruitment>> getListRecruitment() async {
+    try {
+      _isLoadingGetListRecruit = true;
+
+      List<dynamic> responseBody =
+          await recruitmentRepository.getListRecruitment();
+      Iterable it = responseBody;
+      List<Recruitment> list = it.map((e) => Recruitment.fromJson(e)).toList();
+      // list.sort(
+      //   (a, b) => a.salary!.compareTo(b.salary!),
+      // );
+      _isLoadingGetListRecruit = false;
+      notifyListeners();
+      return list;
+    } catch (e) {
+      _isLoadingGetListRecruit = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
 }

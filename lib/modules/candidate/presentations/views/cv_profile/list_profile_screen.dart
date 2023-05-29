@@ -1,4 +1,5 @@
 import 'package:app/configs/route_path.dart';
+import 'package:app/configs/text_app.dart';
 import 'package:app/modules/candidate/data/models/profile_model.dart';
 import 'package:app/modules/candidate/domain/providers/provider_profile.dart';
 import 'package:app/modules/candidate/presentations/views/cv_profile/pdf/item_profile_widget.dart';
@@ -40,26 +41,55 @@ class _ListProfileScreenState extends State<ListProfileScreen> {
       ),
       body: !provider.isLoading
           ? const CircularProgressIndicator()
-          : Container(
-              padding: const EdgeInsets.only(left: 15),
-              height: size.height,
+          : SizedBox(
+              height: listProvider.length * 165 + 140,
               width: size.width,
-              child: ListView.separated(
-                itemCount: listProvider.length,
-                itemBuilder: (context, index) {
-                  return ItemProfileWidget(
-                    name: listProvider[index].name,
-                    id: listProvider[index].id,
-                    pathCV: listProvider[index].pathCv,
-                    reLoadList: () async {
-                      listProvider = await provider.getListProfile();
-                    },
-                    updateAt: listProvider[index].updatedAt,
-                  );
-                },
-                separatorBuilder: (context, index) => const SizedBox(
-                  height: 15,
-                ),
+              child: ListView(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 15),
+                    height: 140,
+                    width: size.width,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text(
+                          'CV',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w700, fontSize: 17),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(TextApp.youWantHave),
+                        Text(TextApp.letisCreateCvNow)
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 15),
+                    height: listProvider.length * 165,
+                    width: size.width,
+                    child: ListView.separated(
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: listProvider.length,
+                      itemBuilder: (context, index) {
+                        return ItemProfileWidget(
+                          name: listProvider[index].name,
+                          id: listProvider[index].id,
+                          pathCV: listProvider[index].pathCv,
+                          reLoadList: () async {
+                            listProvider = await provider.getListProfile();
+                          },
+                          updateAt: listProvider[index].updatedAt,
+                        );
+                      },
+                      separatorBuilder: (context, index) => const SizedBox(
+                        height: 15,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
       bottomNavigationBar: Container(

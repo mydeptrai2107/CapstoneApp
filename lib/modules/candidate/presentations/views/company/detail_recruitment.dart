@@ -6,9 +6,11 @@ import 'package:app/configs/route_path.dart';
 import 'package:app/modules/candidate/data/models/company_model.dart';
 import 'package:app/modules/candidate/data/models/recruitment_model.dart';
 import 'package:app/modules/candidate/data/repositories/company_repositories.dart';
+import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/company/widgets/info_recuitment_item.dart';
 import 'package:app/modules/candidate/presentations/views/company/widgets/tag_info_widget.dart';
+import 'package:app/modules/candidate/presentations/views/home/widgets/item_recruitment.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_outline.dart';
 import 'package:flutter/material.dart';
@@ -30,15 +32,24 @@ class DetailRecruitment extends StatefulWidget {
 class _DetailRecruitmentState extends State<DetailRecruitment> {
   @override
   void initState() {
+    initData();
     super.initState();
   }
 
   // true: thong tin | false : Cong ty
   bool isChoose = true;
 
+  List<Recruitment> recruitements = [];
+
+  initData() async {
+    recruitements = await Modular.get<ProviderRecruitment>()
+        .getListRecruitByCompany(widget.company.id);
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    context.watch<ProviderRecruitment>();
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -52,8 +63,11 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.h),
-              height: 140.h,
+              padding: EdgeInsets.only(right: 10.h, left: 10, bottom: 5),
+              decoration: const BoxDecoration(
+                  border:
+                      Border(bottom: BorderSide(width: 1, color: Colors.grey))),
+              height: 145.h,
               width: size.width,
               child: Column(
                 children: [
@@ -84,7 +98,7 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                               height: 40.h,
                               width: size.width - 100.h,
                               child: Text(
-                                '${widget.recruitment.title.toUpperCase()} - ${widget.recruitment.address.toUpperCase()}',
+                                '${widget.recruitment.title!.toUpperCase()} - ${widget.recruitment.address!.toUpperCase()}',
                                 style: const TextStyle(
                                     fontSize: 14, fontWeight: FontWeight.w700),
                               ),
@@ -124,9 +138,8 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                             },
                             title: 'Thông tin',
                             paddingvertical: 14,
-                            backGroundColor: isChoose
-                                ? primaryColor
-                                : const Color.fromARGB(255, 224, 221, 221),
+                            backGroundColor:
+                                isChoose ? primaryColor : Colors.white,
                             borderRadius: 100,
                             fontSize: 13,
                             textColor: isChoose
@@ -147,9 +160,8 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                             },
                             title: 'Công ty',
                             paddingvertical: 14,
-                            backGroundColor: isChoose
-                                ? const Color.fromARGB(255, 224, 221, 221)
-                                : primaryColor,
+                            backGroundColor:
+                                isChoose ? Colors.white : primaryColor,
                             borderRadius: 100,
                             fontSize: 13,
                             textColor: isChoose
@@ -163,7 +175,9 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                 ],
               ),
             ),
-            isChoose ? buildInfoRecruitment(size) : buildInfoCompany(size)
+            isChoose
+                ? buildInfoRecruitment(size)
+                : buildInfoCompany(size, recruitements)
           ],
         ),
       ),
@@ -185,7 +199,8 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                   title: 'Nhắn tin',
                   icon: ImageFactory.chat,
                   borderRadius: 100,
-                  widthBorder: 3,
+                  widthBorder: 1.5,
+                  paddingvertical: 14,
                 )),
             SizedBox(
               width: 10.h,
@@ -204,10 +219,10 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
     );
   }
 
-  Widget buildInfoCompany(Size size) {
+  Widget buildInfoCompany(Size size, List<Recruitment> recruitments) {
     return Expanded(
         child: Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10),
+      margin: const EdgeInsets.only(left: 10, right: 10),
       width: size.width,
       child: ListView(
         children: [
@@ -216,10 +231,19 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                 color: const Color.fromARGB(255, 236, 235, 235),
                 borderRadius: BorderRadius.circular(10)),
             padding: EdgeInsets.only(
-                left: 15.w, right: 15.w, top: 10.h, bottom: 20.h),
-            margin: const EdgeInsets.only(bottom: 25),
+                left: 15.w, right: 15.w, top: 20.h, bottom: 20.h),
+            margin: const EdgeInsets.only(bottom: 25, top: 15),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  widget.company.name.toUpperCase(),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w900, fontSize: 18),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -245,6 +269,9 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                               color: Colors.grey,
                               fontWeight: FontWeight.w400),
                         ),
+                        const SizedBox(
+                          height: 8,
+                        ),
                         SizedBox(
                           width: size.width - 110,
                           child: Text(
@@ -255,13 +282,21 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                             ),
                           ),
                         ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        SizedBox(
+                            width: size.width - 110,
+                            child: const Divider(
+                              thickness: 1,
+                            )),
                       ],
                     )
                   ],
                 ),
 
                 const SizedBox(
-                  height: 20,
+                  height: 10,
                 ),
                 //website company
                 Row(
@@ -289,6 +324,9 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                               color: Colors.grey,
                               fontWeight: FontWeight.w400),
                         ),
+                        const SizedBox(
+                          height: 8,
+                        ),
                         SizedBox(
                           width: size.width - 110,
                           child: Text(
@@ -305,6 +343,55 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                 )
               ],
             ),
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              'GIỚI THIỆU CÔNG TY',
+              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+            ),
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              widget.company.info.toString(),
+              style: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: Colors.grey),
+            ),
+          ),
+          const SizedBox(
+            height: 25,
+          ),
+          const Divider(
+            thickness: 1,
+          ),
+          const Padding(
+            padding: EdgeInsets.only(top: 15, bottom: 15),
+            child: Text(
+              'Việc làm cùng công ty',
+              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+            ),
+          ),
+          SizedBox(
+            width: size.width,
+            height: 240.0 * recruitements.length,
+            child: ListView.separated(
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return ItemRecuitment(
+                    recruitment: recruitements[index],
+                    marginHorizontal: 0,
+                  );
+                },
+                separatorBuilder: (context, index) => const SizedBox(
+                      height: 20,
+                    ),
+                itemCount: recruitements.length),
           )
         ],
       ),
@@ -321,11 +408,10 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
           children: [
             Container(
               decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 236, 235, 235),
-                  borderRadius: BorderRadius.circular(10)),
+                  color: Colors.white, borderRadius: BorderRadius.circular(10)),
               padding: EdgeInsets.only(
                   left: 15.w, right: 15.w, top: 10.h, bottom: 20.h),
-              margin: const EdgeInsets.only(bottom: 25),
+              margin: const EdgeInsets.only(bottom: 25, top: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -339,12 +425,12 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                   InfoRecuitmentItem(
                     icon: ImageFactory.piggy,
                     title: 'Mức lương',
-                    content: widget.recruitment.salary,
+                    content: widget.recruitment.salary!,
                   ),
                   InfoRecuitmentItem(
                     icon: ImageFactory.work,
                     title: 'Hình thức làm việc',
-                    content: widget.recruitment.workingForm,
+                    content: widget.recruitment.workingForm!,
                   ),
                   InfoRecuitmentItem(
                     icon: ImageFactory.threePerson,
@@ -354,33 +440,34 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                   InfoRecuitmentItem(
                     icon: ImageFactory.sex,
                     title: 'Giới tính',
-                    content: widget.recruitment.gender,
+                    content: widget.recruitment.gender!,
                   ),
                   InfoRecuitmentItem(
                     icon: ImageFactory.workExp,
                     title: 'Kinh nghiệm',
-                    content: widget.recruitment.experience,
+                    content: widget.recruitment.experience!,
                   ),
                   InfoRecuitmentItem(
                     icon: ImageFactory.paper,
                     title: 'Chức vụ',
-                    content: widget.recruitment.position,
+                    content: widget.recruitment.position!,
                   ),
                   InfoRecuitmentItem(
                     icon: ImageFactory.location,
                     title: 'Địa chỉ',
-                    content: widget.recruitment.address,
+                    content: widget.recruitment.address!,
                   ),
                 ],
               ),
             ),
             TagInfoWidget(
                 title: 'Mô tả công việc',
-                content: widget.recruitment.descriptionWorking),
+                content: widget.recruitment.descriptionWorking!),
             TagInfoWidget(
-                title: 'Yêu cầu ứng viên', content: widget.recruitment.request),
+                title: 'Yêu cầu ứng viên',
+                content: widget.recruitment.request!),
             TagInfoWidget(
-                title: 'Quyền lợi', content: widget.recruitment.benefit)
+                title: 'Quyền lợi', content: widget.recruitment.benefit!)
           ],
         ),
       ),

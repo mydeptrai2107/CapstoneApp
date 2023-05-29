@@ -9,9 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+// ignore: must_be_immutable
 class ItemRecuitment extends StatefulWidget {
-  const ItemRecuitment({super.key, required this.recruitment});
+  ItemRecuitment({super.key, required this.recruitment, this.marginHorizontal});
   final Recruitment recruitment;
+  double? marginHorizontal;
 
   @override
   State<ItemRecuitment> createState() => _ItemRecuitmentState();
@@ -40,8 +42,11 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
         .getCompanyById(widget.recruitment.companyId);
   }
 
+  bool isSaved = false;
+
   @override
   Widget build(BuildContext context) {
+    context.watch<ProviderCompany>();
     final Size size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
@@ -49,13 +54,17 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
             arguments: [widget.recruitment, company]);
       },
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 15),
+        margin: EdgeInsets.symmetric(horizontal: widget.marginHorizontal ?? 15),
         padding: const EdgeInsets.all(15),
         width: size.width,
         height: 220,
         decoration: BoxDecoration(
-            border: Border.all(width: 1, color: Colors.grey),
-            borderRadius: BorderRadius.circular(10)),
+            color: Colors.white,
+            border: Border.all(width: 0.1, color: Colors.grey),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: const [
+              BoxShadow(color: Colors.grey, offset: Offset(1, 1))
+            ]),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,10 +91,23 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
                       ]),
                 ),
                 Text(
-                  widget.recruitment.title,
+                  widget.recruitment.title!,
                   style: const TextStyle(
                       fontSize: 15, fontWeight: FontWeight.w700),
                 ),
+                Expanded(child: Container()),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isSaved = !isSaved;
+                    });
+                  },
+                  child: Icon(
+                    isSaved ? Icons.bookmark : Icons.bookmark_outline,
+                    color: isSaved ? primaryColor : Colors.black,
+                    size: 30,
+                  ),
+                )
               ],
             ),
             Text(
@@ -103,7 +125,7 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
                     borderRadius: BorderRadius.circular(7),
                   ),
                   child: Text(
-                    widget.recruitment.address,
+                    widget.recruitment.address!,
                     style: const TextStyle(fontSize: 13),
                   ),
                 ),
@@ -119,7 +141,7 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
                     borderRadius: BorderRadius.circular(7),
                   ),
                   child: Text(
-                    widget.recruitment.experience,
+                    widget.recruitment.experience!,
                     style: const TextStyle(fontSize: 13),
                   ),
                 ),
@@ -133,7 +155,7 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
                 borderRadius: BorderRadius.circular(7),
               ),
               child: Text(
-                widget.recruitment.salary,
+                widget.recruitment.salary!,
                 style: const TextStyle(
                     fontSize: 13,
                     color: primaryColor,
@@ -151,8 +173,8 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
                   height: 17,
                 ),
                 Text(
-                  formatDuration(
-                      (widget.recruitment.deadline).difference(DateTime.now())),
+                  formatDuration((widget.recruitment.deadline!)
+                      .difference(DateTime.now())),
                   style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w400,

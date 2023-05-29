@@ -96,13 +96,13 @@ class _PreviewCVScreenState extends State<PreviewCVScreen> {
           this.bytes = bytes;
           createPDF(bytes!);
           await savePDF();
-          Modular.to.pushNamed(RoutePath.listProfile);
+          Modular.to.navigate(RoutePath.listProfile);
         },
       ),
     );
   }
 
-  createPDF(Uint8List bytes) async {
+  createPDF(Uint8List bytes) {
     final image = pw.MemoryImage(bytes);
     pdf.addPage(pw.Page(
       pageFormat: PdfPageFormat.a4,

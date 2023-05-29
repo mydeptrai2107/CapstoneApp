@@ -33,6 +33,38 @@ class UserRepositories {
     }
   }
 
+  Future<void> updateUserAttribute(
+      {required String key,
+      required String value,
+      required String id}) async {
+    var url = Uri.parse(urlUpdateUser + id);
+    final request = http.MultipartRequest('PUT', url);
+
+    request.fields[key] = value;
+    var response = await request.send();
+    if (response.statusCode != 200) {
+      throw response.statusCode;
+    }
+  }
+
+  Future<void> updateAvatar(
+      {
+      required File? avatar,
+      required String id}) async {
+    var url = Uri.parse(urlUpdateUser + id);
+    final request = http.MultipartRequest('PUT', url);
+    if (avatar != null) {
+      File imageFile = File(avatar.path);
+      final multipartFile =
+          await http.MultipartFile.fromPath('avatar', imageFile.path);
+      request.files.add(multipartFile);
+    }
+    var response = await request.send();
+    if (response.statusCode != 200) {
+      throw response.statusCode;
+    }
+  }
+
   String getAvatar(String image) {
     return urlAvatarUser + image;
   }

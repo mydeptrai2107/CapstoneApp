@@ -1,6 +1,7 @@
 class RoutePath {
+  static const String loading = '/';
   static const String home = '/home';
-  static const String login = '/';
+  static const String login = '/login';
   static const String register = '/register';
   static const String welcomeCreateCV = '/welcomeCreateCV';
   static const String fillFirstInfoCV = '/welcomeCreateCV/fillFirstInfoCV';

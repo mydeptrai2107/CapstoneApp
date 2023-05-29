@@ -1,4 +1,5 @@
 import 'package:app/configs/route_path.dart';
+import 'package:app/loading_screen.dart';
 import 'package:app/modules/candidate/domain/providers/provider_app.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
 import 'package:app/modules/candidate/domain/providers/provider_company.dart';
@@ -23,8 +24,8 @@ import 'package:app/modules/candidate/presentations/views/home/list_company_scre
 import 'package:app/modules/candidate/presentations/views/home/search_company_screen.dart';
 import 'package:app/modules/candidate/presentations/views/home/search_recruitment_screen.dart';
 import 'package:app/modules/candidate/presentations/views/jobcv_home_screen.dart';
-import 'package:app/modules/candidate/presentations/views/login_register/login.dart';
-import 'package:app/modules/candidate/presentations/views/login_register/register.dart';
+import 'package:app/shared/login_register/login.dart';
+import 'package:app/shared/login_register/register.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 class AppModule extends Module {
@@ -40,6 +41,8 @@ class AppModule extends Module {
 
   @override
   List<ModularRoute> get routes => [
+        ChildRoute(RoutePath.loading,
+            child: (context, args) => const LoadingScreen()),
         ChildRoute(RoutePath.home,
             child: (context, args) => const JobCVHomeScreen()),
         ChildRoute(RoutePath.login,
@@ -54,11 +57,13 @@ class AppModule extends Module {
             child: (context, args) => CreateCVScreen(
                   id: args.data[0],
                   name: args.data[1],
+                  idUser: args.data[2],
                 )),
         ChildRoute(RoutePath.fillSecondInfoCV,
             child: (context, args) => FillSecondInformationScreen(
                   id: args.data[0],
                   name: args.data[1],
+                  idUser: args.data[2],
                 )),
         ChildRoute(
           RoutePath.addWorkingExperience,

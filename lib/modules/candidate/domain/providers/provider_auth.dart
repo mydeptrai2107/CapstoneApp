@@ -1,22 +1,18 @@
-import 'package:app/modules/candidate/data/models/hive_models/user_model_hive.dart';
 import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/data/repositories/authen_repositories.dart';
 import 'package:app/modules/candidate/data/repositories/user_repositories.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 class ProviderAuth extends ChangeNotifier {
   final AuthenRepositoris authenRepositoris = AuthenRepositoris();
   final UserRepositories userRepositories = UserRepositories();
-  final _myBoxUser = Hive.box<UserModel>('user');
 
   late String _accessToken;
   late String _refreshToken;
   bool _isLoadingLogin = false;
   bool _isLogged = false;
   bool _isLoadingRegister = false;
-  bool _isRegistered = false;
 
   String get accessToken => _accessToken;
   String get refreshToken => _refreshToken;
@@ -25,7 +21,6 @@ class ProviderAuth extends ChangeNotifier {
   bool get isLogged => _isLogged;
 
   bool get isLoadingRegister => _isLoadingRegister;
-  bool get isRegistered => _isRegistered;
 
   late User _user;
   User get user => _user;
@@ -33,12 +28,14 @@ class ProviderAuth extends ChangeNotifier {
   Future<void> register(String email, String password, String confirmPW,
       String firstName, String lastName) async {
     try {
-      bool reponseBody = await authenRepositoris.register(
+      _isLoadingRegister = true;
+      await authenRepositoris.register(
           email, password, confirmPW, firstName, lastName);
       _isLoadingRegister = false;
-      if (reponseBody) _isRegistered = true;
+      notifyListeners();
     } catch (e) {
-      _isLoadingLogin = false;
+      _isLoadingRegister = false;
+      notifyListeners();
       rethrow;
     }
   }
@@ -53,7 +50,7 @@ class ProviderAuth extends ChangeNotifier {
 
       _accessToken = responseBody['accessToken'];
       _refreshToken = responseBody['refreshToken'];
-      getUser();
+
       _isLoadingLogin = false;
       _isLogged = true;
       notifyListeners();
@@ -64,21 +61,25 @@ class ProviderAuth extends ChangeNotifier {
     }
   }
 
-  Future<void> getUser() async {
+  Future<String> getNameUser() async {
     try {
+      User user = await getUser();
+      return '${user.firstName} ${user.lastName}';
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<User> getUser() async {
+    try {
+      await authenRepositoris.checkTokenExpiration();
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String accessToken = prefs.getString('accessToken')!;
       Map<String, dynamic> responseBody =
           await authenRepositoris.getUser(accessToken);
-      _myBoxUser.put(
-          'userLogin',
-          UserModel(
-              firstName: responseBody['first_name'] ?? '',
-              lastName: responseBody['last_name'] ?? '',
-              phone: responseBody['phone'] ?? '',
-              id: responseBody['id'],
-              gender: responseBody['gender'],
-              avatar: responseBody['avatar'] ?? ''));
+      User user = User.fromJson(responseBody);
+      notifyListeners();
+      return user;
     } catch (e) {
       rethrow;
     }
@@ -91,9 +92,9 @@ class ProviderAuth extends ChangeNotifier {
       String accessToken = prefs.getString('accessToken')!;
       Map<String, dynamic> responseBody =
           await authenRepositoris.getUser(accessToken);
-      return responseBody['avatar'] != ''
-          ? userRepositories.getAvatar(responseBody['avatar'])
-          : '';
+      return responseBody['avatar'] == null
+          ? ''
+          : userRepositories.getAvatar(responseBody['avatar']);
     } catch (e) {
       rethrow;
     }
@@ -101,11 +102,6 @@ class ProviderAuth extends ChangeNotifier {
 
   void setLoadingLogin(bool value) {
     _isLoadingLogin = value;
-    notifyListeners();
-  }
-
-  void setLoadingRegister(bool value) {
-    _isRegistered = value;
     notifyListeners();
   }
 }

@@ -5,6 +5,7 @@ import 'package:app/modules/candidate/data/repositories/company_repositories.dar
 import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_svg/svg.dart';
 
 class ItemCompanyVertical extends StatefulWidget {
   const ItemCompanyVertical({super.key, required this.company});
@@ -40,11 +41,10 @@ class _ItemCompanyVerticalState extends State<ItemCompanyVertical> {
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        height: 300,
+        height: 200,
         width: size.width / 2,
         decoration: BoxDecoration(
-            border: Border.all(width: 1, color: Colors.grey),
-            borderRadius: BorderRadius.circular(10)),
+            color: Colors.white, borderRadius: BorderRadius.circular(10)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -52,11 +52,12 @@ class _ItemCompanyVerticalState extends State<ItemCompanyVertical> {
               height: 20,
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: size.width / 5,
-                  width: size.width / 5,
+                  height: 45,
+                  width: 45,
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
@@ -64,13 +65,18 @@ class _ItemCompanyVerticalState extends State<ItemCompanyVertical> {
                           ? const DecorationImage(
                               image: AssetImage(ImageFactory.editCV))
                           : DecorationImage(
-                              image: NetworkImage(
-                                  CompanyRepository.getAvatar(widget.company.avatar!))),
+                              image: NetworkImage(CompanyRepository.getAvatar(
+                                  widget.company.avatar!))),
                       border: Border.all(width: 0.3, color: Colors.grey),
                       boxShadow: const [
                         BoxShadow(color: Colors.grey, offset: Offset(1, 1))
                       ]),
                 ),
+                SvgPicture.asset(
+                  ImageFactory.bookmarkoutline,
+                  width: 20,
+                  height: 20,
+                )
               ],
             ),
             const SizedBox(
@@ -90,6 +96,7 @@ class _ItemCompanyVerticalState extends State<ItemCompanyVertical> {
                   color: Colors.grey),
             ),
             Container(
+              margin: const EdgeInsets.only(top: 5),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
               decoration: BoxDecoration(
                 color: Colors.grey[300],

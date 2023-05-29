@@ -10,8 +10,7 @@ class TagInfoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 236, 235, 235),
-          borderRadius: BorderRadius.circular(10)),
+          color: Colors.white, borderRadius: BorderRadius.circular(10)),
       padding:
           EdgeInsets.only(left: 15.w, right: 15.w, top: 25.h, bottom: 25.h),
       margin: EdgeInsets.only(bottom: 20.h),

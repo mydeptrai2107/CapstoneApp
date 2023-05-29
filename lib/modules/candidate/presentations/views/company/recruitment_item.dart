@@ -57,19 +57,19 @@ class _RecruitmentItemState extends State<RecruitmentItem> {
                     TagRecuitmentItem(
                       icon: ImageFactory.clock,
                       title: Format.formatDateTimeToYYYYmmdd(
-                          widget.recruitment.deadline),
+                          widget.recruitment.deadline!),
                     ),
                     SizedBox(
                       height: 10.h,
                     ),
                     TagRecuitmentItem(
                       icon: ImageFactory.location,
-                      title: widget.recruitment.address,
+                      title: widget.recruitment.address!,
                     )
                   ],
                 ),
                 TagRecuitmentItem(
-                    title: widget.recruitment.salary, icon: ImageFactory.dollar)
+                    title: widget.recruitment.salary!, icon: ImageFactory.dollar)
               ],
             )
           ],

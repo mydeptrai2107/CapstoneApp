@@ -53,4 +53,9 @@ class ImageFactory {
   static const String searchNotFound = '${urlAssets}search-not-found.png';
   static const String locationColor = '${urlAssets}location-color.svg';
   static const String earth = '${urlAssets}earth.svg';
+  static const String bookmarkoutline = '${urlAssets}bookmark-outline.svg';
+  static const String bookmark = '${urlAssets}bookmark.svg';
+  static const String logout = '${urlAssets}log-out-outline.svg';
+  static const String login = '${urlAssets}log-in-outline.svg';
+  static const String checkmark = '${urlAssets}checkmark-outline.svg';
 }

@@ -105,7 +105,6 @@ class _ApplyScreenState extends State<ApplyScreen> {
                           ),
                         ),
                         Radio(
-                          
                           activeColor: primaryColor,
                           value: 'jobcv',
                           groupValue: isChooseCV,
@@ -301,6 +300,7 @@ class _ApplyScreenState extends State<ApplyScreen> {
                   title: 'Quay lại',
                   borderRadius: 100,
                   widthBorder: 1.5,
+                  paddingvertical: 14,
                 )),
             SizedBox(
               width: 10.h,

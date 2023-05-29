@@ -12,10 +12,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class CreateCVScreen extends StatefulWidget {
-  const CreateCVScreen({super.key, required this.id, required this.name});
+  const CreateCVScreen({super.key, required this.id, required this.name, required this.idUser});
 
   final String id;
   final String name;
+  final String idUser;
 
   @override
   State<CreateCVScreen> createState() => _CreateCVScreenState();
@@ -25,6 +26,7 @@ class _CreateCVScreenState extends State<CreateCVScreen> {
   final _box = Hive.box('info');
   final _experience = Hive.box<ExperienceModel>('Experience');
   final _school = Hive.box<SchoolModel>('school');
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -33,7 +35,6 @@ class _CreateCVScreenState extends State<CreateCVScreen> {
         appBar: AppBar(
           title: const Text('Tạo CV'),
           centerTitle: true,
-          
         ),
         body: SizedBox(
           height: size.height,
@@ -95,7 +96,7 @@ class _CreateCVScreenState extends State<CreateCVScreen> {
                       title: 'Thông tin cá nhân',
                       onPress: () {
                         Modular.to.pushNamed(RoutePath.fillSecondInfoCV,
-                            arguments: [widget.id, widget.name]);
+                            arguments: [widget.id, widget.name, widget.idUser]);
                       },
                     ),
                     InformationItem(

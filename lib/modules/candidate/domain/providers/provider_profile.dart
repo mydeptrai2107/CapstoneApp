@@ -1,12 +1,12 @@
-import 'package:app/modules/candidate/data/models/hive_models/user_model_hive.dart';
 import 'package:app/modules/candidate/data/models/profile_model.dart';
+import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/data/repositories/profile_repository.dart';
+import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 class ProviderProfile extends ChangeNotifier {
   ProfileRepository profileRepository = ProfileRepository();
-  final _myBoxUser = Hive.box<UserModel>('user');
+  ProviderAuth providerAuth = ProviderAuth();
 
   bool _isLoadingCreate = true;
   bool get isLoadignCreate => _isLoadingCreate;
@@ -20,8 +20,7 @@ class ProviderProfile extends ChangeNotifier {
   bool _isLoadingUpdateProfile = false;
   bool get isLoadingUpdateProfile => _isLoadingUpdateProfile;
 
-  Future<Profile> createProfile(String name) async {
-    String idUser = _myBoxUser.get('userLogin')!.id;
+  Future<Profile> createProfile(String name, String idUser) async {
     try {
       _isLoadingCreate = false;
       Map<String, dynamic> responseBody =
@@ -38,11 +37,11 @@ class ProviderProfile extends ChangeNotifier {
   }
 
   Future<List<Profile>> getListProfile() async {
-    String idUser = _myBoxUser.get('userLogin')!.id;
+    User user = await providerAuth.getUser();
     try {
       _isLoading = false;
       List<dynamic> responseBody =
-          await profileRepository.getListProfile(idUser);
+          await profileRepository.getListProfile(user.userId);
       Iterable it = responseBody;
       List<Profile> list = it.map((e) => Profile.fromJson(e)).toList();
       _isLoading = true;
