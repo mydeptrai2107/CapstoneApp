@@ -240,8 +240,9 @@ class _PreviewCVScreenState extends State<PreviewCVScreen> {
                           height: (size.width - 170) / 2,
                           decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              image:
-                                  DecorationImage(image: NetworkImage(avatar))),
+                              image: DecorationImage(
+                                  image: NetworkImage(avatar),
+                                  fit: BoxFit.fill)),
                         )
                       : ClipRRect(
                           borderRadius: BorderRadius.circular(150),

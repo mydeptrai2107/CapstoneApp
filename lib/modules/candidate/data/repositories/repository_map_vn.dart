@@ -8,11 +8,11 @@ class ReporitoryMap {
     String uri = 'assets/data/city.json';
     try {
       final response = await rootBundle.loadString(uri);
-      
-        final data = jsonDecode(response);
-        Iterable it = data;
-        List<Province> list = it.map((e) => Province.fromJson(e)).toList();
-        return list;
+
+      final data = jsonDecode(response);
+      Iterable it = data;
+      List<Province> list = it.map((e) => Province.fromJson(e)).toList();
+      return list;
     } catch (e) {
       return e;
     }

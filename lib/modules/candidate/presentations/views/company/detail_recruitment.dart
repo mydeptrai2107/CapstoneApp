@@ -4,7 +4,7 @@ import 'package:app/configs/font_style_text.dart';
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
 import 'package:app/modules/candidate/data/models/company_model.dart';
-import 'package:app/modules/candidate/data/models/recruitment_model.dart';
+import 'package:app/shared/models/recruitment_model.dart';
 import 'package:app/modules/candidate/data/repositories/company_repositories.dart';
 import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
@@ -78,7 +78,8 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                         height: 80.h,
                         width: 80.h,
                         decoration: BoxDecoration(
-                            image: widget.company.avatar == ''
+                            image: widget.company.avatar == '' ||
+                                    widget.company.avatar == null
                                 ? const DecorationImage(
                                     image: AssetImage(ImageFactory.editCV))
                                 : DecorationImage(
@@ -208,7 +209,7 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
             Expanded(
                 child: ButtonApp(
               onPress: () {
-                Modular.to.pushNamed(RoutePath.applyScreen);
+                Modular.to.pushNamed(RoutePath.applyScreen, arguments: [widget.recruitment]);
               },
               title: 'Ứng tuyển ngay',
               borderRadius: 100,
@@ -228,8 +229,7 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
         children: [
           Container(
             decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 236, 235, 235),
-                borderRadius: BorderRadius.circular(10)),
+                color: Colors.white, borderRadius: BorderRadius.circular(10)),
             padding: EdgeInsets.only(
                 left: 15.w, right: 15.w, top: 20.h, bottom: 20.h),
             margin: const EdgeInsets.only(bottom: 25, top: 15),
@@ -344,24 +344,28 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
               ],
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15),
-            child: Text(
-              'GIỚI THIỆU CÔNG TY',
-              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
-            ),
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Text(
-              widget.company.info.toString(),
-              style: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
-                  color: Colors.grey),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 25),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10), color: Colors.white),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'GIỚI THIỆU CÔNG TY',
+                  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Text(
+                  widget.company.info.toString(),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      color: Colors.grey),
+                ),
+              ],
             ),
           ),
           const SizedBox(

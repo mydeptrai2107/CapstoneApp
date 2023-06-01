@@ -15,4 +15,13 @@ class AuthenFirebaseRepositories {
     //UserCredential userCredential =
     await FirebaseAuth.instance.signInWithCredential(credential);
   }
+
+  Future signUp(String email, String password) async {
+    try {
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException {
+      rethrow;
+    }
+  }
 }

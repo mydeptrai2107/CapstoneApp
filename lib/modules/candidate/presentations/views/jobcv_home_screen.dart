@@ -70,7 +70,7 @@ class _JobCVHomeScreenState extends State<JobCVHomeScreen> {
               height: 25,
               color: _currentIndex == 2 ? primaryColor : Colors.grey,
             ),
-            label: 'Chat',
+            label: 'Yêu thích',
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(

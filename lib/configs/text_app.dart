@@ -29,4 +29,6 @@ class TextApp {
       '3. Tìm hiểu thêm kinh nghiệm phòng tránh lừa đảo tại đây';
   static const String inputName =
       'Giúp JobCV và các Công ty dễ dàng nhận ra bạn bằng cách nhập họ và tên của bạn vào bên dưới.';
+  static const String applySuccess =
+      'Chúc mừng bạn đã ứng tuyển thành công. Hãy ghi nhớ tên các công ty và việc làm bạn đã ứng tuyển để chuẩn bị tốt nhất cho một cuộc gọi hoặc email từ Nhà tuyển dụng trong một vài ngày tới, nếu hồ sơ của bạn đã đạt yêu cầu.';
 }

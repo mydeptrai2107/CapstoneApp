@@ -1,6 +1,6 @@
-import 'package:app/modules/candidate/data/models/hive_models/experience_model.g.dart';
-import 'package:app/modules/candidate/data/models/hive_models/school_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'experience_model.g.dart';
+import 'school_model.dart';
 
 class SchoolModelAdapter extends TypeAdapter<SchoolModel> {
   @override
@@ -42,9 +42,8 @@ class SchoolModelAdapter extends TypeAdapter<SchoolModel> {
 
   @override
   bool operator ==(Object other) =>
-    identical(this, other) ||
-        other is ExperienceModelAdapter &&
-            runtimeType == other.runtimeType &&
-            typeId == other.typeId;
-  
+      identical(this, other) ||
+      other is ExperienceModelAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }

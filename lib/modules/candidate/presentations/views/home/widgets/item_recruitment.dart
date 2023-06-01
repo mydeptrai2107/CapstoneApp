@@ -1,7 +1,7 @@
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
 import 'package:app/modules/candidate/data/models/company_model.dart';
-import 'package:app/modules/candidate/data/models/recruitment_model.dart';
+import 'package:app/shared/models/recruitment_model.dart';
 import 'package:app/modules/candidate/data/repositories/company_repositories.dart';
 import 'package:app/modules/candidate/domain/providers/provider_company.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
@@ -59,12 +59,9 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
         width: size.width,
         height: 220,
         decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(width: 0.1, color: Colors.grey),
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: const [
-              BoxShadow(color: Colors.grey, offset: Offset(1, 1))
-            ]),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,21 +76,28 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
-                      image: company.avatar == ''
+                      image: company.avatar == '' || company.avatar == null
                           ? const DecorationImage(
                               image: AssetImage(ImageFactory.editCV))
                           : DecorationImage(
-                              image: NetworkImage(CompanyRepository.getAvatar(
-                                  company.avatar!))),
+                              image: NetworkImage(
+                                  CompanyRepository.getAvatar(company.avatar!)),
+                              fit: BoxFit.fill),
                       border: Border.all(width: 0.3, color: Colors.grey),
                       boxShadow: const [
                         BoxShadow(color: Colors.grey, offset: Offset(1, 1))
                       ]),
                 ),
-                Text(
-                  widget.recruitment.title!,
-                  style: const TextStyle(
-                      fontSize: 15, fontWeight: FontWeight.w700),
+                SizedBox(
+                  height: size.width / 7,
+                  width: size.width - (size.width / 7) - 120,
+                  child: Text(
+                    widget.recruitment.title!,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                    style: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.w700),
+                  ),
                 ),
                 Expanded(child: Container()),
                 GestureDetector(

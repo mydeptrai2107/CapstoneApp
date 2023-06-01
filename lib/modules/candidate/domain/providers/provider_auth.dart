@@ -1,4 +1,5 @@
 import 'package:app/modules/candidate/data/models/user_model.dart';
+import 'package:app/modules/candidate/data/repositories/authen_firebase_repositories.dart';
 import 'package:app/modules/candidate/data/repositories/authen_repositories.dart';
 import 'package:app/modules/candidate/data/repositories/user_repositories.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ProviderAuth extends ChangeNotifier {
   final AuthenRepositoris authenRepositoris = AuthenRepositoris();
   final UserRepositories userRepositories = UserRepositories();
+  AuthenFirebaseRepositories authenFirebaseRepositories =
+      AuthenFirebaseRepositories();
 
   late String _accessToken;
   late String _refreshToken;
@@ -31,6 +34,19 @@ class ProviderAuth extends ChangeNotifier {
       _isLoadingRegister = true;
       await authenRepositoris.register(
           email, password, confirmPW, firstName, lastName);
+      _isLoadingRegister = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoadingRegister = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future signUpEmail(String email, String password) async {
+    try {
+      _isLoadingRegister = true;
+      await authenFirebaseRepositories.signUp(email, password);
       _isLoadingRegister = false;
       notifyListeners();
     } catch (e) {
@@ -92,7 +108,7 @@ class ProviderAuth extends ChangeNotifier {
       String accessToken = prefs.getString('accessToken')!;
       Map<String, dynamic> responseBody =
           await authenRepositoris.getUser(accessToken);
-      return responseBody['avatar'] == null
+      return responseBody['avatar'] == null || responseBody['avatar'] == ''
           ? ''
           : userRepositories.getAvatar(responseBody['avatar']);
     } catch (e) {

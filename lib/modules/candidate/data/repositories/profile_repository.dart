@@ -7,7 +7,7 @@ class ProfileRepository {
   final String urlCreateCV = '${uriApiApp}api/user/';
   final String urlDeleteProfile = '${uriApiApp}api/user/profile/';
   final String urlUpdateProfile = '${uriApiApp}api/user/profile/';
-  final String urlPdfProfile = '$uriApiApp/static/cv/';
+  final String urlPdfProfile = '${uriApiApp}static/cv/';
 
   Future<Map<String, dynamic>> createProfile(String name, String idUser) async {
     var url = Uri.parse('$urlCreateCV$idUser/profile');

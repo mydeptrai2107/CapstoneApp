@@ -6,9 +6,10 @@ class SkillModel extends HiveObject {
   String nameSkill;
 
   @HiveField(1)
-String description;
+  String description;
 
-  SkillModel(
-      {required this.nameSkill,
-      required this.description,});
+  SkillModel({
+    required this.nameSkill,
+    required this.description,
+  });
 }

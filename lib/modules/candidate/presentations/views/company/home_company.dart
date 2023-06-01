@@ -41,7 +41,7 @@ class _CompanyHomeState extends State<CompanyHome> {
                 child: Stack(
                   children: [
                     Positioned.fill(
-                        child: widget.company.avatar == ''
+                        child: widget.company.avatar == '' || widget.company.avatar == null
                             ? Image.asset(
                                 ImageFactory.editCV,
                                 fit: BoxFit.cover,
@@ -65,7 +65,7 @@ class _CompanyHomeState extends State<CompanyHome> {
                               height: 70,
                               width: 70,
                               decoration: BoxDecoration(
-                                  image: widget.company.avatar == ''
+                                  image: widget.company.avatar == ''  || widget.company.avatar == null
                                       ? const DecorationImage(
                                           image:
                                               AssetImage(ImageFactory.editCV))

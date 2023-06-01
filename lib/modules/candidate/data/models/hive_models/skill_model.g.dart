@@ -1,5 +1,6 @@
-import 'package:app/modules/candidate/data/models/hive_models/skill_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
+import 'skill_model.dart';
 
 class SkillModelAdapter extends TypeAdapter<SkillModel> {
   @override

@@ -40,7 +40,7 @@ class _ListProfileScreenState extends State<ListProfileScreen> {
             icon: const Icon(Icons.arrow_back)),
       ),
       body: !provider.isLoading
-          ? const CircularProgressIndicator()
+          ? const Center(child: CircularProgressIndicator())
           : SizedBox(
               height: listProvider.length * 165 + 140,
               width: size.width,

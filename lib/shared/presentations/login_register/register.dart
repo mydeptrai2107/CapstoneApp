@@ -1,13 +1,13 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
-import 'dart:convert';
 
-import 'package:app/shared/utils/format.dart';
+import 'package:app/modules/candidate/data/repositories/authen_firebase_repositories.dart';
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
+import 'package:app/shared/utils/format.dart';
 import 'package:elegant_notification/elegant_notification.dart';
 import 'package:elegant_notification/resources/arrays.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +25,8 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   bool showPassWord = true;
   bool showConfirmPW = true;
+  AuthenFirebaseRepositories authenFirebaseRepositories =
+      AuthenFirebaseRepositories();
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -200,14 +202,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           const Duration(milliseconds: 3000),
                           () => Modular.to.pushNamed(RoutePath.login),
                         );
+
+                        // await provider.signUpEmail(
+                        //     emailController.text, passwordController.text);
+                        // Modular.to.pushNamed(RoutePath.verifyEmail, arguments: [passwordController.text]);
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Row(
                             children: [
                               const Icon(Icons.warning),
-                              Expanded(
-                                  child:
-                                      Text(jsonDecode(e.toString())['message']))
+                              Expanded(child: Text(e.toString()))
                             ],
                           ),
                         ));

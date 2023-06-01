@@ -137,13 +137,15 @@ class _AccountScreenState extends State<AccountScreen> {
                                         image: imageFile != null
                                             ? DecorationImage(
                                                 image: FileImage(imageFile!))
-                                            : widget.avatar != null
+                                            : widget.avatar != ''
                                                 ? DecorationImage(
                                                     image: NetworkImage(
-                                                        widget.avatar!))
+                                                        widget.avatar!),
+                                                    fit: BoxFit.fill)
                                                 : const DecorationImage(
                                                     image: AssetImage(
-                                                        ImageFactory.editCV))),
+                                                        ImageFactory.editCV),
+                                                    fit: BoxFit.fill)),
                                   ),
                                   Positioned(
                                       top: 50,
@@ -255,16 +257,23 @@ class _AccountScreenState extends State<AccountScreen> {
                       await _box.delete('info');
                       await _box.delete('province');
                       for (int i = 0;
-                          i < providerApp.listExperience.length;
+                          i < _experienceBox.values.toList().length;
                           i++) {
                         await _experienceBox.deleteAt(i);
                       }
-                      for (int j = 0; j < providerApp.listSchool.length; j++) {
+                      for (int j = 0;
+                          j < _schoolBox.values.toList().length;
+                          j++) {
                         await _schoolBox.deleteAt(j);
                       }
-                      for (int z = 0; z < providerApp.listSkill.length; z++) {
+                      for (int z = 0;
+                          z < _skillBox.values.toList().length;
+                          z++) {
                         await _skillBox.deleteAt(z);
                       }
+                      providerApp.fetchAllExperience();
+                      providerApp.fetchAllSchool();
+                      providerApp.fetchAllSkill();
                       Modular.to.navigate(RoutePath.login);
                     },
                     child: const ItemProfile(
