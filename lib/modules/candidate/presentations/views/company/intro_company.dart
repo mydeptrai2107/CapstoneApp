@@ -40,7 +40,7 @@ class _IntroCompanyState extends State<IntroCompany> {
             height: 4.h,
           ),
           Text(
-            'asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds v asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk \n asdhaisjlh hiashd hkashda alhds vv asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd\n hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds v v v asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk \nasdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhdsasdgasjk asdhaisjlh hiashd hkashda \nalhds asdgasjk asdhaisjlh hiashd hkashda alhds asdgasjk asdhaisjlh hiashd hkashda alhds ',
+            widget.company.info!,
             style:
                 TextStyle(fontSize: 14, color: Colors.black.withOpacity(0.7)),
           ),

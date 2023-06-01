@@ -43,9 +43,7 @@ class _ItemCompanyHorizontalState extends State<ItemCompanyHorizontal> {
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
           width: size.width,
           decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(width: 1, color: Colors.grey),
-              borderRadius: BorderRadius.circular(10)),
+              color: Colors.white, borderRadius: BorderRadius.circular(10)),
           height: 170,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,7 +55,8 @@ class _ItemCompanyHorizontalState extends State<ItemCompanyHorizontal> {
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
-                    image: widget.company.avatar == ''
+                    image: widget.company.avatar == '' ||
+                            widget.company.avatar == null
                         ? const DecorationImage(
                             image: AssetImage(ImageFactory.editCV))
                         : DecorationImage(

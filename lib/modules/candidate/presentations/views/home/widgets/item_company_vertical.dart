@@ -40,17 +40,15 @@ class _ItemCompanyVerticalState extends State<ItemCompanyVertical> {
             .pushNamed(RoutePath.homeCompany, arguments: [widget.company]);
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         height: 200,
         width: size.width / 2,
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(10)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const SizedBox(
-              height: 20,
-            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,7 +59,8 @@ class _ItemCompanyVerticalState extends State<ItemCompanyVertical> {
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
-                      image: widget.company.avatar == ''
+                      image: widget.company.avatar == '' ||
+                              widget.company.avatar == null
                           ? const DecorationImage(
                               image: AssetImage(ImageFactory.editCV))
                           : DecorationImage(
@@ -80,11 +79,17 @@ class _ItemCompanyVerticalState extends State<ItemCompanyVertical> {
               ],
             ),
             const SizedBox(
-              height: 20,
+              height: 10,
             ),
-            Text(
-              widget.company.name,
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            SizedBox(
+              height: size.width / 9,
+              child: Text(
+                widget.company.name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
             ),
             Text(
               widget.company.type == ''

@@ -1,6 +1,6 @@
 import 'package:app/configs/image_factory.dart';
 import 'package:app/modules/candidate/data/models/company_model.dart';
-import 'package:app/modules/candidate/data/models/recruitment_model.dart';
+import 'package:app/shared/models/recruitment_model.dart';
 import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
 import 'package:app/modules/candidate/presentations/views/company/recruitment_item.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +33,7 @@ class _RecruitmentPageCompanyState extends State<RecruitmentPageCompany> {
   Widget build(BuildContext context) {
     final provider = context.watch<ProviderRecruitment>();
     return provider.isLoadingGetListRecruit
-        ? const CircularProgressIndicator()
+        ? Center(child: CircularProgressIndicator())
         : listRecruitment.isEmpty
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,

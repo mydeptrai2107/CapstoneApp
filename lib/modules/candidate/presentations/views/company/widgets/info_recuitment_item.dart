@@ -21,7 +21,6 @@ class InfoRecuitmentItem extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(top: 10.h),
       width: size.width,
-      //height: 60,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -55,7 +54,7 @@ class InfoRecuitmentItem extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                width: size.width - 115,
+                width: size.width - 125,
                 child: Text(
                   content,
                   style: TextStyle(
@@ -67,7 +66,7 @@ class InfoRecuitmentItem extends StatelessWidget {
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 10),
                 height: 1,
-                width: size.width - 115,
+                width: size.width - 125,
                 color: Colors.grey.withOpacity(0.5),
               )
             ],

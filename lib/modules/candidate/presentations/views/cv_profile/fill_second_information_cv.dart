@@ -283,7 +283,8 @@ class _FillSecondInformationScreenState
                                     height: 50,
                                     decoration: BoxDecoration(
                                       image: DecorationImage(
-                                          image: NetworkImage(avatar)),
+                                          image: NetworkImage(avatar),
+                                          fit: BoxFit.fill),
                                       shape: BoxShape.circle,
                                     ))
                             : ClipRRect(

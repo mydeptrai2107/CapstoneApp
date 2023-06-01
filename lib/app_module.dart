@@ -1,11 +1,13 @@
 import 'package:app/configs/route_path.dart';
 import 'package:app/loading_screen.dart';
 import 'package:app/modules/candidate/domain/providers/provider_app.dart';
+import 'package:app/modules/candidate/domain/providers/provider_apply.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
 import 'package:app/modules/candidate/domain/providers/provider_company.dart';
 import 'package:app/modules/candidate/domain/providers/provider_profile.dart';
 import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
 import 'package:app/modules/candidate/domain/providers/provider_user.dart';
+import 'package:app/modules/candidate/presentations/views/company/applied_screen.dart';
 import 'package:app/modules/candidate/presentations/views/company/apply_screen.dart';
 import 'package:app/modules/candidate/presentations/views/company/detail_recruitment.dart';
 import 'package:app/modules/candidate/presentations/views/company/home_company.dart';
@@ -24,8 +26,11 @@ import 'package:app/modules/candidate/presentations/views/home/list_company_scre
 import 'package:app/modules/candidate/presentations/views/home/search_company_screen.dart';
 import 'package:app/modules/candidate/presentations/views/home/search_recruitment_screen.dart';
 import 'package:app/modules/candidate/presentations/views/jobcv_home_screen.dart';
-import 'package:app/shared/login_register/login.dart';
-import 'package:app/shared/login_register/register.dart';
+import 'package:app/modules/recruiter/domain/repositories/recruitment_provider.dart';
+import 'package:app/modules/recruiter/presentations/views/home/widgets/add_recruitment.dart';
+import 'package:app/modules/recruiter/presentations/views/recruiter_main.dart';
+import 'package:app/shared/presentations/login_register/login.dart';
+import 'package:app/shared/presentations/login_register/register.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 class AppModule extends Module {
@@ -36,7 +41,11 @@ class AppModule extends Module {
         Bind.singleton((i) => ProviderUser()),
         Bind.singleton((i) => ProviderProfile()),
         Bind.singleton((i) => ProviderCompany()),
-        Bind.singleton((i) => ProviderRecruitment())
+        Bind.singleton((i) => ProviderRecruitment()),
+        Bind.singleton((i) => ProviderApply()),
+
+        // if role Recruiter
+        Bind.singleton((i) => RecruitmentProvider())
       ];
 
   @override
@@ -95,6 +104,15 @@ class AppModule extends Module {
             nameCV: args.data[12],
           ),
         ),
+        // Recruiter
+        ChildRoute(
+          RoutePath.mainRecruiter,
+          child: (context, args) => const RecruiteMain(),
+        ),
+        ChildRoute(
+          RoutePath.addRecruitment,
+          child: (context, args) => AddRecruitmentScreen(),
+        ),
         ChildRoute(
           RoutePath.listProfile,
           child: (context, args) => const ListProfileScreen(),
@@ -119,7 +137,7 @@ class AppModule extends Module {
         ),
         ChildRoute(
           RoutePath.applyScreen,
-          child: (context, args) => const ApplyScreen(),
+          child: (context, args) => ApplyScreen(recruitment: args.data[0]),
         ),
         ChildRoute(
           RoutePath.listCompanyScreen,
@@ -132,6 +150,14 @@ class AppModule extends Module {
         ChildRoute(
           RoutePath.searchRecruitmentScreen,
           child: (context, args) => const SearchRecruitmentScreen(),
+        ),
+        // ChildRoute(
+        //   RoutePath.verifyEmail,
+        //   child: (context, args) => VerifyEmailPage(password: args.data[0]),
+        // ),
+        ChildRoute(
+          RoutePath.appliedScreen,
+          child: (context, args) => const AppliedScreen(),
         )
       ];
 }

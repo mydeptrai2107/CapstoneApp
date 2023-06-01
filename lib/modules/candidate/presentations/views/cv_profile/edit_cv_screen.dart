@@ -31,7 +31,7 @@ class _EditCVScreenState extends State<EditCVScreen> {
         child: const Icon(Icons.image_outlined),
         onPressed: () async {
           final bytes = await controller.capture();
-            this.bytes = bytes;
+          this.bytes = bytes;
         },
       ),
     );

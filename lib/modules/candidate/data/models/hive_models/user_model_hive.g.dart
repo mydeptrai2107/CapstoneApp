@@ -1,5 +1,6 @@
-import 'package:app/modules/candidate/data/models/hive_models/user_model_hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
+import 'user_model_hive.dart';
 
 class UserModelAdapter extends TypeAdapter<UserModel> {
   @override

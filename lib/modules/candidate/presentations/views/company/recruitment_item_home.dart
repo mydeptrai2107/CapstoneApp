@@ -1,10 +1,10 @@
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
 import 'package:app/modules/candidate/data/models/company_model.dart';
-import 'package:app/modules/candidate/data/models/recruitment_model.dart';
 import 'package:app/modules/candidate/data/repositories/company_repositories.dart';
 import 'package:app/modules/candidate/domain/providers/provider_company.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
+import 'package:app/shared/models/recruitment_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -46,7 +46,7 @@ class _RecruitmentItemHomeState extends State<RecruitmentItemHome> {
       child: Container(
         padding: const EdgeInsets.all(14),
         margin: const EdgeInsets.only(right: 10),
-        height: 170,
+        height: 180,
         width: size.width,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10), color: Colors.white),
@@ -64,7 +64,7 @@ class _RecruitmentItemHomeState extends State<RecruitmentItemHome> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: Colors.grey,
-                      image: company.avatar == ''
+                      image: company.avatar == '' || company.avatar == null
                           ? const DecorationImage(
                               image: AssetImage(ImageFactory.editCV))
                           : DecorationImage(
@@ -78,9 +78,15 @@ class _RecruitmentItemHomeState extends State<RecruitmentItemHome> {
                 )
               ],
             ),
-            Text(
-              widget.recruitment.title!,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            SizedBox(
+              height: 47,
+              child: Text(
+                widget.recruitment.title!,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
             ),
             Text(
               company.name,

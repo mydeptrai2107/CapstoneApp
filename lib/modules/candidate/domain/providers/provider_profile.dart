@@ -40,6 +40,7 @@ class ProviderProfile extends ChangeNotifier {
     User user = await providerAuth.getUser();
     try {
       _isLoading = false;
+      notifyListeners();
       List<dynamic> responseBody =
           await profileRepository.getListProfile(user.userId);
       Iterable it = responseBody;

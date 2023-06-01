@@ -1,5 +1,5 @@
 import 'package:app/configs/image_factory.dart';
-import 'package:app/modules/candidate/data/models/recruitment_model.dart';
+import 'package:app/shared/models/recruitment_model.dart';
 import 'package:app/modules/candidate/domain/providers/provider_company.dart';
 import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
@@ -76,16 +76,21 @@ class _SearchRecruitmentScreenState extends State<SearchRecruitmentScreen> {
                 ],
               ),
             )
-          : ListView.separated(
-              itemBuilder: (context, index) {
-                return ItemRecuitment(recruitment: listRecruitment[index]);
-              },
-              separatorBuilder: (context, index) {
-                return const SizedBox(
-                  height: 20,
-                );
-              },
-              itemCount: listRecruitment.length),
+          : Container(
+              width: size.width,
+              height: size.height,
+              padding: const EdgeInsets.only(top: 15),
+              child: ListView.separated(
+                  itemBuilder: (context, index) {
+                    return ItemRecuitment(recruitment: listRecruitment[index]);
+                  },
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(
+                      height: 20,
+                    );
+                  },
+                  itemCount: listRecruitment.length),
+            ),
     );
   }
 }

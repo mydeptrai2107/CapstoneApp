@@ -58,4 +58,5 @@ class ImageFactory {
   static const String logout = '${urlAssets}log-out-outline.svg';
   static const String login = '${urlAssets}log-in-outline.svg';
   static const String checkmark = '${urlAssets}checkmark-outline.svg';
+  static const String success = '${urlAssets}success.svg';
 }

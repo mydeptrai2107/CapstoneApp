@@ -1,4 +1,4 @@
-import 'package:app/modules/candidate/data/models/recruitment_model.dart';
+import 'package:app/shared/models/recruitment_model.dart';
 import 'package:app/modules/candidate/data/repositories/recruitment_repositories.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +11,6 @@ class ProviderRecruitment extends ChangeNotifier {
   Future<List<Recruitment>> getListRecruitByCompany(String idCompany) async {
     try {
       _isLoadingGetListRecruit = true;
-
       List<dynamic> responseBody =
           await recruitmentRepository.getListRecruitByCompany(idCompany);
       Iterable it = responseBody;
@@ -19,6 +18,23 @@ class ProviderRecruitment extends ChangeNotifier {
       _isLoadingGetListRecruit = false;
       notifyListeners();
       return list;
+    } catch (e) {
+      _isLoadingGetListRecruit = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<Recruitment> getRecruitById(String id) async {
+    try {
+      _isLoadingGetListRecruit = true;
+
+      Map<String, dynamic> responseBody =
+          await recruitmentRepository.getRecruitById(id);
+      Recruitment recruitment = Recruitment.fromJson(responseBody);
+      _isLoadingGetListRecruit = false;
+      notifyListeners();
+      return recruitment;
     } catch (e) {
       _isLoadingGetListRecruit = false;
       notifyListeners();

@@ -3,13 +3,13 @@
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
 import 'package:app/modules/candidate/data/models/company_model.dart';
-import 'package:app/modules/candidate/data/models/recruitment_model.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
 import 'package:app/modules/candidate/domain/providers/provider_company.dart';
 import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/company/recruitment_item_home.dart';
 import 'package:app/modules/candidate/presentations/views/home/widgets/item_company_vertical.dart';
+import 'package:app/shared/models/recruitment_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/svg.dart';
@@ -39,11 +39,11 @@ class _HomeScreenState extends State<HomeScreen> {
   void initData() async {
     listCompany =
         await Modular.get<ProviderCompany>().getListCompanyPaging(numberPaging);
+    listRecruitment =
+        await Modular.get<ProviderRecruitment>().getListRecruitment();
 
     avatar = await Modular.get<ProviderAuth>().getAvatar();
     nameUser = await Modular.get<ProviderAuth>().getNameUser();
-    listRecruitment =
-        await Modular.get<ProviderRecruitment>().getListRecruitment();
   }
 
   @override
@@ -147,8 +147,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 41,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(100),
-                              image:
-                                  DecorationImage(image: NetworkImage(avatar))),
+                              image: avatar != ''
+                                  ? DecorationImage(
+                                      image: NetworkImage(avatar),
+                                      fit: BoxFit.fill)
+                                  : const DecorationImage(
+                                      image: AssetImage(ImageFactory.editCV),
+                                      fit: BoxFit.fill)),
                         )
                       ],
                     ),
@@ -222,7 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemCount: listCompany.length,
                         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                             maxCrossAxisExtent: size.width / 2,
-                            childAspectRatio: 1,
+                            childAspectRatio: 9 / 10,
                             crossAxisSpacing: 10,
                             mainAxisSpacing: 10),
                         itemBuilder: (context, index) {
