@@ -17,15 +17,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class RecruitmentItemHome extends StatefulWidget {
-  const RecruitmentItemHome({super.key, required this.recruitment});
+class RecruitmentItemHomeFirst extends StatefulWidget {
+  const RecruitmentItemHomeFirst({super.key, required this.recruitment});
   final Recruitment recruitment;
 
   @override
-  State<RecruitmentItemHome> createState() => _RecruitmentItemHomeState();
+  State<RecruitmentItemHomeFirst> createState() =>
+      _RecruitmentItemHomeFirstState();
 }
 
-class _RecruitmentItemHomeState extends State<RecruitmentItemHome> {
+class _RecruitmentItemHomeFirstState extends State<RecruitmentItemHomeFirst> {
   Company company = Company(
       name: '',
       contact: '',
@@ -68,7 +69,7 @@ class _RecruitmentItemHomeState extends State<RecruitmentItemHome> {
         height: 180,
         width: size.width,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10), color: Colors.white),
+            borderRadius: BorderRadius.circular(10), color: primaryColor),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +94,9 @@ class _RecruitmentItemHomeState extends State<RecruitmentItemHome> {
                 Text(
                   "${widget.recruitment.salary} / Tháng",
                   style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.w400),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white),
                 )
               ],
             ),
@@ -103,8 +106,10 @@ class _RecruitmentItemHomeState extends State<RecruitmentItemHome> {
                 widget.recruitment.title!,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
               ),
             ),
             Text(
@@ -113,7 +118,7 @@ class _RecruitmentItemHomeState extends State<RecruitmentItemHome> {
               style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w400,
-                  color: Colors.grey),
+                  color: Colors.white),
             ),
             Row(
               children: [
@@ -121,7 +126,7 @@ class _RecruitmentItemHomeState extends State<RecruitmentItemHome> {
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: Colors.grey[200]),
+                      color: Colors.white),
                   child: Text(
                     widget.recruitment.workingForm!,
                     style: const TextStyle(color: primaryColor, fontSize: 13),
@@ -132,7 +137,7 @@ class _RecruitmentItemHomeState extends State<RecruitmentItemHome> {
                   margin: const EdgeInsets.only(left: 10),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: Colors.grey[200]),
+                      color: Colors.white),
                   child: Text(
                     widget.recruitment.address!,
                     style: const TextStyle(color: primaryColor, fontSize: 13),
@@ -154,15 +159,16 @@ class _RecruitmentItemHomeState extends State<RecruitmentItemHome> {
                   },
                   child: isLike
                       ? SvgPicture.asset(
-                          ImageFactory.bookmark,
-                          width: 23,
-                          height: 20,
-                          color: primaryColor,
-                        )
-                      : SvgPicture.asset(
                           ImageFactory.bookmarkoutline,
                           width: 23,
                           height: 20,
+                          color: Colors.white,
+                        )
+                      : SvgPicture.asset(
+                          ImageFactory.bookmark,
+                          width: 23,
+                          height: 20,
+                          color: Colors.white,
                         ),
                 )
               ],

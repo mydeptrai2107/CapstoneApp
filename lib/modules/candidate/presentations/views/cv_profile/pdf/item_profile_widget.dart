@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
+import 'package:app/modules/candidate/data/repositories/user_repositories.dart';
 import 'package:app/modules/candidate/domain/providers/provider_profile.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
@@ -13,6 +14,7 @@ import 'package:app/shared/utils/notiface_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class ItemProfileWidget extends StatefulWidget {
   const ItemProfileWidget(
@@ -37,12 +39,13 @@ class _ItemProfileWidgetState extends State<ItemProfileWidget> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    final provider = context.watch<ProviderProfile>();
+    context.watch<ProviderProfile>();
+    UserRepositories userRepositories = UserRepositories();
     return Row(
       children: [
         Container(
           width: size.width - 30,
-          height: 150,
+          height: 450,
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -51,6 +54,21 @@ class _ItemProfileWidgetState extends State<ItemProfileWidget> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              GestureDetector(
+                onTap: () {
+                  if (widget.pathCV != null) {
+                    Modular.to.pushNamed(RoutePath.pdfViewer,
+                        arguments: [widget.name, widget.pathCV]);
+                  }
+                },
+                child: SizedBox(
+                  height: 300,
+                  width: size.width,
+                  child: SfPdfViewer.network(
+                    userRepositories.getAvatar(widget.pathCV!),
+                  ),
+                ),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -59,38 +77,6 @@ class _ItemProfileWidgetState extends State<ItemProfileWidget> {
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 14),
                   ),
-                  GestureDetector(
-                    onTap: () async {
-                      try {
-                        OverlayEntry? overlayEntry;
-                        overlayEntry = OverlayEntry(
-                          builder: (BuildContext context) {
-                            return GetEntry(
-                              entry: overlayEntry,
-                              nameCV: widget.name,
-                              onTap: () {
-                                provider.deleteProfile(widget.id);
-                                widget.reLoadList();
-                                overlayEntry!.remove();
-                              },
-                            );
-                          },
-                        );
-                        Overlay.of(context).insert(overlayEntry);
-                      } catch (e) {
-                        notifaceError(
-                            context, jsonDecode(e.toString())['message']);
-                      }
-                    },
-                    child: !provider.isLoadingDelete
-                        ? const CircularProgressIndicator()
-                        : SvgPicture.asset(
-                            ImageFactory.delete,
-                            color: Colors.red,
-                            width: 25,
-                            height: 25,
-                          ),
-                  )
                 ],
               ),
               Row(
@@ -128,24 +114,56 @@ class _ItemProfileWidgetState extends State<ItemProfileWidget> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ButtonOutline(
-                      fontSize: 15,
-                      title: 'PREVIEW',
-                      onPress: () {
-                        if (widget.pathCV != null) {
-                          Modular.to.pushNamed(RoutePath.pdfViewer,
-                              arguments: [widget.name, widget.pathCV]);
-                        }
-                      },
-                      borderRadius: 5,
-                      width: (size.width - 70) / 2),
-                  ButtonOutline(
-                    fontSize: 15,
-                    title: 'EDIT',
-                    onPress: () {},
-                    borderRadius: 5,
-                    width: (size.width - 70) / 2,
-                  )
+                  GestureDetector(
+                    onTap: () {
+                      if (widget.pathCV != null) {
+                        Modular.to.pushNamed(RoutePath.pdfViewer,
+                            arguments: [widget.name, widget.pathCV]);
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.grey[200]),
+                      child: SvgPicture.asset(
+                        ImageFactory.edit,
+                        height: 14,
+                        width: 14,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(left: 7),
+                    padding: const EdgeInsets.all(7),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.grey[200]),
+                    child: SvgPicture.asset(
+                      ImageFactory.download,
+                      height: 14,
+                      width: 14,
+                    ),
+                  ),
+                  Expanded(child: Container()),
+                  GestureDetector(
+                    onTap: () {
+                      moreAction(
+                          context, widget.name, widget.id, widget.reLoadList);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 7, vertical: 12),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.grey[200]),
+                      child: SvgPicture.asset(
+                        ImageFactory.more,
+                        height: 5,
+                        width: 10,
+                      ),
+                    ),
+                  ),
                 ],
               )
             ],
@@ -154,6 +172,75 @@ class _ItemProfileWidgetState extends State<ItemProfileWidget> {
       ],
     );
   }
+}
+
+void moreAction(
+    BuildContext context, String name, String id, VoidCallback reLoadList) {
+  final provider = context.watch<ProviderProfile>();
+  showModalBottomSheet(
+    context: context,
+    builder: (context) {
+      return Container(
+          margin: const EdgeInsets.all(15),
+          height: 200,
+          child: Column(
+            children: [
+              const Text(
+                'Thao  tác',
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+              ),
+              const Divider(
+                thickness: 1,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              GestureDetector(
+                onTap: () async {
+                  Navigator.pop(context);
+                  try {
+                    OverlayEntry? overlayEntry;
+                    overlayEntry = OverlayEntry(
+                      builder: (BuildContext context) {
+                        return GetEntry(
+                          entry: overlayEntry,
+                          nameCV: name,
+                          onTap: () {
+                            provider.deleteProfile(id);
+                            reLoadList();
+                            overlayEntry!.remove();
+                          },
+                        );
+                      },
+                    );
+                    Overlay.of(context).insert(overlayEntry);
+                  } catch (e) {
+                    notifaceError(context, jsonDecode(e.toString())['message']);
+                  }
+                },
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      ImageFactory.delete,
+                      color: Colors.black87,
+                      width: 25,
+                      height: 25,
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                    const Text(
+                      'Xóa CV',
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ));
+    },
+  );
 }
 
 // ignore: must_be_immutable

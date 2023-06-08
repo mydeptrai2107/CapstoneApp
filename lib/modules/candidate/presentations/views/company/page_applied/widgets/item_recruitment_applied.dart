@@ -1,22 +1,31 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:convert';
+
 import 'package:app/configs/image_factory.dart';
+import 'package:app/configs/route_path.dart';
 import 'package:app/modules/candidate/data/models/company_model.dart';
+import 'package:app/modules/candidate/data/models/profile_model.dart';
 import 'package:app/modules/candidate/data/repositories/company_repositories.dart';
+import 'package:app/modules/candidate/domain/providers/provider_apply.dart';
 import 'package:app/modules/candidate/domain/providers/provider_company.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/company/widgets/tag_recuitment_item.dart';
 import 'package:app/shared/models/recruitment_model.dart';
 import 'package:app/shared/utils/format.dart';
+import 'package:app/shared/utils/notiface_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ItemRecruitApplied extends StatefulWidget {
-  const ItemRecruitApplied({super.key, required this.recruitment});
+  const ItemRecruitApplied(
+      {super.key, required this.recruitment, required this.idApply});
 
   final Recruitment recruitment;
+  final String idApply;
 
   @override
   State<ItemRecruitApplied> createState() => _ItemRecruitAppliedState();
@@ -30,9 +39,13 @@ class _ItemRecruitAppliedState extends State<ItemRecruitApplied> {
       updatedAt: DateTime.now(),
       id: '');
 
+  Profile? profile;
+
   initData() async {
     company = await Modular.get<ProviderCompany>()
         .getCompanyById(widget.recruitment.companyId);
+    profile =
+        await Modular.get<ProviderApply>().getProfileApplied(widget.idApply);
   }
 
   @override
@@ -124,44 +137,75 @@ class _ItemRecruitAppliedState extends State<ItemRecruitApplied> {
                 ],
               ),
               TagRecuitmentItem(
-                  title: widget.recruitment.salary!, icon: ImageFactory.dollar)
+                  title: widget.recruitment.salary!,
+                  icon: ImageFactory.dollar)
             ],
           ),
           Flex(
             direction: Axis.horizontal,
             children: [
               Expanded(
-                  child: Container(
-                margin: const EdgeInsets.only(right: 8),
-                padding: const EdgeInsets.symmetric(vertical: 7),
-                decoration: BoxDecoration(
-                    color: primaryColor.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(5)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(ImageFactory.chat,
-                        color: primaryColor, width: 20, height: 20),
-                    const Text(
-                      '  Gởi tin nhắn',
-                      style: TextStyle(
-                          color: primaryColor, fontWeight: FontWeight.w500),
-                    )
-                  ],
+                  child: GestureDetector(
+                onTap: () async {
+                  String? encodeQueryParameters(Map<String, String> params) {
+                    return params.entries
+                        .map((MapEntry<String, String> e) =>
+                            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+                        .join('&');
+                  }
+
+                  final Uri emailLaunchUri = Uri(
+                    scheme: 'mailto',
+                    path: company.contact,
+                    query: encodeQueryParameters(<String, String>{
+                      'subject': 'Example Subject & Symbols are allowed!',
+                    }),
+                  );
+
+                  try {
+                    await launchUrl(emailLaunchUri);
+                  } catch (e) {
+                    notifaceError(context, jsonDecode(e.toString())['message']);
+                  }
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(right: 8),
+                  padding: const EdgeInsets.symmetric(vertical: 7),
+                  decoration: BoxDecoration(
+                      color: primaryColor.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(ImageFactory.chat,
+                          color: primaryColor, width: 20, height: 20),
+                      const Text(
+                        '  Gởi tin nhắn',
+                        style: TextStyle(
+                            color: primaryColor, fontWeight: FontWeight.w500),
+                      )
+                    ],
+                  ),
                 ),
               )),
               Expanded(
-                  child: Container(
-                margin: const EdgeInsets.only(left: 8),
-                padding: const EdgeInsets.symmetric(vertical: 7),
-                decoration: BoxDecoration(
-                    color: Colors.grey[350],
-                    borderRadius: BorderRadius.circular(5)),
-                child: const Center(
-                    child: Text(
-                  'Xem lại CV',
-                  style: TextStyle(fontWeight: FontWeight.w500),
-                )),
+                  child: GestureDetector(
+                onTap: () {
+                  Modular.to.pushNamed(RoutePath.pdfViewer,
+                      arguments: [profile?.name ?? '', profile?.pathCv ?? '']);
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(left: 8),
+                  padding: const EdgeInsets.symmetric(vertical: 7),
+                  decoration: BoxDecoration(
+                      color: Colors.grey[350],
+                      borderRadius: BorderRadius.circular(5)),
+                  child: const Center(
+                      child: Text(
+                    'Xem lại CV',
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  )),
+                ),
               ))
             ],
           )

@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
 import 'package:app/modules/candidate/data/models/company_model.dart';
+import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/data/repositories/company_repositories.dart';
+import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
+import 'package:app/modules/candidate/domain/providers/provider_company.dart';
 import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
+import 'package:app/shared/utils/notiface_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -17,9 +23,17 @@ class ItemCompanyHorizontal extends StatefulWidget {
 
 class _ItemCompanyHorizontalState extends State<ItemCompanyHorizontal> {
   int quantityRecruitment = 0;
+  bool isLike = false;
+
+  List<String> listIdSaved = [];
+
   initData() async {
     quantityRecruitment = await Modular.get<ProviderRecruitment>()
         .getQuantityRecruitByCompany(widget.company.id);
+    User user = await Modular.get<ProviderAuth>().getUser();
+    listIdSaved =
+        await Modular.get<ProviderCompany>().getListIdCompanySaved(user.userId);
+    isLike = listIdSaved.contains(widget.company.id);
   }
 
   @override
@@ -32,6 +46,7 @@ class _ItemCompanyHorizontalState extends State<ItemCompanyHorizontal> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     context.watch<ProviderRecruitment>();
+    final providerCompany = context.watch<ProviderCompany>();
 
     return GestureDetector(
       onTap: () {
@@ -44,7 +59,7 @@ class _ItemCompanyHorizontalState extends State<ItemCompanyHorizontal> {
           width: size.width,
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10)),
-          height: 170,
+          height: 150,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -69,6 +84,7 @@ class _ItemCompanyHorizontalState extends State<ItemCompanyHorizontal> {
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SizedBox(
                     width: size.width - 100 - size.width / 6,
@@ -81,14 +97,13 @@ class _ItemCompanyHorizontalState extends State<ItemCompanyHorizontal> {
                   SizedBox(
                     width: size.width - 100 - size.width / 6,
                     child: Text(
-                      widget.company.type == ''
+                      widget.company.contact == ''
                           ? 'Chưa cập nhật'
-                          : widget.company.type.toString(),
+                          : widget.company.contact.toString(),
                       style: const TextStyle(fontSize: 13, color: Colors.grey),
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.only(top: 10),
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                     decoration: BoxDecoration(
@@ -100,17 +115,36 @@ class _ItemCompanyHorizontalState extends State<ItemCompanyHorizontal> {
                       style: const TextStyle(fontSize: 14),
                     ),
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(top: 20),
-                    width: size.width - 100 - size.width / 6,
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    decoration: BoxDecoration(
-                        border: Border.all(width: 1, color: primaryColor),
-                        borderRadius: BorderRadius.circular(100)),
-                    child: const Center(
-                      child: Text(
-                        '+ Theo dõi',
-                        style: TextStyle(fontSize: 13, color: primaryColor),
+                  GestureDetector(
+                    onTap: () async {
+                      try {
+                        User user = await Modular.get<ProviderAuth>().getUser();
+
+                        await providerCompany.actionSave(
+                            widget.company.id, user.userId, true);
+                        isLike = !isLike;
+                      } catch (e) {
+                        notifaceError(
+                            context, jsonDecode(e.toString())['message']);
+                      }
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 5),
+                      width: size.width - 100 - size.width / 6,
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      decoration: BoxDecoration(
+                          border: Border.all(width: 0.5, color:isLike ? Colors.grey : primaryColor),
+                          borderRadius: BorderRadius.circular(100)),
+                      child: Center(
+                        child: isLike
+                      ? const Text(
+                          'Đang theo dõi',
+                          style: TextStyle(fontSize: 13, color: Colors.black),
+                        )
+                      : const Text(
+                          '+ Theo dõi',
+                          style: TextStyle(fontSize: 13, color: primaryColor),
+                        ),
                       ),
                     ),
                   )

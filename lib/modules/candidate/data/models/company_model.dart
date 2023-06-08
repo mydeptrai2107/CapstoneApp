@@ -15,7 +15,7 @@ class Company {
   DateTime updatedAt;
   String? avatar;
   String? info;
-  String? type;
+  String? intro;
   String? address;
   String id;
 
@@ -26,7 +26,7 @@ class Company {
     required this.updatedAt,
     this.avatar,
     this.info,
-    this.type,
+    this.intro,
     this.address,
     required this.id,
   });
@@ -38,7 +38,7 @@ class Company {
         updatedAt: DateTime.parse(json["updatedAt"]),
         avatar: json["avatar"] ?? '',
         info: json["info"] ?? '',
-        type: json["type"] ?? '',
+        intro: json["intro"] ?? '',
         address: json["address"] ?? '',
         id: json["id"],
       );
@@ -50,7 +50,7 @@ class Company {
         "updatedAt": updatedAt.toIso8601String(),
         "avatar": avatar,
         "info": info,
-        "type": type,
+        "type": intro,
         "address": address,
         "id": id,
       };

@@ -48,7 +48,7 @@ class Recruitment {
 
   factory Recruitment.fromJson(Map<String, dynamic> json) => Recruitment(
         companyId: json["company_id"],
-        title: json["position"],
+        title: json["title"],
         salary: json["salary"],
         deadline: DateTime.parse(json["deadline"]),
         workingForm: json["workingForm"],

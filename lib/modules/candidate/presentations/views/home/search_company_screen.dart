@@ -31,7 +31,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    context.watch<ProviderCompany>();
+    final provider = context.watch<ProviderCompany>();
     return Scaffold(
       appBar: AppBar(
         title: Container(
@@ -41,8 +41,8 @@ class _SearchScreenState extends State<SearchScreen> {
               border: Border.all(width: 1, color: primaryColor),
               borderRadius: BorderRadius.circular(10)),
           child: TextField(
-            onSubmitted: (value) {
-              initData();
+            onSubmitted: (value) async {
+              await initData();
             },
             controller: _searchController,
             decoration: const InputDecoration(
@@ -52,38 +52,43 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ),
       ),
-      body: isSearched && listCompany.isEmpty
-          ? SizedBox(
-              width: size.width,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: const BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage(ImageFactory.searchNotFound),
-                            fit: BoxFit.fill)),
-                  ),
-                  const Text(
-                    'Không tìm thấy dữ liệu',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                  )
-                ],
-              ),
+      body: provider.isLoadingSearch
+          ? const Center(
+              child: CircularProgressIndicator(),
             )
-          : ListView.separated(
-              itemBuilder: (context, index) {
-                return ItemCompanyHorizontal(company: listCompany[index]);
-              },
-              separatorBuilder: (context, index) {
-                return const SizedBox(
-                  height: 20,
-                );
-              },
-              itemCount: listCompany.length),
+          : isSearched && listCompany.isEmpty
+              ? SizedBox(
+                  width: size.width,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: const BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage(ImageFactory.searchNotFound),
+                                fit: BoxFit.fill)),
+                      ),
+                      const Text(
+                        'Không tìm thấy dữ liệu',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
+                      )
+                    ],
+                  ),
+                )
+              : ListView.separated(
+                  itemBuilder: (context, index) {
+                    return ItemCompanyHorizontal(company: listCompany[index]);
+                  },
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(
+                      height: 20,
+                    );
+                  },
+                  itemCount: listCompany.length),
     );
   }
 }

@@ -40,7 +40,7 @@ class _IntroCompanyState extends State<IntroCompany> {
             height: 4.h,
           ),
           Text(
-            widget.company.info!,
+            widget.company.intro!,
             style:
                 TextStyle(fontSize: 14, color: Colors.black.withOpacity(0.7)),
           ),

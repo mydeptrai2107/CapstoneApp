@@ -4,6 +4,7 @@ import 'package:app/modules/candidate/data/models/profile_model.dart';
 import 'package:app/modules/candidate/domain/providers/provider_profile.dart';
 import 'package:app/modules/candidate/presentations/views/cv_profile/pdf/item_profile_widget.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
+import 'package:app/shared/utils/notiface_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -15,7 +16,7 @@ class ListProfileScreen extends StatefulWidget {
 }
 
 class _ListProfileScreenState extends State<ListProfileScreen> {
-  List<Profile> listProvider = [];
+  List<Profile> listProfile = [];
   @override
   void initState() {
     super.initState();
@@ -23,7 +24,7 @@ class _ListProfileScreenState extends State<ListProfileScreen> {
   }
 
   void initData() async {
-    listProvider = await Modular.get<ProviderProfile>().getListProfile();
+    listProfile = await Modular.get<ProviderProfile>().getListProfile();
   }
 
   @override
@@ -42,7 +43,7 @@ class _ListProfileScreenState extends State<ListProfileScreen> {
       body: !provider.isLoading
           ? const Center(child: CircularProgressIndicator())
           : SizedBox(
-              height: listProvider.length * 165 + 140,
+              height: size.height,
               width: size.width,
               child: ListView(
                 children: [
@@ -68,20 +69,20 @@ class _ListProfileScreenState extends State<ListProfileScreen> {
                   ),
                   Container(
                     padding: const EdgeInsets.only(left: 15),
-                    height: listProvider.length * 165,
+                    height: listProfile.length * (450 + 15) + 70,
                     width: size.width,
                     child: ListView.separated(
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: listProvider.length,
+                      itemCount: listProfile.length,
                       itemBuilder: (context, index) {
                         return ItemProfileWidget(
-                          name: listProvider[index].name,
-                          id: listProvider[index].id,
-                          pathCV: listProvider[index].pathCv,
+                          name: listProfile[index].name,
+                          id: listProfile[index].id,
+                          pathCV: listProfile[index].pathCv,
                           reLoadList: () async {
-                            listProvider = await provider.getListProfile();
+                            listProfile = await provider.getListProfile();
                           },
-                          updateAt: listProvider[index].updatedAt,
+                          updateAt: listProfile[index].updatedAt,
                         );
                       },
                       separatorBuilder: (context, index) => const SizedBox(
@@ -92,19 +93,13 @@ class _ListProfileScreenState extends State<ListProfileScreen> {
                 ],
               ),
             ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(18),
-        decoration: const BoxDecoration(
-            border: Border(top: BorderSide(color: Colors.grey, width: 1))),
-        height: 85,
-        width: size.width,
-        child: ButtonApp(
-          borderRadius: 10,
-          title: 'Tiếp tục',
-          onPress: () {
-            Modular.to.pushNamed(RoutePath.fillFirstInfoCV);
-          },
-        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          listProfile.length >= 5
+              ? notifaceError(context, 'Số lượng CV không vượt quá 5.')
+              : Modular.to.pushNamed(RoutePath.fillFirstInfoCV);
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

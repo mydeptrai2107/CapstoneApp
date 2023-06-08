@@ -31,4 +31,10 @@ class TextApp {
       'Giúp JobCV và các Công ty dễ dàng nhận ra bạn bằng cách nhập họ và tên của bạn vào bên dưới.';
   static const String applySuccess =
       'Chúc mừng bạn đã ứng tuyển thành công. Hãy ghi nhớ tên các công ty và việc làm bạn đã ứng tuyển để chuẩn bị tốt nhất cho một cuộc gọi hoặc email từ Nhà tuyển dụng trong một vài ngày tới, nếu hồ sơ của bạn đã đạt yêu cầu.';
+  static const String grossSalary =
+      'Lương Gross là  gì? Là tổng thu nhập ghi trên hợp đồng của người lao động, bao gồm chi phí thuế, bảo hiểm và phí công đoàn(nếu có). Lương thực lãnh sẽ thấp hơn lương gross.';
+  static const String netSalary =
+      'Lương Net là gì? Là số tiền người lao động thực lãnh sau khi đã trừ hết các khoản thuế, bảo hiểm và phí công đoàn (nếu có).';
+  static const String methodCalculating =
+      'Cách tính kết quả dựa trên công thức và biểu thuế mới nhất của cục thuế. Áp dụng mức giảm trừ gia cảnh mới nhất 11 triệu đồng/tháng (theo nghị định số 954/2020/UBTVQH14) và áp dụng mức lương tối thiểu vùng mới nhất có hiệu lực từ ngày 01/01/2020 (theo điều 3 Nghị định 90/2019/NĐ-CP)';
 }

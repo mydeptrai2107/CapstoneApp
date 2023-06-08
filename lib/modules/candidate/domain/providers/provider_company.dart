@@ -1,9 +1,13 @@
+import 'package:app/modules/candidate/data/models/action_company_model.dart';
 import 'package:app/modules/candidate/data/models/company_model.dart';
 import 'package:app/modules/candidate/data/repositories/company_repositories.dart';
 import 'package:flutter/material.dart';
 
 class ProviderCompany extends ChangeNotifier {
   CompanyRepository companyRepository = CompanyRepository();
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
   bool _isLoadingGetList = false;
   bool get isLoadingGetList => _isLoadingGetList;
@@ -21,7 +25,7 @@ class ProviderCompany extends ChangeNotifier {
       notifyListeners();
       return listCompany;
     } catch (e) {
-      _isLoadingGetList = true;
+      _isLoadingGetList = false;
       notifyListeners();
       rethrow;
     }
@@ -38,7 +42,7 @@ class ProviderCompany extends ChangeNotifier {
       notifyListeners();
       return listCompany;
     } catch (e) {
-      _isLoadingSearch = true;
+      _isLoadingSearch = false;
       notifyListeners();
       rethrow;
     }
@@ -77,10 +81,77 @@ class ProviderCompany extends ChangeNotifier {
       } else {
         listPaging = listCompany.sublist(8 * (number - 1));
       }
+      _isLoadingGetList = false;
       notifyListeners();
       return listPaging;
     } catch (e) {
-      _isLoadingGetList = true;
+      _isLoadingGetList = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<ActionCompanyModel> actionSave(
+      String comid, String userId, bool save) async {
+    try {
+      _isLoading = true;
+      Map<String, dynamic> responseBody =
+          await companyRepository.actionSaveCompany(comid, userId, save);
+      ActionCompanyModel action = ActionCompanyModel.fromJson(responseBody);
+      _isLoading = false;
+      notifyListeners();
+      return action;
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<List<String>> getListIdCompanySaved(String userId) async {
+    try {
+      _isLoading = true;
+      List<dynamic> responseBody =
+          await companyRepository.getListIdCompanySaved(userId);
+      Iterable it = responseBody;
+      List<String> list = it.map((e) => e.toString()).toList();
+      _isLoading = false;
+      notifyListeners();
+      return list;
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<int> getCountCompanySaved(String userId) async {
+    try {
+      _isLoading = true;
+      List<String> list = await getListIdCompanySaved(userId);
+      _isLoading = false;
+      notifyListeners();
+      return list.length;
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<List<Company>> getListCompanySaved(String userId) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+      List<dynamic> responseBody =
+          await companyRepository.getListCompanySaved(userId);
+      Iterable it = responseBody;
+      List<Company> list = it.map((e) => Company.fromJson(e)).toList();
+      _isLoading = false;
+      notifyListeners();
+      return list;
+    } catch (e) {
+      _isLoading = false;
       notifyListeners();
       rethrow;
     }

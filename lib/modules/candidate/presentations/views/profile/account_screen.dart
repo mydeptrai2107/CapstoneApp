@@ -12,11 +12,14 @@ import 'package:app/modules/candidate/data/models/hive_models/skill_model.dart';
 import 'package:app/modules/candidate/data/models/profile_model.dart';
 import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/domain/providers/provider_app.dart';
+import 'package:app/modules/candidate/domain/providers/provider_apply.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
+import 'package:app/modules/candidate/domain/providers/provider_company.dart';
 import 'package:app/modules/candidate/domain/providers/provider_profile.dart';
+import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
 import 'package:app/modules/candidate/domain/providers/provider_user.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
-import 'package:app/modules/candidate/presentations/views/cv_profile/pdf/item_profile_widget.dart';
+import 'package:app/modules/candidate/presentations/views/profile/widgets/item_manage_job.dart';
 import 'package:app/modules/candidate/presentations/views/profile/widgets/item_profile.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_outline.dart';
@@ -53,6 +56,10 @@ class _AccountScreenState extends State<AccountScreen> {
   String nameUser = '';
   String phoneNumber = '';
   bool male = true;
+  int countProfile = 0;
+  int countApplied = 0;
+  int countSavedRecruitment = 0;
+  int countCompany = 0;
 
   List<Profile> listProvider = [];
   final _box = Hive.box('info');
@@ -62,6 +69,12 @@ class _AccountScreenState extends State<AccountScreen> {
     nameUser = '${widget.user.firstName} ${widget.user.lastName}';
     phoneNumber = widget.user.phone.toString();
     male = widget.user.gender.toString().toLowerCase() == 'male';
+    countProfile = await Modular.get<ProviderProfile>().getcountProfile();
+    countApplied = await Modular.get<ProviderApply>().getCountApply();
+    countSavedRecruitment = await Modular.get<ProviderRecruitment>()
+        .getCountRecruitmentSaved(widget.user.userId);
+    countCompany = await Modular.get<ProviderCompany>()
+        .getCountCompanySaved(widget.user.userId);
   }
 
   @override
@@ -75,10 +88,13 @@ class _AccountScreenState extends State<AccountScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     context.watch<ProviderUser>();
-    final provider = context.watch<ProviderProfile>();
+    context.watch<ProviderProfile>();
     final providerApp = context.watch<ProviderApp>();
-
+    context.watch<ProviderApply>();
     context.watch<ProviderAuth>();
+    context.watch<ProviderCompany>();
+    context.watch<ProviderRecruitment>();
+    final providerRecruitment = context.watch<ProviderRecruitment>();
 
     return Scaffold(
       body: SizedBox(
@@ -116,7 +132,6 @@ class _AccountScreenState extends State<AccountScreen> {
                         width: size.width - 30,
                         decoration: BoxDecoration(
                             color: Colors.white,
-                            border: Border.all(width: 1, color: Colors.grey),
                             borderRadius: BorderRadius.circular(15)),
                         child: Row(
                           children: [
@@ -133,10 +148,11 @@ class _AccountScreenState extends State<AccountScreen> {
                                         borderRadius:
                                             BorderRadius.circular(100),
                                         border: Border.all(
-                                            width: 2, color: Colors.red),
+                                            width: 2, color: primaryColor),
                                         image: imageFile != null
                                             ? DecorationImage(
-                                                image: FileImage(imageFile!))
+                                                image: FileImage(imageFile!),
+                                                fit: BoxFit.fill)
                                             : widget.avatar != ''
                                                 ? DecorationImage(
                                                     image: NetworkImage(
@@ -155,7 +171,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                         decoration: BoxDecoration(
                                             color: Colors.white,
                                             border: Border.all(
-                                                width: 1, color: Colors.black),
+                                                width: 1, color: Colors.grey),
                                             borderRadius:
                                                 BorderRadius.circular(100)),
                                         child: SvgPicture.asset(
@@ -185,8 +201,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                       'Mã ứng viên: ',
                                       style: TextStyle(
                                           fontSize: 14,
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w400),
+                                          color: Colors.black54,
+                                          fontWeight: FontWeight.w500),
                                     ),
                                     Text(
                                       widget.user.userId.substring(0, 7),
@@ -284,42 +300,101 @@ class _AccountScreenState extends State<AccountScreen> {
                 ],
               ),
             ),
+            // const Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            //   child: Text(
+            //     'CV của bạn',
+            //     style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+            //   ),
+            // ),
+            // !provider.isLoading
+            //     ? const Center(
+            //         child: SizedBox(
+            //             height: 30,
+            //             width: 30,
+            //             child: CircularProgressIndicator()))
+            //     : Container(
+            //         padding: const EdgeInsets.only(left: 15),
+            //         height: 165.0 * listProvider.length,
+            //         width: size.width,
+            //         child: ListView.separated(
+            //           physics: const NeverScrollableScrollPhysics(),
+            //           itemCount: listProvider.length,
+            //           itemBuilder: (context, index) {
+            //             return ItemProfileWidget(
+            //               name: listProvider[index].name,
+            //               id: listProvider[index].id,
+            //               pathCV: listProvider[index].pathCv,
+            //               reLoadList: () async {
+            //                 listProvider = await provider.getListProfile();
+            //               },
+            //               updateAt: listProvider[index].updatedAt,
+            //             );
+            //           },
+            //           separatorBuilder: (context, index) => const SizedBox(
+            //             height: 15,
+            //           ),
+            //         ),
+            //       ),
+
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
               child: Text(
-                'CV của bạn',
-                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+                'Quản lý tìm việc',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
             ),
-            !provider.isLoading
-                ? const Center(
-                    child: SizedBox(
-                        height: 30,
-                        width: 30,
-                        child: CircularProgressIndicator()))
-                : Container(
-                    padding: const EdgeInsets.only(left: 15),
-                    height: 165.0 * listProvider.length,
-                    width: size.width,
-                    child: ListView.separated(
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: listProvider.length,
-                      itemBuilder: (context, index) {
-                        return ItemProfileWidget(
-                          name: listProvider[index].name,
-                          id: listProvider[index].id,
-                          pathCV: listProvider[index].pathCv,
-                          reLoadList: () async {
-                            listProvider = await provider.getListProfile();
-                          },
-                          updateAt: listProvider[index].updatedAt,
-                        );
+
+            Container(
+                margin: const EdgeInsets.symmetric(horizontal: 15),
+                height: 500,
+                width: size.width,
+                child: GridView.count(
+                  physics: const NeverScrollableScrollPhysics(),
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  crossAxisCount: 2,
+                  childAspectRatio: 5 / 2.8,
+                  children: [
+                    ItemManageJob(
+                      icon: ImageFactory.works,
+                      title: 'Việc làm ứng tuyển',
+                      onTap: () {
+                        Modular.to.pushNamed(RoutePath.appliedScreen);
                       },
-                      separatorBuilder: (context, index) => const SizedBox(
-                        height: 15,
-                      ),
+                      count: countApplied,
                     ),
-                  ),
+                    ItemManageJob(
+                      icon: ImageFactory.bookmarks,
+                      title: 'Việc làm đã lưu',
+                      onTap: () {
+                        Modular.to.pushNamed(RoutePath.recruitmentSavedScreen,
+                            arguments: [
+                              () async {
+                                countSavedRecruitment =
+                                    await providerRecruitment
+                                        .getCountRecruitmentSaved(
+                                            widget.user.userId);
+                              }
+                            ]);
+                      },
+                      count: countSavedRecruitment,
+                    ),
+                    ItemManageJob(
+                      icon: ImageFactory.cv,
+                      title: 'CV của bạn',
+                      onTap: () {
+                        Modular.to.navigate(RoutePath.listProfile);
+                      },
+                      count: countProfile,
+                    ),
+                    ItemManageJob(
+                      icon: ImageFactory.company,
+                      title: 'Công ty đang theo dõi',
+                      count: countCompany,
+                    ),
+                  ],
+                )),
           ],
         ),
       ),

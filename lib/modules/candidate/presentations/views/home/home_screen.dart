@@ -8,8 +8,9 @@ import 'package:app/modules/candidate/domain/providers/provider_company.dart';
 import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/company/recruitment_item_home.dart';
+import 'package:app/modules/candidate/presentations/views/company/recruitment_item_home_first.dart';
 import 'package:app/modules/candidate/presentations/views/home/widgets/item_company_vertical.dart';
-import 'package:app/shared/models/recruitment_model.dart';
+import 'package:app/shared/models/recruitment_like_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/svg.dart';
@@ -23,7 +24,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Company> listCompany = [];
-  List<Recruitment> listRecruitment = [];
+  List<RecruitmentLike> listRecruitment = [];
   int numberPaging = 1;
   String avatar = '';
   String nameUser = '';
@@ -182,8 +183,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         padEnds: false,
                         controller: _pageController,
                         itemCount: listRecruitment.length,
-                        itemBuilder: (context, index) => RecruitmentItemHome(
-                            recruitment: listRecruitment[index]),
+                        itemBuilder: (context, index) => index == 0 ? RecruitmentItemHomeFirst(
+                            recruitment: listRecruitment[index].recruitment) : RecruitmentItemHome(
+                            recruitment: listRecruitment[index].recruitment),
                       ),
                     ),
 

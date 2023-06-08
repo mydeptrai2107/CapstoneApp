@@ -14,7 +14,7 @@ class RoutePath {
   static const String previewCV = '/previewCV';
 
   // Recruiter
-  static const String mainRecruiter = '/';
+  static const String mainRecruiter = '/main';
   static const String homeRecruiter = '/homeRecruiter';
   static const String campaign = '/campaign';
   static const String managementCV = '/managementCV';
@@ -31,4 +31,7 @@ class RoutePath {
   static const String searchRecruitmentScreen = '/searchRecruitmentScreen';
   static const String verifyEmail = '/verifyEmail';
   static const String appliedScreen = '/appliedScreen';
+  static const String recruitmentSavedScreen = '/recruitmentSavedScreen';
+  static const String accountScreen = '/accountScreen';
+
 }

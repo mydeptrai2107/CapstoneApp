@@ -1,19 +1,34 @@
+// ignore_for_file: deprecated_member_use
+
+import 'dart:convert';
+
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
 import 'package:app/modules/candidate/data/models/company_model.dart';
+import 'package:app/modules/candidate/data/models/user_model.dart';
+import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
+import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
 import 'package:app/shared/models/recruitment_model.dart';
 import 'package:app/modules/candidate/data/repositories/company_repositories.dart';
 import 'package:app/modules/candidate/domain/providers/provider_company.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
+import 'package:app/shared/utils/notiface_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // ignore: must_be_immutable
 class ItemRecuitment extends StatefulWidget {
-  ItemRecuitment({super.key, required this.recruitment, this.marginHorizontal});
+  ItemRecuitment(
+      {super.key,
+      required this.recruitment,
+      this.marginHorizontal,
+      this.onLoading,
+      this.loadCount});
   final Recruitment recruitment;
   double? marginHorizontal;
+  VoidCallback? onLoading;
+  VoidCallback? loadCount;
 
   @override
   State<ItemRecuitment> createState() => _ItemRecuitmentState();
@@ -27,7 +42,7 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
       updatedAt: DateTime.now(),
       avatar: '',
       info: '',
-      type: '',
+      intro: '',
       address: '',
       id: '');
 
@@ -40,14 +55,22 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
   initData() async {
     company = await Modular.get<ProviderCompany>()
         .getCompanyById(widget.recruitment.companyId);
+
+    User user = await Modular.get<ProviderAuth>().getUser();
+    listIdSaved = await Modular.get<ProviderRecruitment>()
+        .getListIdRecruitmentSaved(user.userId);
+    isLike = listIdSaved.contains(widget.recruitment.id);
   }
 
-  bool isSaved = false;
+  bool isLike = false;
+
+  List<String> listIdSaved = [];
 
   @override
   Widget build(BuildContext context) {
     context.watch<ProviderCompany>();
     final Size size = MediaQuery.of(context).size;
+    final providerRecruitment = context.watch<ProviderRecruitment>();
     return GestureDetector(
       onTap: () {
         Modular.to.pushNamed(RoutePath.detailRecruitment,
@@ -101,14 +124,24 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
                 ),
                 Expanded(child: Container()),
                 GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isSaved = !isSaved;
-                    });
+                  onTap: () async {
+                    try {
+                      User user = await Modular.get<ProviderAuth>().getUser();
+
+                      await providerRecruitment.actionSave(
+                          widget.recruitment.id, user.userId, true);
+                      isLike = !isLike;
+                    } catch (e) {
+                      notifaceError(
+                          context, jsonDecode(e.toString())['message']);
+                    }
+                    if (widget.loadCount != null) widget.loadCount!();
+                    if (widget.onLoading != null) widget.onLoading!();
+
                   },
                   child: Icon(
-                    isSaved ? Icons.bookmark : Icons.bookmark_outline,
-                    color: isSaved ? primaryColor : Colors.black,
+                    isLike ? Icons.bookmark : Icons.bookmark_outline,
+                    color: isLike ? primaryColor : Colors.black,
                     size: 30,
                   ),
                 )
@@ -130,7 +163,8 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
                   ),
                   child: Text(
                     widget.recruitment.address!,
-                    style: const TextStyle(fontSize: 13),
+                    style: const TextStyle(
+                        fontSize: 13, fontWeight: FontWeight.w400),
                   ),
                 ),
                 const SizedBox(
@@ -151,20 +185,37 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
                 ),
               ],
             ),
-            Container(
-              margin: const EdgeInsets.only(top: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-              decoration: BoxDecoration(
-                color: primaryColor.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(7),
-              ),
-              child: Text(
-                widget.recruitment.salary!,
-                style: const TextStyle(
-                    fontSize: 13,
-                    color: primaryColor,
-                    fontWeight: FontWeight.bold),
-              ),
+            Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 7),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(7),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      SvgPicture.asset(
+                        ImageFactory.dollarSignBag,
+                        color: primaryColor,
+                        width: 15,
+                        height: 15,
+                      ),
+                      Text(
+                        widget.recruitment.salary!,
+                        style: const TextStyle(
+                            fontSize: 13,
+                            color: primaryColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(child: Container())
+              ],
             ),
             const Divider(
               thickness: 1,
