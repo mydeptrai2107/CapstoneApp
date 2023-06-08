@@ -22,6 +22,7 @@ class ImageFactory {
   static const String threePerson = '${urlAssets}three-person.svg';
   static const String workExp = '${urlAssets}work-experience.svg';
   static const String work = '${urlAssets}work.svg';
+  static const String works = '${urlAssets}works.svg';
   static const String chat = '${urlAssets}chat.svg';
   static const String documentText = '${urlAssets}document-text-outline.svg';
   static const String start = '${urlAssets}star-outline.svg';
@@ -59,4 +60,15 @@ class ImageFactory {
   static const String login = '${urlAssets}log-in-outline.svg';
   static const String checkmark = '${urlAssets}checkmark-outline.svg';
   static const String success = '${urlAssets}success.svg';
+  static const String question = '${urlAssets}question.svg';
+  static const String bookmarksOutline = '${urlAssets}bookmarks-outline.svg';
+  static const String bookmarks = '${urlAssets}bookmarks.svg';
+  static const String setting = '${urlAssets}settings-sharp.svg';
+  static const String dollarSignBag = '${urlAssets}dollar-sign-bag.svg';
+  static const String company = '${urlAssets}company.svg';
+  static const String cv = '${urlAssets}cv.svg';
+  static const String calculator = '${urlAssets}calculator-outline.svg';
+  static const String edit = '${urlAssets}edit-pen.svg';
+  static const String download = '${urlAssets}download.svg';
+  static const String more = '${urlAssets}more.svg';
 }

@@ -5,7 +5,7 @@ import 'package:app/modules/candidate/domain/providers/provider_apply.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
 import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
 import 'package:app/modules/candidate/presentations/views/company/page_applied/widgets/item_recruitment_applied.dart';
-import 'package:app/shared/models/recruitment_model.dart';
+import 'package:app/shared/models/recruitment_like_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -18,7 +18,7 @@ class PageAppliedSevenDay extends StatefulWidget {
 
 class _PageAppliedSevenDayState extends State<PageAppliedSevenDay> {
   List<Apply> list = [];
-  List<Recruitment> listRecruit = [];
+  List<RecruitmentLike> listRecruit = [];
   bool isLoading = false;
 
   initData() async {
@@ -28,7 +28,7 @@ class _PageAppliedSevenDayState extends State<PageAppliedSevenDay> {
     User user = await Modular.get<ProviderAuth>().getUser();
     list = await Modular.get<ProviderApply>().getListApply7Day(user.userId);
     list.map((e) async {
-      Recruitment recruitment = await Modular.get<ProviderRecruitment>()
+      RecruitmentLike recruitment = await Modular.get<ProviderRecruitment>()
           .getRecruitById(e.recruitmentId);
       listRecruit.add(recruitment);
     }).toList();
@@ -79,7 +79,8 @@ class _PageAppliedSevenDayState extends State<PageAppliedSevenDay> {
                 child: ListView.separated(
                     itemBuilder: (context, index) {
                       return ItemRecruitApplied(
-                          recruitment: listRecruit[index]);
+                          recruitment: listRecruit[index].recruitment,
+                          idApply: list[index].id);
                     },
                     separatorBuilder: (context, index) => const SizedBox(
                           height: 15,

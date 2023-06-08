@@ -5,6 +5,6 @@ final ThemeData themeData = ThemeData(
     scaffoldBackgroundColor: Colors.grey[200],
     useMaterial3: true,
     appBarTheme: AppBarTheme(
-        color: Colors.grey[100],
+        color: Colors.grey[200],
         titleTextStyle: textStyleTitleAppBar,
         centerTitle: true));

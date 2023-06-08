@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/recruiter/domain/repositories/recruitment_provider.dart';
 import 'package:app/modules/recruiter/presentations/views/management/management_screen.dart';

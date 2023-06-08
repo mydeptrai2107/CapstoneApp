@@ -7,6 +7,9 @@ class CompanyRepository {
   final String urlGetAllCompany = '${uriApiApp}api/company/';
   final String urlGetCompanyByName = '${uriApiApp}api/company/search/';
   final String urlGetCompanyById = '${uriApiApp}api/company/';
+  final String urlActionSaveCompay = '${uriApiApp}api/company/action';
+  final String urlListIdCompanySaved = '${uriApiApp}api/company/IdSaved/';
+  final String urlListCompanySaved = '${uriApiApp}api/company/saved/';
   static const String urlAvatarCompany = '${uriApiApp}static/image/';
 
   Future<List<dynamic>> getListCompany() async {
@@ -41,5 +44,38 @@ class CompanyRepository {
 
   static String getAvatar(String image) {
     return urlAvatarCompany + image;
+  }
+
+  Future<Map<String, dynamic>> actionSaveCompany(
+      String comid, String userId, bool save) async {
+    var url = Uri.parse(urlActionSaveCompay);
+    final response = await http.post(url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'comid': comid, 'userId': userId, 'is_saved': save}));
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw response.body;
+    }
+  }
+
+  Future<List<dynamic>> getListIdCompanySaved(String userId) async {
+    var url = Uri.parse(urlListIdCompanySaved + userId);
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw response.body;
+    }
+  }
+
+  Future<List<dynamic>> getListCompanySaved(String userId) async {
+    var url = Uri.parse(urlListCompanySaved + userId);
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw response.body;
+    }
   }
 }

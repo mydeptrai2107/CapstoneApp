@@ -7,6 +7,7 @@ import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/cv_profile/welcome_create_cv.dart';
 import 'package:app/modules/candidate/presentations/views/home/home_screen.dart';
 import 'package:app/modules/candidate/presentations/views/profile/account_screen.dart';
+import 'package:app/modules/candidate/presentations/views/salary_calculation/salary_calculation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -30,15 +31,14 @@ class _JobCVHomeScreenState extends State<JobCVHomeScreen> {
     final tabs = [
       const HomeScreen(),
       const WelcomeCreateCV(),
-      const Center(
-        child: Text('Chat'),
-      ),
+      const SalaryCalculationScreen(),
       const Center(
         child: Text('Notification'),
       ),
       AccountScreen(user: user, avatar: avatar)
     ];
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: tabs[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         selectedFontSize: 12,
@@ -65,12 +65,12 @@ class _JobCVHomeScreenState extends State<JobCVHomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              ImageFactory.chatbubbles,
+              ImageFactory.calculator,
               width: 25,
               height: 25,
               color: _currentIndex == 2 ? primaryColor : Colors.grey,
             ),
-            label: 'Yêu thích',
+            label: 'Tính lương',
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(

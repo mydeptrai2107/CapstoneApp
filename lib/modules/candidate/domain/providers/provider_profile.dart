@@ -55,6 +55,22 @@ class ProviderProfile extends ChangeNotifier {
     }
   }
 
+  Future<int> getcountProfile() async {
+    try {
+      _isLoading = false;
+      notifyListeners();
+      List<Profile> list =
+          await getListProfile();
+      _isLoading = true;
+      notifyListeners();
+      return list.length;
+    } catch (e) {
+      _isLoading = true;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
   Future deleteProfile(String id) async {
     try {
       _isLoadingDelete = false;

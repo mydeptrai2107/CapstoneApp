@@ -1,8 +1,17 @@
+// ignore_for_file: deprecated_member_use
+
+import 'dart:convert';
+
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
 import 'package:app/modules/candidate/data/models/company_model.dart';
+import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/data/repositories/company_repositories.dart';
+import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
+import 'package:app/modules/candidate/domain/providers/provider_company.dart';
 import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
+import 'package:app/modules/candidate/presentations/themes/color.dart';
+import 'package:app/shared/utils/notiface_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/svg.dart';
@@ -19,6 +28,10 @@ class ItemCompanyVertical extends StatefulWidget {
 class _ItemCompanyVerticalState extends State<ItemCompanyVertical> {
   int quantityRecruit = 0;
 
+  bool isLike = false;
+
+  List<String> listIdSaved = [];
+
   @override
   void initState() {
     super.initState();
@@ -28,12 +41,18 @@ class _ItemCompanyVerticalState extends State<ItemCompanyVertical> {
   initData() async {
     quantityRecruit = await Modular.get<ProviderRecruitment>()
         .getQuantityRecruitByCompany(widget.company.id);
+
+    User user = await Modular.get<ProviderAuth>().getUser();
+    listIdSaved =
+        await Modular.get<ProviderCompany>().getListIdCompanySaved(user.userId);
+    isLike = listIdSaved.contains(widget.company.id);
   }
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     context.watch<ProviderRecruitment>();
+    final providerCompany = context.watch<ProviderCompany>();
     return GestureDetector(
       onTap: () {
         Modular.to
@@ -71,11 +90,6 @@ class _ItemCompanyVerticalState extends State<ItemCompanyVertical> {
                         BoxShadow(color: Colors.grey, offset: Offset(1, 1))
                       ]),
                 ),
-                SvgPicture.asset(
-                  ImageFactory.bookmarkoutline,
-                  width: 20,
-                  height: 20,
-                )
               ],
             ),
             const SizedBox(
@@ -91,15 +105,6 @@ class _ItemCompanyVerticalState extends State<ItemCompanyVertical> {
                     const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
             ),
-            Text(
-              widget.company.type == ''
-                  ? 'Chưa xác định'
-                  : widget.company.type.toString(),
-              style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey),
-            ),
             Container(
               margin: const EdgeInsets.only(top: 5),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
@@ -110,6 +115,38 @@ class _ItemCompanyVerticalState extends State<ItemCompanyVertical> {
               child: Text(
                 '$quantityRecruit việc làm',
                 style: const TextStyle(fontSize: 14),
+              ),
+            ),
+            GestureDetector(
+              onTap: () async {
+                try {
+                  User user = await Modular.get<ProviderAuth>().getUser();
+
+                  await providerCompany.actionSave(
+                      widget.company.id, user.userId, true);
+                  isLike = !isLike;
+                } catch (e) {
+                  notifaceError(context, jsonDecode(e.toString())['message']);
+                }
+              },
+              child: Container(
+                margin: const EdgeInsets.only(top: 5),
+                padding: const EdgeInsets.symmetric(vertical: 3),
+                decoration: BoxDecoration(
+                    border: Border.all(
+                        width: 0.5, color: isLike ? Colors.grey : primaryColor),
+                    borderRadius: BorderRadius.circular(100)),
+                child: Center(
+                  child: isLike
+                      ? const Text(
+                          'Đang theo dõi',
+                          style: TextStyle(fontSize: 13, color: Colors.black),
+                        )
+                      : const Text(
+                          '+ Theo dõi',
+                          style: TextStyle(fontSize: 13, color: primaryColor),
+                        ),
+                ),
               ),
             )
           ],

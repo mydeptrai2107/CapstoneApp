@@ -1,11 +1,15 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:convert';
+
 import 'package:app/configs/font_style_text.dart';
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
 import 'package:app/modules/candidate/data/models/company_model.dart';
-import 'package:app/shared/models/recruitment_model.dart';
+import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/data/repositories/company_repositories.dart';
+import 'package:app/modules/candidate/domain/providers/provider_apply.dart';
+import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
 import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/company/widgets/info_recuitment_item.dart';
@@ -13,10 +17,14 @@ import 'package:app/modules/candidate/presentations/views/company/widgets/tag_in
 import 'package:app/modules/candidate/presentations/views/home/widgets/item_recruitment.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_outline.dart';
+import 'package:app/shared/models/recruitment_like_model.dart';
+import 'package:app/shared/models/recruitment_model.dart';
+import 'package:app/shared/utils/notiface_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailRecruitment extends StatefulWidget {
   const DetailRecruitment(
@@ -36,20 +44,27 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
     super.initState();
   }
 
+  bool checkApplied = false;
+
   // true: thong tin | false : Cong ty
   bool isChoose = true;
 
-  List<Recruitment> recruitements = [];
+  List<RecruitmentLike> recruitements = [];
 
   initData() async {
     recruitements = await Modular.get<ProviderRecruitment>()
         .getListRecruitByCompany(widget.company.id);
+    User user = await Modular.get<ProviderAuth>().getUser();
+    checkApplied = await Modular.get<ProviderApply>()
+        .checkRecruitmentApplied(widget.recruitment.id, user.userId);
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     context.watch<ProviderRecruitment>();
+    context.watch<ProviderApply>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -196,7 +211,29 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
             Expanded(
                 flex: 1,
                 child: ButtonOutline(
-                  onPress: () {},
+                  onPress: () async {
+                    String? encodeQueryParameters(Map<String, String> params) {
+                      return params.entries
+                          .map((MapEntry<String, String> e) =>
+                              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+                          .join('&');
+                    }
+
+                    final Uri emailLaunchUri = Uri(
+                      scheme: 'mailto',
+                      path: widget.company.contact,
+                      query: encodeQueryParameters(<String, String>{
+                        'subject': 'Example Subject & Symbols are allowed!',
+                      }),
+                    );
+
+                    try {
+                      await launchUrl(emailLaunchUri);
+                    } catch (e) {
+                      notifaceError(
+                          context, jsonDecode(e.toString())['message']);
+                    }
+                  },
                   title: 'Nhắn tin',
                   icon: ImageFactory.chat,
                   borderRadius: 100,
@@ -209,9 +246,10 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
             Expanded(
                 child: ButtonApp(
               onPress: () {
-                Modular.to.pushNamed(RoutePath.applyScreen, arguments: [widget.recruitment]);
+                Modular.to.pushNamed(RoutePath.applyScreen,
+                    arguments: [widget.recruitment]);
               },
-              title: 'Ứng tuyển ngay',
+              title: checkApplied ? "Đã ứng tuyển" : 'Ứng tuyển ngay',
               borderRadius: 100,
             ))
           ],
@@ -220,7 +258,7 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
     );
   }
 
-  Widget buildInfoCompany(Size size, List<Recruitment> recruitments) {
+  Widget buildInfoCompany(Size size, List<RecruitmentLike> recruitments) {
     return Expanded(
         child: Container(
       margin: const EdgeInsets.only(left: 10, right: 10),
@@ -330,7 +368,7 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                         SizedBox(
                           width: size.width - 110,
                           child: Text(
-                            widget.company.contact,
+                            widget.company.info ?? '',
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
@@ -359,7 +397,7 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                   height: 15,
                 ),
                 Text(
-                  widget.company.info.toString(),
+                  widget.company.intro.toString(),
                   style: const TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
@@ -388,7 +426,7 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   return ItemRecuitment(
-                    recruitment: recruitements[index],
+                    recruitment: recruitements[index].recruitment,
                     marginHorizontal: 0,
                   );
                 },

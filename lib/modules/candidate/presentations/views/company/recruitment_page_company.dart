@@ -1,8 +1,8 @@
 import 'package:app/configs/image_factory.dart';
 import 'package:app/modules/candidate/data/models/company_model.dart';
-import 'package:app/shared/models/recruitment_model.dart';
-import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
 import 'package:app/modules/candidate/presentations/views/company/recruitment_item.dart';
+import 'package:app/shared/models/recruitment_like_model.dart';
+import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,7 +17,7 @@ class RecruitmentPageCompany extends StatefulWidget {
 }
 
 class _RecruitmentPageCompanyState extends State<RecruitmentPageCompany> {
-  List<Recruitment> listRecruitment = [];
+  List<RecruitmentLike> listRecruitment = [];
   initData() async {
     listRecruitment = await Modular.get<ProviderRecruitment>()
         .getListRecruitByCompany(widget.company.id);
@@ -33,7 +33,7 @@ class _RecruitmentPageCompanyState extends State<RecruitmentPageCompany> {
   Widget build(BuildContext context) {
     final provider = context.watch<ProviderRecruitment>();
     return provider.isLoadingGetListRecruit
-        ? Center(child: CircularProgressIndicator())
+        ? const Center(child: CircularProgressIndicator())
         : listRecruitment.isEmpty
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -58,7 +58,7 @@ class _RecruitmentPageCompanyState extends State<RecruitmentPageCompany> {
                   itemCount: listRecruitment.length,
                   itemBuilder: (context, index) {
                     return RecruitmentItem(
-                      recruitment: listRecruitment[index],
+                      recruitment: listRecruitment[index].recruitment,
                       company: widget.company,
                     );
                   },

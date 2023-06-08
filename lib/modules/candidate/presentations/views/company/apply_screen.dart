@@ -375,8 +375,10 @@ class _ApplyScreenState extends State<ApplyScreen> {
                     child: ButtonApp(
                     onPress: () async {
                       try {
-                        await providerApply.createApply(chooseProfile.id,
-                            widget.recruitment.id, introController.text);
+                        await providerApply.createApply(
+                            chooseProfile.id,
+                            widget.recruitment.id,
+                            introController.text);
                         OverlayEntry? overlayEntry;
                         overlayEntry = OverlayEntry(
                           builder: (BuildContext context) {
