@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/data/repositories/authen_repositories.dart';
 import 'package:app/modules/candidate/data/repositories/user_repositories.dart';
+import 'package:app/modules/candidate/data/repositories/user_show_model.dart';
 import 'package:flutter/material.dart';
 
 class ProviderUser extends ChangeNotifier {
@@ -64,6 +66,18 @@ class ProviderUser extends ChangeNotifier {
     } catch (e) {
       _isLoadingUpdateUser = false;
       notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<UserShow> getUserById(String id) async {
+    try {
+      Map<String, dynamic> responseBody =
+          await userRepositories.getUserById(id: id);
+      UserShow user = UserShow.fromJson(responseBody);
+      notifyListeners();
+      return user;
+    } catch (e) {
       rethrow;
     }
   }

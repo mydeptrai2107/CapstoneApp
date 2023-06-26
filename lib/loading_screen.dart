@@ -1,5 +1,8 @@
 import 'package:app/configs/route_path.dart';
+import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
+import 'package:app/modules/recruiter/data/provider/recruiter_provider.dart';
+import 'package:app/modules/recruiter/data/provider/recruitment_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,15 +16,29 @@ class LoadingScreen extends StatefulWidget {
 
 class _LoadingScreenState extends State<LoadingScreen> {
   bool isLogined = false;
+  String type = '';
 
   initData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     isLogined = prefs.getString('refreshToken') != null;
-    await Future.delayed(
-        const Duration(seconds: 2),
-        () => isLogined
-            ? Modular.to.navigate(RoutePath.home)
-            : Modular.to.navigate(RoutePath.login));
+    type = prefs.getString('account_type') ?? '';
+    await Future.delayed(const Duration(seconds: 2), () async {
+      if (isLogined) {
+        if (type == 'user') {
+          await Modular.get<ProviderAuth>().getUserLogin();
+          Modular.to.navigate(RoutePath.home);
+        } else {
+          await Modular.get<RecruiterProvider>().findMe();
+          final recruiter = Modular.get<RecruiterProvider>().recruiter;
+          await Modular.get<RecruitmentProvider>()
+              .getRecruitments(recruiter.id);
+          await Modular.get<RecruitmentProvider>().showListByStatus();
+          Modular.to.navigate(RoutePath.mainRecruiter);
+        }
+      } else {
+        Modular.to.navigate(RoutePath.login);
+      }
+    });
   }
 
   @override
@@ -33,6 +50,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
+    context.watch<RecruiterProvider>();
+    context.watch<ProviderAuth>();
+
     return Scaffold(
       body: Container(
         width: size.width,

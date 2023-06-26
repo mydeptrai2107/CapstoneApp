@@ -6,8 +6,8 @@ import 'package:app/modules/candidate/data/models/company_model.dart';
 import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/data/repositories/company_repositories.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
-import 'package:app/modules/candidate/domain/providers/provider_company.dart';
-import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
+import 'package:app/shared/provider/provider_company.dart';
+import 'package:app/shared/provider/provider_recruitment.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/shared/utils/notiface_message.dart';
 import 'package:flutter/material.dart';
@@ -26,11 +26,11 @@ class _ItemCompanyHorizontalState extends State<ItemCompanyHorizontal> {
   bool isLike = false;
 
   List<String> listIdSaved = [];
+  UserModel user = Modular.get<ProviderAuth>().user;
 
   initData() async {
     quantityRecruitment = await Modular.get<ProviderRecruitment>()
         .getQuantityRecruitByCompany(widget.company.id);
-    User user = await Modular.get<ProviderAuth>().getUser();
     listIdSaved =
         await Modular.get<ProviderCompany>().getListIdCompanySaved(user.userId);
     isLike = listIdSaved.contains(widget.company.id);
@@ -46,6 +46,7 @@ class _ItemCompanyHorizontalState extends State<ItemCompanyHorizontal> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     context.watch<ProviderRecruitment>();
+    context.watch<ProviderAuth>();
     final providerCompany = context.watch<ProviderCompany>();
 
     return GestureDetector(
@@ -117,9 +118,7 @@ class _ItemCompanyHorizontalState extends State<ItemCompanyHorizontal> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      try {
-                        User user = await Modular.get<ProviderAuth>().getUser();
-
+                      try {                 
                         await providerCompany.actionSave(
                             widget.company.id, user.userId, true);
                         isLike = !isLike;
@@ -133,18 +132,22 @@ class _ItemCompanyHorizontalState extends State<ItemCompanyHorizontal> {
                       width: size.width - 100 - size.width / 6,
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       decoration: BoxDecoration(
-                          border: Border.all(width: 0.5, color:isLike ? Colors.grey : primaryColor),
+                          border: Border.all(
+                              width: 0.5,
+                              color: isLike ? Colors.grey : primaryColor),
                           borderRadius: BorderRadius.circular(100)),
                       child: Center(
                         child: isLike
-                      ? const Text(
-                          'Đang theo dõi',
-                          style: TextStyle(fontSize: 13, color: Colors.black),
-                        )
-                      : const Text(
-                          '+ Theo dõi',
-                          style: TextStyle(fontSize: 13, color: primaryColor),
-                        ),
+                            ? const Text(
+                                'Đang theo dõi',
+                                style: TextStyle(
+                                    fontSize: 13, color: Colors.black),
+                              )
+                            : const Text(
+                                '+ Theo dõi',
+                                style: TextStyle(
+                                    fontSize: 13, color: primaryColor),
+                              ),
                       ),
                     ),
                   )

@@ -37,7 +37,8 @@ class PreviewCVScreen extends StatefulWidget {
       required this.schoolModell,
       this.imageFile,
       required this.idCV,
-      required this.nameCV});
+      required this.nameCV,
+      required this.language});
 
   final String name;
   final String position;
@@ -53,6 +54,7 @@ class PreviewCVScreen extends StatefulWidget {
   final File? imageFile;
   final String idCV;
   final String nameCV;
+  final String language;
 
   @override
   State<PreviewCVScreen> createState() => _PreviewCVScreenState();
@@ -164,9 +166,11 @@ class _PreviewCVScreenState extends State<PreviewCVScreen> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(100),
                         color: primaryColor),
-                    child: const Text(
-                      'Kinh nghiệm làm việc',
-                      style: TextStyle(
+                    child: Text(
+                      widget.language == 'Tiếng Anh'
+                          ? 'Work experience'
+                          : 'Kinh nghiệm làm việc',
+                      style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                           fontSize: 12),
@@ -189,9 +193,9 @@ class _PreviewCVScreenState extends State<PreviewCVScreen> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(100),
                         color: primaryColor),
-                    child: const Text(
-                      'Học vấn',
-                      style: TextStyle(
+                    child: Text(
+                      widget.language == 'Tiếng Anh' ? 'Education' : 'Học vấn',
+                      style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                           fontSize: 12),
@@ -212,9 +216,9 @@ class _PreviewCVScreenState extends State<PreviewCVScreen> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(100),
                         color: primaryColor),
-                    child: const Text(
-                      'Kỹ năng',
-                      style: TextStyle(
+                    child: Text(
+                      widget.language == 'Tiếng Anh' ? 'Skills' : 'Kỹ năng',
+                      style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                           fontSize: 12),
@@ -266,10 +270,12 @@ class _PreviewCVScreenState extends State<PreviewCVScreen> {
                   ),
                   Container(
                     margin: const EdgeInsets.symmetric(vertical: 5),
-                    child: const Text(
-                      'THÔNG TIN',
-                      style:
-                          TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
+                    child: Text(
+                      widget.language == 'Tiếng Anh'
+                          ? 'Contact infomation'
+                          : 'THÔNG TIN',
+                      style: const TextStyle(
+                          fontSize: 9, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const InformationCVItem(
@@ -291,9 +297,9 @@ class _PreviewCVScreenState extends State<PreviewCVScreen> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(100),
                         color: primaryColor),
-                    child: const Text(
-                      'Mục tiêu nghề nghiệp',
-                      style: TextStyle(
+                    child: Text(
+                      widget.language == 'Tiếng Anh'? 'Career goals' : 'Mục tiêu nghề nghiệp',
+                      style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                           fontSize: 12),

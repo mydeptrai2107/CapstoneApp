@@ -15,7 +15,7 @@ class Recruitment {
   String? salary;
   DateTime? deadline;
   String? workingForm;
-  int? numberOfRecruits;
+  String? numberOfRecruits;
   String? gender;
   String? experience;
   String? position;
@@ -23,9 +23,10 @@ class Recruitment {
   String? descriptionWorking;
   String? request;
   String? benefit;
-  DateTime createdAt;
-  DateTime updatedAt;
-  String id;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  String? id;
+  bool? statusShow;
 
   Recruitment({
     required this.companyId,
@@ -41,9 +42,10 @@ class Recruitment {
     this.descriptionWorking,
     this.request,
     this.benefit,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.id,
+    this.createdAt,
+    this.updatedAt,
+    this.id,
+    this.statusShow,
   });
 
   factory Recruitment.fromJson(Map<String, dynamic> json) => Recruitment(
@@ -63,6 +65,7 @@ class Recruitment {
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
         id: json["id"],
+        statusShow: json["statusShow"] ?? false,
       );
 
   Map<String, dynamic> toJson() => {
@@ -71,7 +74,7 @@ class Recruitment {
         "salary": salary,
         "deadline": deadline!.toIso8601String(),
         "workingForm": workingForm,
-        "numberOfRecruits": numberOfRecruits,
+        "numberOfRecruits": numberOfRecruits.toString(),
         "gender": gender,
         "experience": experience,
         "position": position,
@@ -79,8 +82,6 @@ class Recruitment {
         "descriptionWorking": descriptionWorking,
         "request": request,
         "benefit": benefit,
-        "createdAt": createdAt.toIso8601String(),
-        "updatedAt": updatedAt.toIso8601String(),
-        "id": id,
+        "statusShow": statusShow.toString(),
       };
 }

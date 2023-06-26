@@ -1,9 +1,15 @@
-import 'package:app/modules/recruiter/domain/repositories/recruitment_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import 'package:app/modules/recruiter/data/provider/recruitment_provider.dart';
+import 'package:app/shared/models/recruitment_model.dart';
+
 class RecruitmentEfficiency extends StatelessWidget {
-  const RecruitmentEfficiency({super.key});
+  final List<Recruitment> list;
+  const RecruitmentEfficiency({
+    Key? key,
+    required this.list,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,66 +22,57 @@ class RecruitmentEfficiency extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         const SizedBox(height: 6),
-        Column(
+        Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            flexBox(Builder(builder: (_) {
-              final list = _
-                  .watch<RecruitmentProvider>((p) => p.listRecruitment)
-                  .listRecruitment;
+            Expanded(
+              child: Builder(builder: (_) {
+                final value =
+                    _.watch<RecruitmentProvider>((p) => p.totalShow).totalShow;
+                return ElementWidget(
+                  label: 'Tin tuyển dụng hiển thị',
+                  color: Colors.orange.shade400,
+                  quantity: value,
+                );
+              }),
+            ),
+            const SizedBox(
+              width: 16.0,
+            ),
+            Builder(builder: (_) {
+              final value = _
+                  .watch<RecruitmentProvider>((p) => p.listApply)
+                  .listApply
+                  .length;
               return ElementWidget(
-                label: 'Tin tuyển dụng hiển thị',
-                color: Colors.orange.shade400,
-                quantity: list.length,
-                width: size.width / 2 - 20,
+                label: 'CV tiếp nhận',
+                color: Colors.green,
+                quantity: value,
               );
             }),
-                ElementWidget(
-                  label: 'CV tiếp nhận',
-                  color: Colors.green,
-                  quantity: 0,
-                  width: size.width / 2 - 20,
-                )),
             const SizedBox(height: 6),
-            ElementWidget(
-              label: 'Cv ứng tuyển mới',
-              color: Colors.redAccent,
-              quantity: 0,
-              width: size.width / 2 - 20,
-            ),
           ],
         )
       ],
     );
   }
-
-  Widget flexBox(Widget child1, Widget child2) => Row(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Expanded(flex: 1, child: child1),
-          const SizedBox(width: 6),
-          Expanded(flex: 1, child: child2)
-        ],
-      );
 }
 
 class ElementWidget extends StatelessWidget {
   final String label;
   final Color color;
   final int quantity;
-  final double width;
-  const ElementWidget(
-      {super.key,
-      required this.label,
-      required this.color,
-      required this.quantity,
-      required this.width});
+  const ElementWidget({
+    super.key,
+    required this.label,
+    required this.color,
+    required this.quantity,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-      width: width,
       decoration: BoxDecoration(
           color: color.withOpacity(0.2),
           borderRadius: BorderRadius.circular(4)),

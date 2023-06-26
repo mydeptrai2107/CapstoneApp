@@ -4,8 +4,11 @@ import 'package:app/configs/image_factory.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_outline.dart';
+import 'package:app/shared/utils/format.dart';
+import 'package:app/shared/utils/notiface_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:money_input_formatter/money_input_formatter.dart';
 
 class SalaryCalculationScreen extends StatefulWidget {
   const SalaryCalculationScreen({super.key});
@@ -80,6 +83,7 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(5)),
               child: TextField(
+                inputFormatters: [MoneyInputFormatter()],
                 keyboardType: TextInputType.number,
                 controller: incomeController,
                 decoration: const InputDecoration(
@@ -105,6 +109,7 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
                   color: Colors.white, borderRadius: BorderRadius.circular(5)),
               child: TextField(
                 enabled: isCheckbox,
+                inputFormatters: [MoneyInputFormatter()],
                 keyboardType: TextInputType.number,
                 controller: insuranceController,
                 decoration: const InputDecoration(
@@ -175,9 +180,15 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
               Expanded(
                 child: ButtonApp(
                   onPress: () {
+                    if (incomeController.text.trim() == '') {
+                      notifaceError(context, 'Thu nhập không phù hợp');
+                      return;
+                    }
                     setState(() {
-                      gross = netToGross(double.parse(incomeController.text));
-                      net = double.parse(incomeController.text);
+                      gross = netToGross(double.parse(
+                          Format.formatMoneyToString(incomeController.text)));
+                      net = double.parse(
+                          Format.formatMoneyToString(incomeController.text));
                       isShowCalculation = true;
                     });
                   },
@@ -191,9 +202,15 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
               Expanded(
                 child: ButtonOutline(
                   onPress: () {
+                    if (incomeController.text.trim() == '') {
+                      notifaceError(context, 'Thu nhập không phù hợp');
+                      return;
+                    }
                     setState(() {
-                      net = grossToNet(double.parse(incomeController.text));
-                      gross = double.parse(incomeController.text);
+                      net = grossToNet(double.parse(
+                          Format.formatMoneyToString(incomeController.text)));
+                      gross = double.parse(
+                          Format.formatMoneyToString(incomeController.text));
                       isShowCalculation = true;
                     });
                   },
@@ -212,9 +229,12 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
   double netToGross(double net) {
     double input = insuranceController.text == ''
         ? 0
-        : double.parse(insuranceController.text);
-    double thunhaptruocthue = thunhapchiuthue(net) +
-        (11000000 + 4400000 * int.parse(numberPersonController.text));
+        : double.parse(
+            Format.formatMoneyToString(insuranceController.text.toString()));
+    double thunhaptruocthue = thunhapchiuthue(net) <= 0
+        ? net
+        : thunhapchiuthue(net) +
+            (11000000 + 4400000 * int.parse(numberPersonController.text));
     double gross = 0;
     if (isCheckbox) {
       gross = thunhaptruocthue + bhxh(gross) + bhyt(gross) + input * 0.01;
@@ -236,8 +256,9 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
     double thunhapquydoi =
         net - 11000000 - 4400000 * int.parse(numberPersonController.text);
     double thunhaptinhthue = 0;
-
-    if (thunhapquydoi <= 4750000) {
+    if (thunhapquydoi <= 0) {
+      thunhaptinhthue = 0;
+    } else if (thunhapquydoi > 0 && thunhapquydoi <= 4750000) {
       thunhaptinhthue = thunhapquydoi / 0.95;
     } else if (thunhapquydoi > 4750000 && thunhapquydoi <= 9250000) {
       thunhaptinhthue = (thunhapquydoi - 250000) / 0.9;
@@ -258,7 +279,8 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
 
   double grossToNet(double gross) {
     double thunhaptruocthue = 0;
-    double input = double.parse(insuranceController.text);
+    double input =
+        double.parse(Format.formatMoneyToString(insuranceController.text));
     if (isCheckbox) {
       thunhaptruocthue = gross - input * 0.01 - bhyt(gross) - bhxh(gross);
     } else {
@@ -317,7 +339,8 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
 
   double bhxh(double? gross) {
     if (isCheckbox) {
-      double input = double.parse(insuranceController.text);
+      double input =
+          double.parse(Format.formatMoneyToString(insuranceController.text));
       if (input > 1490000 * 20) {
         return 1490000 * 20 * 0.08;
       } else {
@@ -334,7 +357,8 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
 
   double bhtnld(double? gross) {
     if (isCheckbox) {
-      double input = double.parse(insuranceController.text);
+      double input =
+          double.parse(Format.formatMoneyToString(insuranceController.text));
       if (input > 1490000 * 20) {
         return 1490000 * 20 * 0.005;
       } else {
@@ -351,7 +375,8 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
 
   double bhyt(double? gross) {
     if (isCheckbox) {
-      double input = double.parse(insuranceController.text);
+      double input =
+          double.parse(Format.formatMoneyToString(insuranceController.text));
       if (input > 1490000 * 20) {
         return 1490000 * 20 * 0.015;
       } else {
@@ -413,7 +438,9 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
                         fontWeight: FontWeight.w600,
                         color: primaryColor),
                   ),
-                  Text(roundToThreeDecimalPlaces(gross),
+                  Text(
+                      Format.formatStringToMoney(
+                          roundToThreeDecimalPlaces(gross)),
                       style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -427,7 +454,9 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
                     'Bảo hiểm xã hội (8%)',
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                   ),
-                  Text(roundToThreeDecimalPlaces(bhxh(gross)),
+                  Text(
+                      Format.formatStringToMoney(
+                          roundToThreeDecimalPlaces(bhxh(gross))),
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500))
                 ],
@@ -439,7 +468,9 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
                     'Bảo hiểm y tế (1.5%)',
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                   ),
-                  Text(roundToThreeDecimalPlaces(bhyt(gross)),
+                  Text(
+                      Format.formatStringToMoney(
+                          roundToThreeDecimalPlaces(bhyt(gross))),
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500))
                 ],
@@ -453,9 +484,13 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
                   ),
                   Text(
                       isCheckbox
-                          ? roundToThreeDecimalPlaces(
-                              double.parse(insuranceController.text) * 0.01)
-                          : roundToThreeDecimalPlaces(gross * 0.01),
+                          ? Format.formatStringToMoney(
+                              roundToThreeDecimalPlaces(double.parse(
+                                      Format.formatMoneyToString(
+                                          insuranceController.text)) *
+                                  0.01))
+                          : Format.formatStringToMoney(
+                              roundToThreeDecimalPlaces(gross * 0.01)),
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500))
                 ],
@@ -468,8 +503,8 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                   ),
                   Text(
-                      roundToThreeDecimalPlaces(
-                          net + tinhthue(thunhapchiuthue(net))),
+                      Format.formatStringToMoney(roundToThreeDecimalPlaces(
+                          net + tinhthue(thunhapchiuthue(net)))),
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500))
                 ],
@@ -494,8 +529,8 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                   ),
                   Text(
-                      roundToThreeDecimalPlaces(
-                          4400000.0 * int.parse(numberPersonController.text)),
+                      Format.formatStringToMoney(roundToThreeDecimalPlaces(
+                          4400000.0 * int.parse(numberPersonController.text))),
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500))
                 ],
@@ -507,7 +542,9 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
                     'Thu nhập chịu thuế',
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                   ),
-                  Text(roundToThreeDecimalPlaces(thunhapchiuthue(net)),
+                  Text(
+                      Format.formatStringToMoney(
+                          roundToThreeDecimalPlaces(thunhapchiuthue(net))),
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500))
                 ],
@@ -520,7 +557,8 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                   ),
                   Text(
-                      roundToThreeDecimalPlaces(tinhthue(thunhapchiuthue(net))),
+                      Format.formatStringToMoney(roundToThreeDecimalPlaces(
+                          tinhthue(thunhapchiuthue(net)))),
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500))
                 ],
@@ -535,7 +573,9 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
                         fontWeight: FontWeight.w600,
                         color: primaryColor),
                   ),
-                  Text(roundToThreeDecimalPlaces(net),
+                  Text(
+                      Format.formatStringToMoney(
+                          roundToThreeDecimalPlaces(net)),
                       style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -551,7 +591,8 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
 
   Widget buildOwner(double gross, Size size) {
     double bhtn = isCheckbox
-        ? double.parse(insuranceController.text) * 0.01
+        ? double.parse(Format.formatMoneyToString(insuranceController.text)) *
+            0.01
         : gross * 0.01;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -604,7 +645,9 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
                         fontWeight: FontWeight.w600,
                         color: primaryColor),
                   ),
-                  Text(roundToThreeDecimalPlaces(gross),
+                  Text(
+                      Format.formatStringToMoney(
+                          roundToThreeDecimalPlaces(gross)),
                       style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -618,7 +661,9 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
                     'Bảo hiểm xã hội (17%)',
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                   ),
-                  Text(roundToThreeDecimalPlaces(bhxh(gross) / 8 * 17),
+                  Text(
+                      Format.formatStringToMoney(
+                          roundToThreeDecimalPlaces(bhxh(gross) / 8 * 17)),
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500))
                 ],
@@ -630,7 +675,9 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
                     'Bảo hiểm y tế',
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                   ),
-                  Text(roundToThreeDecimalPlaces(bhyt(gross) * 2),
+                  Text(
+                      Format.formatStringToMoney(
+                          roundToThreeDecimalPlaces(bhyt(gross) * 2)),
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500))
                 ],
@@ -647,7 +694,9 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
                           TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                     ),
                   ),
-                  Text(roundToThreeDecimalPlaces(bhtnld(gross)),
+                  Text(
+                      Format.formatStringToMoney(
+                          roundToThreeDecimalPlaces(bhtnld(gross))),
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500))
                 ],
@@ -659,7 +708,9 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
                     'Bảo hiểm thất nghiệp',
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                   ),
-                  Text(roundToThreeDecimalPlaces(bhtn),
+                  Text(
+                      Format.formatStringToMoney(
+                          roundToThreeDecimalPlaces(bhtn)),
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500))
                 ],
@@ -675,11 +726,12 @@ class _SalaryCalculationScreenState extends State<SalaryCalculationScreen> {
                         color: primaryColor),
                   ),
                   Text(
-                      roundToThreeDecimalPlaces(gross +
-                          bhxh(gross) / 8 * 17 +
-                          bhyt(gross) * 2 +
-                          bhtnld(gross) +
-                          bhtn),
+                      Format.formatStringToMoney(roundToThreeDecimalPlaces(
+                          gross +
+                              bhxh(gross) / 8 * 17 +
+                              bhyt(gross) * 2 +
+                              bhtnld(gross) +
+                              bhtn)),
                       style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

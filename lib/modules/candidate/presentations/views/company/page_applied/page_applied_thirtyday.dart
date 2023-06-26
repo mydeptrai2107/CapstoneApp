@@ -1,9 +1,10 @@
 import 'package:app/configs/image_factory.dart';
 import 'package:app/modules/candidate/data/models/apply_model.dart';
 import 'package:app/modules/candidate/data/models/user_model.dart';
-import 'package:app/modules/candidate/domain/providers/provider_apply.dart';
+import 'package:app/shared/models/recruitment_model.dart';
+import 'package:app/shared/provider/provider_apply.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
-import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
+import 'package:app/shared/provider/provider_recruitment.dart';
 import 'package:app/modules/candidate/presentations/views/company/page_applied/widgets/item_recruitment_applied.dart';
 import 'package:app/shared/models/recruitment_like_model.dart';
 import 'package:flutter/material.dart';
@@ -21,17 +22,25 @@ class _PageAppliedThirtyDayState extends State<PageAppliedThirtyDay> {
   List<RecruitmentLike> listRecruit = [];
   bool isLoading = false;
 
+    UserModel user = Modular.get<ProviderAuth>().user;
+
+
   initData() async {
     setState(() {
       isLoading = true;
     });
-    User user = await Modular.get<ProviderAuth>().getUser();
     list = await Modular.get<ProviderApply>().getListApply30Day(user.userId);
-    list.map((e) async {
-      RecruitmentLike recruitment = await Modular.get<ProviderRecruitment>()
-          .getRecruitById(e.recruitmentId);
-      listRecruit.add(recruitment);
-    }).toList();
+    for (int i = 0; i < list.length; i++) {
+      try {
+        RecruitmentLike recruitment = await Modular.get<ProviderRecruitment>()
+            .getRecruitById(list[i].recruitmentId);
+        listRecruit.add(recruitment);
+      } catch (e) {
+        RecruitmentLike re = RecruitmentLike(
+            recruitment: Recruitment(companyId: '', id: ''), totalLike: 0);
+        listRecruit.add(re);
+      }
+    }
     setState(() {
       isLoading = false;
     });

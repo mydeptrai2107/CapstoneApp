@@ -71,4 +71,10 @@ class ImageFactory {
   static const String edit = '${urlAssets}edit-pen.svg';
   static const String download = '${urlAssets}download.svg';
   static const String more = '${urlAssets}more.svg';
+  static const String star = '${urlAssets}star.svg';
+  static const String chatOutline = '${urlAssets}chatoutline.svg';
+  static const String gmailIcon = '${urlAssets}gmail.svg';
+  static const String location1 = '${urlAssets}location1.svg';
+  static const String keyOutline = '${urlAssets}key-outline.svg';
+
 }

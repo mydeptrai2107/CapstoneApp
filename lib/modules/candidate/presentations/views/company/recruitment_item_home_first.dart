@@ -8,8 +8,8 @@ import 'package:app/modules/candidate/data/models/company_model.dart';
 import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/data/repositories/company_repositories.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
-import 'package:app/modules/candidate/domain/providers/provider_company.dart';
-import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
+import 'package:app/shared/provider/provider_company.dart';
+import 'package:app/shared/provider/provider_recruitment.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/shared/models/recruitment_model.dart';
 import 'package:app/shared/utils/notiface_message.dart';
@@ -33,11 +33,12 @@ class _RecruitmentItemHomeFirstState extends State<RecruitmentItemHomeFirst> {
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
       id: '');
+    UserModel user = Modular.get<ProviderAuth>().user;
+  
 
   initData() async {
     company = await Modular.get<ProviderCompany>()
         .getCompanyById(widget.recruitment.companyId);
-    User user = await Modular.get<ProviderAuth>().getUser();
     listIdSaved = await Modular.get<ProviderRecruitment>()
         .getListIdRecruitmentSaved(user.userId);
     isLike = listIdSaved.contains(widget.recruitment.id);
@@ -146,11 +147,9 @@ class _RecruitmentItemHomeFirstState extends State<RecruitmentItemHomeFirst> {
                 Expanded(child: Container()),
                 GestureDetector(
                   onTap: () async {
-                    try {
-                      User user = await Modular.get<ProviderAuth>().getUser();
-
+                    try {                    
                       await providerRecruitment.actionSave(
-                          widget.recruitment.id, user.userId, true);
+                          widget.recruitment.id!, user.userId, true);
                       isLike = !isLike;
                     } catch (e) {
                       notifaceError(

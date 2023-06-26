@@ -1,9 +1,11 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:app/configs/image_factory.dart';
+import 'package:app/configs/uri.dart';
 import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
+import 'package:app/modules/candidate/presentations/views/chat/screens/home_chat_candidate_screen.dart';
 import 'package:app/modules/candidate/presentations/views/cv_profile/welcome_create_cv.dart';
 import 'package:app/modules/candidate/presentations/views/home/home_screen.dart';
 import 'package:app/modules/candidate/presentations/views/profile/account_screen.dart';
@@ -22,20 +24,23 @@ class JobCVHomeScreen extends StatefulWidget {
 class _JobCVHomeScreenState extends State<JobCVHomeScreen> {
   int _currentIndex = 0;
   String avatar = '';
-  User user =
-      User(userId: '', accountId: '', email: '', firstName: '', lastName: '');
+
+  UserModel user = Modular.get<ProviderAuth>().user;
+
+  @override
+  void initState() {
+    avatar = getAvatarUser(user.avatar.toString());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final providerAuth = context.watch<ProviderAuth>();
+    context.watch<ProviderAuth>();
     final tabs = [
       const HomeScreen(),
       const WelcomeCreateCV(),
-      const SalaryCalculationScreen(),
-      const Center(
-        child: Text('Notification'),
-      ),
-      AccountScreen(user: user, avatar: avatar)
+      HomeChatCandidateScreen(currentUserId: user.userId),
+      const AccountScreen()
     ];
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -65,19 +70,10 @@ class _JobCVHomeScreenState extends State<JobCVHomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              ImageFactory.calculator,
+              ImageFactory.chatOutline,
               width: 25,
               height: 25,
               color: _currentIndex == 2 ? primaryColor : Colors.grey,
-            ),
-            label: 'Tính lương',
-          ),
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              ImageFactory.notification,
-              width: 25,
-              height: 25,
-              color: _currentIndex == 3 ? primaryColor : Colors.grey,
             ),
             label: 'Thông báo',
           ),
@@ -86,16 +82,12 @@ class _JobCVHomeScreenState extends State<JobCVHomeScreen> {
               ImageFactory.person,
               width: 25,
               height: 25,
-              color: _currentIndex == 4 ? primaryColor : Colors.grey,
+              color: _currentIndex == 3 ? primaryColor : Colors.grey,
             ),
-            label: 'Tài khoản',
+            label: 'Tin nhắn',
           ),
         ],
         onTap: (value) async {
-          if (value == 4) {
-            avatar = await providerAuth.getAvatar();
-            user = await providerAuth.getUser();
-          }
           setState(() {
             _currentIndex = value;
           });

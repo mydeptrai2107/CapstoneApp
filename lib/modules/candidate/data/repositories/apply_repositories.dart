@@ -1,6 +1,9 @@
 import 'dart:convert';
 
 import 'package:app/configs/uri.dart';
+import 'package:app/modules/candidate/data/models/apply_model.dart';
+import 'package:app/modules/candidate/data/models/profile_model.dart';
+import 'package:app/shared/utils/rest.dart';
 import 'package:http/http.dart' as http;
 
 class ApplyRepository {
@@ -8,11 +11,12 @@ class ApplyRepository {
   final String urlGetListApplyBuIdUser = '${uriApiApp}api/apply/uid/';
 
   Future<Map<String, dynamic>> createApply(
-      String idProfile, String idRecruit, String comment) async {
+      String idUser, String idProfile, String idRecruit, String comment) async {
     var url = Uri.parse(urlCreateApply);
     final response = await http.post(url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
+          'user_id': idUser,
           'user_profile_id': idProfile,
           'recruitment_id': idRecruit,
           'comment': comment
@@ -42,5 +46,21 @@ class ApplyRepository {
     } else {
       throw response.body;
     }
+  }
+
+  Future<Profile> getApplyByUserId(String id) async {
+    final res = await Rest.get('${uriApiApp}api/user/profile/$id');
+    return Profile.fromJson(res);
+  }
+
+  Future<List<Apply>> getApplyByRecruitment(String id) async {
+    final res = await Rest.get('${uriApiApp}api/apply/rid/$id');
+    final list = (res as List).map((e) => Apply.fromJson(e)).toList();
+    return list;
+  }
+
+  Future updateApply(String id, String status) async {
+    await Rest.update('${uriApiApp}api/apply/update',
+        body: {"applyId": id, "newStatus": status});
   }
 }

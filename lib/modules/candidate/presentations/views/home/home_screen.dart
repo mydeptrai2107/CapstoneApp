@@ -2,10 +2,15 @@
 
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
+import 'package:app/configs/uri.dart';
 import 'package:app/modules/candidate/data/models/company_model.dart';
+import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
-import 'package:app/modules/candidate/domain/providers/provider_company.dart';
-import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
+import 'package:app/modules/candidate/presentations/views/company/suggest_recruitment_item.dart';
+import 'package:app/shared/models/recruitment_model.dart';
+import 'package:app/shared/provider/provider_apply.dart';
+import 'package:app/shared/provider/provider_company.dart';
+import 'package:app/shared/provider/provider_recruitment.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/company/recruitment_item_home.dart';
 import 'package:app/modules/candidate/presentations/views/company/recruitment_item_home_first.dart';
@@ -23,11 +28,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late UserModel user;
   List<Company> listCompany = [];
   List<RecruitmentLike> listRecruitment = [];
-  int numberPaging = 1;
-  String avatar = '';
-  String nameUser = '';
+  List<Recruitment> suggestRecruitments = [];
   late PageController _pageController;
 
   @override
@@ -38,20 +42,22 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void initData() async {
+    user = Modular.get<ProviderAuth>().user;
     listCompany =
-        await Modular.get<ProviderCompany>().getListCompanyPaging(numberPaging);
+        await Modular.get<ProviderCompany>().getListCompanyOutStanding();
     listRecruitment =
         await Modular.get<ProviderRecruitment>().getListRecruitment();
-
-    avatar = await Modular.get<ProviderAuth>().getAvatar();
-    nameUser = await Modular.get<ProviderAuth>().getNameUser();
+    suggestRecruitments = await Modular.get<ProviderApply>()
+        .suggestRecuitment(Modular.get<ProviderAuth>().user.userId);
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    context.watch<ProviderAuth>();
     context.watch<ProviderCompany>();
     context.watch<ProviderRecruitment>();
+    context.watch<ProviderApply>();
 
     return Scaffold(
       body: SafeArea(
@@ -127,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   style: TextStyle(fontSize: 14),
                                 ),
                                 Text(
-                                  nameUser,
+                                  "${user.firstName} ${user.lastName}",
                                   style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
@@ -144,18 +150,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                         Container(
-                          width: 41,
-                          height: 41,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              image: avatar != ''
-                                  ? DecorationImage(
-                                      image: NetworkImage(avatar),
-                                      fit: BoxFit.fill)
-                                  : const DecorationImage(
-                                      image: AssetImage(ImageFactory.editCV),
-                                      fit: BoxFit.fill)),
-                        )
+                            width: 41,
+                            height: 41,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                image: DecorationImage(
+                                    image: NetworkImage(
+                                        getAvatarUser(user.avatar.toString())),
+                                    fit: BoxFit.fill)))
                       ],
                     ),
                   )),
@@ -183,9 +185,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         padEnds: false,
                         controller: _pageController,
                         itemCount: listRecruitment.length,
-                        itemBuilder: (context, index) => index == 0 ? RecruitmentItemHomeFirst(
-                            recruitment: listRecruitment[index].recruitment) : RecruitmentItemHome(
-                            recruitment: listRecruitment[index].recruitment),
+                        itemBuilder: (context, index) => index == 0
+                            ? RecruitmentItemHomeFirst(
+                                recruitment: listRecruitment[index].recruitment)
+                            : RecruitmentItemHome(
+                                recruitment:
+                                    listRecruitment[index].recruitment),
                       ),
                     ),
 
@@ -217,16 +222,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 15),
-                      height: (size.width *
-                              (5 / 6) *
-                              (listCompany.length / 2 < 1
-                                  ? 1
-                                  : listCompany.length / 2)) -
-                          (listCompany.length == 8 ? 60 : 0),
+                      height: listCompany.length >= 6
+                          ? 210 * 3
+                          : (size.width *
+                                  (5 / 6) *
+                                  (listCompany.length / 2 < 1
+                                      ? 1
+                                      : listCompany.length / 2)) -
+                              (listCompany.length == 8 ? 60 : 0),
                       width: size.width,
                       child: GridView.builder(
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: listCompany.length,
+                        itemCount:
+                            listCompany.length >= 6 ? 6 : listCompany.length,
                         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                             maxCrossAxisExtent: size.width / 2,
                             childAspectRatio: 9 / 10,
@@ -239,6 +247,33 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                       ),
                     ),
+
+                    const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                      child: Text(
+                        'Công việc được đề xuất',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 17),
+                      ),
+                    ),
+
+                    Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 15),
+                        height: 210.0 * suggestRecruitments.length,
+                        width: size.width,
+                        child: ListView.separated(
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return SuggestRecruitmentItem(
+                                recruitment: suggestRecruitments[index],
+                              );
+                            },
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                            itemCount: suggestRecruitments.length)),
                   ],
                 ),
               ),

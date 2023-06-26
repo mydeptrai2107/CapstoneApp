@@ -8,13 +8,12 @@ import 'package:app/modules/candidate/data/models/company_model.dart';
 import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/data/repositories/company_repositories.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
-import 'package:app/modules/candidate/domain/providers/provider_company.dart';
-import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
+import 'package:app/shared/provider/provider_company.dart';
+import 'package:app/shared/provider/provider_recruitment.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/shared/utils/notiface_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutter_svg/svg.dart';
 
 class ItemCompanyVertical extends StatefulWidget {
   const ItemCompanyVertical({super.key, required this.company});
@@ -38,11 +37,13 @@ class _ItemCompanyVerticalState extends State<ItemCompanyVertical> {
     initData();
   }
 
+    UserModel user = Modular.get<ProviderAuth>().user;
+
+
   initData() async {
     quantityRecruit = await Modular.get<ProviderRecruitment>()
         .getQuantityRecruitByCompany(widget.company.id);
 
-    User user = await Modular.get<ProviderAuth>().getUser();
     listIdSaved =
         await Modular.get<ProviderCompany>().getListIdCompanySaved(user.userId);
     isLike = listIdSaved.contains(widget.company.id);
@@ -52,6 +53,8 @@ class _ItemCompanyVerticalState extends State<ItemCompanyVertical> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     context.watch<ProviderRecruitment>();
+    context.watch<ProviderAuth>();
+
     final providerCompany = context.watch<ProviderCompany>();
     return GestureDetector(
       onTap: () {
@@ -120,8 +123,6 @@ class _ItemCompanyVerticalState extends State<ItemCompanyVertical> {
             GestureDetector(
               onTap: () async {
                 try {
-                  User user = await Modular.get<ProviderAuth>().getUser();
-
                   await providerCompany.actionSave(
                       widget.company.id, user.userId, true);
                   isLike = !isLike;

@@ -58,7 +58,7 @@ class _ItemProfileWidgetState extends State<ItemProfileWidget> {
                 onTap: () {
                   if (widget.pathCV != null) {
                     Modular.to.pushNamed(RoutePath.pdfViewer,
-                        arguments: [widget.name, widget.pathCV]);
+                        arguments: [widget.name, widget.pathCV,false,'']);
                   }
                 },
                 child: SizedBox(
@@ -118,7 +118,7 @@ class _ItemProfileWidgetState extends State<ItemProfileWidget> {
                     onTap: () {
                       if (widget.pathCV != null) {
                         Modular.to.pushNamed(RoutePath.pdfViewer,
-                            arguments: [widget.name, widget.pathCV]);
+                            arguments: [widget.name, widget.pathCV,false,'']);
                       }
                     },
                     child: Container(

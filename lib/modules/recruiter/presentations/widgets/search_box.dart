@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 
 class SearchBox extends StatelessWidget {
   final String hinText;
-  const SearchBox({super.key, required this.hinText});
+  final VoidCallback? callback;
+  final VoidCallback? closeSearch;
+  final TextEditingController textEditingController;
+  const SearchBox(
+      {super.key,
+      required this.hinText,
+      this.callback,
+      required this.textEditingController, this.closeSearch});
 
   @override
   Widget build(BuildContext context) {
@@ -12,9 +19,12 @@ class SearchBox extends StatelessWidget {
             child: SizedBox(
           height: 42,
           child: TextField(
+            controller: textEditingController,
             decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                hintText:hinText,
+                hintText: hinText,
+                suffixIcon:
+                    IconButton(onPressed: closeSearch, icon: const Icon(Icons.close)),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(4),
                     borderSide: const BorderSide(width: 0.5))),
@@ -24,7 +34,7 @@ class SearchBox extends StatelessWidget {
         SizedBox(
           height: 42,
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: callback,
             style: ElevatedButton.styleFrom(
                 elevation: 0,
                 backgroundColor: Colors.blue,

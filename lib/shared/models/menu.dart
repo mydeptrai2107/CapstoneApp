@@ -9,5 +9,6 @@ class Menu {
 final bottomNavBarRecruiter = [
   Menu(title: 'Trang chủ', assetsIcon: ImageFactory.home),
   Menu(title: 'Tin tuyển dụng', assetsIcon: ImageFactory.documentText),
+  Menu(title: 'Tin Nhắn', assetsIcon: ImageFactory.chatOutline),
   Menu(title: 'Quản lý CV', assetsIcon: ImageFactory.person),
 ];

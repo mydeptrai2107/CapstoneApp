@@ -2,18 +2,18 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'user_model_hive.dart';
 
-class UserModelAdapter extends TypeAdapter<UserModel> {
+class UserModelAdapter extends TypeAdapter<UserModelHive> {
   @override
   final int typeId = 3;
 
   @override
-  UserModel read(BinaryReader reader) {
+  UserModelHive read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fiels = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
 
-    return UserModel(
+    return UserModelHive(
         firstName: fiels[0] as String,
         lastName: fiels[1] as String,
         phone: fiels[2] as String,
@@ -26,7 +26,7 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
   int get hashCode => typeId.hashCode;
 
   @override
-  void write(BinaryWriter writer, UserModel obj) {
+  void write(BinaryWriter writer, UserModelHive obj) {
     writer
       ..writeByte(6)
       ..writeByte(0)

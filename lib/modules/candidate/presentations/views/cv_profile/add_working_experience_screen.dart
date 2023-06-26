@@ -39,10 +39,12 @@ class _AddWorkingExperienceScreenState
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text('Add Working Experience'),
         centerTitle: true,
       ),
-      body: SizedBox(
+      body: Container(
+        color: Colors.white,
         height: size.height,
         width: size.width,
         child: ListView(
@@ -299,7 +301,7 @@ class _AddWorkingExperienceScreenState
     );
   }
 
-  saveExperience() async{
+  saveExperience() async {
     await _experienceBox.add(ExperienceModel(
         nameCompany: _nameCompanyController.text,
         to: setToDate,

@@ -6,12 +6,13 @@ import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
 import 'package:app/configs/text_app.dart';
 import 'package:app/modules/candidate/data/models/profile_model.dart';
-import 'package:app/modules/candidate/domain/providers/provider_apply.dart';
+import 'package:app/modules/candidate/data/models/user_model.dart';
+import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
 import 'package:app/modules/candidate/domain/providers/provider_profile.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
-import 'package:app/modules/candidate/presentations/views/widgets/button_outline.dart';
 import 'package:app/shared/models/recruitment_model.dart';
+import 'package:app/shared/provider/provider_apply.dart';
 import 'package:app/shared/utils/notiface_message.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +57,8 @@ class _ApplyScreenState extends State<ApplyScreen> {
     final Size size = MediaQuery.of(context).size;
     context.watch<ProviderProfile>();
     final providerApply = context.watch<ProviderApply>();
+    final providerAuth = context.watch<ProviderAuth>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ứng tuyển'),
@@ -336,70 +339,51 @@ class _ApplyScreenState extends State<ApplyScreen> {
         ),
       ),
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-            border: Border(
-                top: BorderSide(
-                    color: Colors.black.withOpacity(0.6), width: 1))),
-        padding: EdgeInsets.all(10.h),
-        height: 65.h,
-        width: size.width,
-        child: Flex(
-          direction: Axis.horizontal,
-          children: [
-            Expanded(
-                flex: 1,
-                child: ButtonOutline(
-                  onPress: () {
-                    Modular.to.pushNamed(RoutePath.appliedScreen);
-                  },
-                  title: 'Quay lại',
-                  borderRadius: 100,
-                  widthBorder: 1.5,
-                  paddingvertical: 14,
-                )),
-            SizedBox(
-              width: 10.h,
-            ),
-            providerApply.isLoading
-                ? Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 70, vertical: 4),
-                      decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(15)),
-                      child: const CircularProgressIndicator(),
-                    ),
-                  )
-                : Expanded(
-                    child: ButtonApp(
-                    onPress: () async {
-                      try {
-                        await providerApply.createApply(
-                            chooseProfile.id,
-                            widget.recruitment.id,
-                            introController.text);
-                        OverlayEntry? overlayEntry;
-                        overlayEntry = OverlayEntry(
-                          builder: (BuildContext context) {
-                            return ShowApplySuccess(
-                              entry: overlayEntry,
-                            );
-                          },
-                        );
+          padding: EdgeInsets.symmetric(horizontal: 10.h, vertical: 7),
+          height: 50.h,
+          width: size.width,
+          color: Colors.white,
+          child: providerApply.isLoading
+              ? Expanded(
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 70, vertical: 4),
+                    decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(15)),
+                    child: const CircularProgressIndicator(),
+                  ),
+                )
+              : Expanded(
+                  child: ButtonApp(
+                  height: 38,
+                  onPress: () async {
+                    try {
+                      UserModel user = Modular.get<ProviderAuth>().user;
 
-                        Overlay.of(context).insert(overlayEntry);
-                      } catch (e) {
-                        notifaceError(
-                            context, jsonDecode(e.toString())['message']);
-                      }
-                    },
-                    title: 'Ứng tuyển',
-                    borderRadius: 100,
-                  ))
-          ],
-        ),
-      ),
+                      await providerApply.createApply(
+                          user.userId,
+                          chooseProfile.id,
+                          widget.recruitment.id!,
+                          introController.text);
+                      OverlayEntry? overlayEntry;
+                      overlayEntry = OverlayEntry(
+                        builder: (BuildContext context) {
+                          return ShowApplySuccess(
+                            entry: overlayEntry,
+                          );
+                        },
+                      );
+
+                      Overlay.of(context).insert(overlayEntry);
+                    } catch (e) {
+                      notifaceError(
+                          context, jsonDecode(e.toString())['message']);
+                    }
+                  },
+                  title: 'Ứng tuyển',
+                  borderRadius: 100,
+                ))),
     );
   }
 

@@ -3,7 +3,6 @@ import 'package:app/configs/text_app.dart';
 import 'package:app/modules/candidate/data/models/profile_model.dart';
 import 'package:app/modules/candidate/domain/providers/provider_profile.dart';
 import 'package:app/modules/candidate/presentations/views/cv_profile/pdf/item_profile_widget.dart';
-import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
 import 'package:app/shared/utils/notiface_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';

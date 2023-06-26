@@ -3,6 +3,7 @@ import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/data/repositories/profile_repository.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 class ProviderProfile extends ChangeNotifier {
   ProfileRepository profileRepository = ProfileRepository();
@@ -37,7 +38,7 @@ class ProviderProfile extends ChangeNotifier {
   }
 
   Future<List<Profile>> getListProfile() async {
-    User user = await providerAuth.getUser();
+    UserModel user = await Modular.get<ProviderAuth>().getUserLogin();
     try {
       _isLoading = false;
       notifyListeners();
@@ -59,8 +60,7 @@ class ProviderProfile extends ChangeNotifier {
     try {
       _isLoading = false;
       notifyListeners();
-      List<Profile> list =
-          await getListProfile();
+      List<Profile> list = await getListProfile();
       _isLoading = true;
       notifyListeners();
       return list.length;

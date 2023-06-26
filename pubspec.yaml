@@ -63,8 +63,15 @@ dependencies:
   ionicons: ^0.2.2
   syncfusion_flutter_pdfviewer: ^21.2.3
   elegant_notification: ^1.10.0
+  firebase_messaging: ^14.6.1
+  flutter_local_notifications: ^14.1.0
   file_picker: ^5.3.1
   url_launcher: ^6.1.11
+  money_input_formatter: ^2.0.0
+  fl_chart: ^0.62.0
+  loading_animation_widget: ^1.2.0+4
+  string_similarity: ^2.0.0
+  animations: ^2.0.7
 
 dev_dependencies:
   flutter_test:

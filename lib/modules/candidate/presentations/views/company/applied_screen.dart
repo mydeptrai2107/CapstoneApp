@@ -1,3 +1,4 @@
+import 'package:app/modules/candidate/presentations/views/company/page_applied/page_applied_allday.dart';
 import 'package:app/modules/candidate/presentations/views/company/page_applied/page_applied_sevenday.dart';
 import 'package:app/modules/candidate/presentations/views/company/page_applied/page_applied_thirtyday.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class _AppliedScreenState extends State<AppliedScreen> {
           children: [
             PageAppliedSevenDay(),
             PageAppliedThirtyDay(),
-            Text('All'),
+            PageAppliedAllDay()
           ],
         ),
       ),

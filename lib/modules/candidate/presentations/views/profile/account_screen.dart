@@ -6,17 +6,18 @@ import 'dart:io';
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
 import 'package:app/configs/text_app.dart';
+import 'package:app/configs/uri.dart';
 import 'package:app/modules/candidate/data/models/hive_models/experience_model.dart';
 import 'package:app/modules/candidate/data/models/hive_models/school_model.dart';
 import 'package:app/modules/candidate/data/models/hive_models/skill_model.dart';
 import 'package:app/modules/candidate/data/models/profile_model.dart';
 import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/domain/providers/provider_app.dart';
-import 'package:app/modules/candidate/domain/providers/provider_apply.dart';
+import 'package:app/shared/provider/provider_apply.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
-import 'package:app/modules/candidate/domain/providers/provider_company.dart';
+import 'package:app/shared/provider/provider_company.dart';
 import 'package:app/modules/candidate/domain/providers/provider_profile.dart';
-import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
+import 'package:app/shared/provider/provider_recruitment.dart';
 import 'package:app/modules/candidate/domain/providers/provider_user.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/profile/widgets/item_manage_job.dart';
@@ -24,6 +25,7 @@ import 'package:app/modules/candidate/presentations/views/profile/widgets/item_p
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_outline.dart';
 import 'package:app/shared/utils/format.dart';
+import 'package:app/shared/utils/notiface_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -34,10 +36,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
 class AccountScreen extends StatefulWidget {
-  AccountScreen({super.key, required this.user, required this.avatar});
+  const AccountScreen({super.key});
 
-  User user;
-  String? avatar;
   @override
   State<AccountScreen> createState() => _AccountScreenState();
 }
@@ -64,17 +64,19 @@ class _AccountScreenState extends State<AccountScreen> {
   List<Profile> listProvider = [];
   final _box = Hive.box('info');
 
+  UserModel user = Modular.get<ProviderAuth>().user;
+
   void initData() async {
     listProvider = await Modular.get<ProviderProfile>().getListProfile();
-    nameUser = '${widget.user.firstName} ${widget.user.lastName}';
-    phoneNumber = widget.user.phone.toString();
-    male = widget.user.gender.toString().toLowerCase() == 'male';
+    nameUser = '${user.firstName} ${user.lastName}';
+    phoneNumber = user.phone.toString();
+    male = user.gender.toString().toLowerCase() == 'male';
     countProfile = await Modular.get<ProviderProfile>().getcountProfile();
     countApplied = await Modular.get<ProviderApply>().getCountApply();
     countSavedRecruitment = await Modular.get<ProviderRecruitment>()
-        .getCountRecruitmentSaved(widget.user.userId);
-    countCompany = await Modular.get<ProviderCompany>()
-        .getCountCompanySaved(widget.user.userId);
+        .getCountRecruitmentSaved(user.userId);
+    countCompany =
+        await Modular.get<ProviderCompany>().getCountCompanySaved(user.userId);
   }
 
   @override
@@ -153,15 +155,11 @@ class _AccountScreenState extends State<AccountScreen> {
                                             ? DecorationImage(
                                                 image: FileImage(imageFile!),
                                                 fit: BoxFit.fill)
-                                            : widget.avatar != ''
-                                                ? DecorationImage(
-                                                    image: NetworkImage(
-                                                        widget.avatar!),
-                                                    fit: BoxFit.fill)
-                                                : const DecorationImage(
-                                                    image: AssetImage(
-                                                        ImageFactory.editCV),
-                                                    fit: BoxFit.fill)),
+                                            : DecorationImage(
+                                                image: NetworkImage(
+                                                    getAvatarUser(user.avatar
+                                                        .toString())),
+                                                fit: BoxFit.fill)),
                                   ),
                                   Positioned(
                                       top: 50,
@@ -205,7 +203,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                           fontWeight: FontWeight.w500),
                                     ),
                                     Text(
-                                      widget.user.userId.substring(0, 7),
+                                      user.userId.substring(0, 7),
                                       style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500),
@@ -229,10 +227,8 @@ class _AccountScreenState extends State<AccountScreen> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      editName(
-                          context,
-                          '${widget.user.firstName} ${widget.user.lastName}',
-                          widget.user.userId);
+                      editName(context, '${user.firstName} ${user.lastName}',
+                          user.userId);
                     },
                     child: ItemProfile(
                         icon: ImageFactory.person,
@@ -241,7 +237,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      editPhoneNumber(context, phoneNumber, widget.user.userId);
+                      editPhoneNumber(context, phoneNumber, user.userId);
                     },
                     child: ItemProfile(
                         icon: ImageFactory.call,
@@ -250,12 +246,21 @@ class _AccountScreenState extends State<AccountScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      chooseGender(context, widget.user.userId);
+                      chooseGender(context, user.userId);
                     },
                     child: ItemProfile(
                         icon: ImageFactory.sex,
                         title: 'Giới tính',
                         content: male ? 'nam' : 'nữ'),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      chooseGender(context, user.userId);
+                    },
+                    child: const ItemProfile(
+                        icon: ImageFactory.keyOutline,
+                        title: 'Mật khẩu',
+                        content: 'Thay đổi mật khẩu'),
                   ),
                   GestureDetector(
                     onTap: () async {
@@ -373,8 +378,7 @@ class _AccountScreenState extends State<AccountScreen> {
                               () async {
                                 countSavedRecruitment =
                                     await providerRecruitment
-                                        .getCountRecruitmentSaved(
-                                            widget.user.userId);
+                                        .getCountRecruitmentSaved(user.userId);
                               }
                             ]);
                       },
@@ -455,10 +459,11 @@ class _AccountScreenState extends State<AccountScreen> {
         ]);
     if (croppedFile != null) {
       imageCache.clear();
-      setState(() {
+      setState(() async {
         imageFile = File(croppedFile.path);
-        Modular.get<ProviderUser>()
-            .updateAvatar(id: widget.user.userId, avatar: imageFile);
+        await Modular.get<ProviderUser>()
+            .updateAvatar(id: user.userId, avatar: imageFile);
+        await Modular.get<ProviderAuth>().getUserUpdate();
       });
       // reload();
     }
@@ -565,6 +570,11 @@ class _AccountScreenState extends State<AccountScreen> {
               ButtonApp(
                 title: 'Lưu thay đổi',
                 onPress: () async {
+                  if (nameController.text.trim() == '') {
+                    Modular.to.pop();
+                    notifaceError(context, 'Họ và tên không được để trống.');
+                    return;
+                  }
                   try {
                     await Modular.get<ProviderUser>().updateUserAttribute(
                         key: 'first_name',
@@ -575,6 +585,7 @@ class _AccountScreenState extends State<AccountScreen> {
                         value: Format.getLastNameByName(nameController.text),
                         id: id);
                     nameUser = nameController.text;
+                    await Modular.get<ProviderAuth>().getUserUpdate();
                     setState(() {});
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -646,12 +657,19 @@ class _AccountScreenState extends State<AccountScreen> {
               ButtonApp(
                 title: 'Lưu thay đổi',
                 onPress: () async {
+                  if (phoneController.text.trim() == '') {
+                    Modular.to.pop();
+                    notifaceError(
+                        context, 'Số điện thoại không được để trống.');
+                    return;
+                  }
                   try {
                     await Modular.get<ProviderUser>().updateUserAttribute(
                         key: 'phone',
                         value: Format.getFirstNameByName(phoneController.text),
                         id: id);
                     phoneNumber = phoneController.text;
+                    await Modular.get<ProviderAuth>().getUserUpdate();
                     setState(() {});
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -737,6 +755,8 @@ class _AccountScreenState extends State<AccountScreen> {
                   if (male) {
                     await Modular.get<ProviderUser>().updateUserAttribute(
                         key: 'gender', value: 'female', id: id);
+                    await Modular.get<ProviderAuth>().getUserUpdate();
+
                     setState(() {
                       male = !male;
                     });

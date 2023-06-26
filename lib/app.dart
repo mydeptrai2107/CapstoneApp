@@ -17,11 +17,14 @@ class _AppState extends State<App> {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (BuildContext context, Widget? child) {
-        return MaterialApp.router(
-          theme: themeData,
-          debugShowCheckedModeBanner: false,
-          routeInformationParser: Modular.routeInformationParser,
-          routerDelegate: Modular.routerDelegate,
+        return GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: MaterialApp.router(
+            theme: themeData,
+            debugShowCheckedModeBanner: false,
+            routeInformationParser: Modular.routeInformationParser,
+            routerDelegate: Modular.routerDelegate,
+          ),
         );
       },
     );

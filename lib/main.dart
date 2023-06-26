@@ -1,4 +1,5 @@
 import 'package:app/app_module.dart';
+import 'package:flutter/foundation.dart';
 import 'modules/candidate/data/models/hive_models/experience_model.dart';
 import 'modules/candidate/data/models/hive_models/experience_model.g.dart';
 import 'modules/candidate/data/models/hive_models/school_model.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'shared/service/fcm.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,11 +33,16 @@ void main() async {
     await Hive.openBox('info');
     await Hive.openBox<SchoolModel>('school');
     await Hive.openBox<SkillModel>('skill');
-    await Hive.openBox<UserModel>('user');
+    await Hive.openBox<UserModelHive>('user');
 
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    // Set the background messaging handler early on, as a named top-level function
+    setupFirebaseMessage();
+    if (!kIsWeb) {
+      await setupFlutterNotifications();
+    }
     runApp(ModularApp(module: AppModule(), child: const App()));
   });
 }

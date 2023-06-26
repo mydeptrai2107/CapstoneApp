@@ -790,13 +790,29 @@ class _FillSecondInformationScreenState
   }
 
   saveCV() async {
-    await _box.put('name', _nameController.text);
-    await _box.put('position', _positionController.text);
-    await _box.put('email', _emailController.text);
-    await _box.put('phoneNumber', _phoneNumberController.text);
-    await _box.put('address', _addressController.text);
-    await _box.put('link', _linkController.text);
-    await _box.put('git', _gitController.text);
-    await _box.put('info', _infoController.text);
+    if (_nameController.text.trim() != '') {
+      await _box.put('name', _nameController.text);
+    }
+    if (_positionController.text.trim() != '') {
+      await _box.put('position', _positionController.text);
+    }
+    if (_emailController.text.trim() != '') {
+      await _box.put('email', _emailController.text);
+    }
+    if (_phoneNumberController.text.trim() != '') {
+      await _box.put('phoneNumber', _phoneNumberController.text);
+    }
+    if (_addressController.text.trim() != '') {
+      await _box.put('address', _addressController.text);
+    }
+    if (_linkController.text.trim() != '') {
+      await _box.put('link', _linkController.text);
+    }
+    if (_gitController.text.trim() != '') {
+      await _box.put('git', _gitController.text);
+    }
+    if (_infoController.text.trim() != '') {
+      await _box.put('info', _infoController.text);
+    }
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:app/configs/uri.dart';
@@ -6,6 +7,18 @@ import 'package:http/http.dart' as http;
 class UserRepositories {
   final String urlUpdateUser = '${uriApiApp}api/user/';
   final String urlAvatarUser = '${uriApiApp}static/cv/';
+
+   Future<Map<String,dynamic>> getUserById(
+      {required String id}) async {
+    var url = Uri.parse(urlUpdateUser + id);
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw response.body;
+    }
+  }
+
 
   Future<void> updateUser(
       {required String firsName,

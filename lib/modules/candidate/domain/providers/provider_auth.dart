@@ -11,6 +11,9 @@ class ProviderAuth extends ChangeNotifier {
   AuthenFirebaseRepositories authenFirebaseRepositories =
       AuthenFirebaseRepositories();
 
+  late UserModel _user;
+  UserModel get user => _user;
+
   late String _accessToken;
   late String _refreshToken;
   bool _isLoadingLogin = false;
@@ -25,8 +28,8 @@ class ProviderAuth extends ChangeNotifier {
 
   bool get isLoadingRegister => _isLoadingRegister;
 
-  late User _user;
-  User get user => _user;
+  // late UserModel _user;
+  // UserModel get user => _user;
 
   Future<void> register(String email, String password, String confirmPW,
       String firstName, String lastName) async {
@@ -77,23 +80,31 @@ class ProviderAuth extends ChangeNotifier {
     }
   }
 
-  Future<String> getNameUser() async {
-    try {
-      User user = await getUser();
-      return '${user.firstName} ${user.lastName}';
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<User> getUser() async {
+  Future<UserModel> getUserLogin() async {
     try {
       await authenRepositoris.checkTokenExpiration();
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String accessToken = prefs.getString('accessToken')!;
       Map<String, dynamic> responseBody =
           await authenRepositoris.getUser(accessToken);
-      User user = User.fromJson(responseBody);
+      UserModel user = UserModel.fromJson(responseBody);
+      _user = user;
+      notifyListeners();
+      return user;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<UserModel> getUserUpdate() async {
+    try {
+      await authenRepositoris.refreshToken();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String accessToken = prefs.getString('accessToken')!;
+      Map<String, dynamic> responseBody =
+          await authenRepositoris.getUser(accessToken);
+      UserModel user = UserModel.fromJson(responseBody);
+      _user = user;
       notifyListeners();
       return user;
     } catch (e) {
@@ -108,6 +119,8 @@ class ProviderAuth extends ChangeNotifier {
       String accessToken = prefs.getString('accessToken')!;
       Map<String, dynamic> responseBody =
           await authenRepositoris.getUser(accessToken);
+      notifyListeners();
+
       return responseBody['avatar'] == null || responseBody['avatar'] == ''
           ? ''
           : userRepositories.getAvatar(responseBody['avatar']);

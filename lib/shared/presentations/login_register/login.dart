@@ -4,10 +4,14 @@ import 'dart:convert';
 
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
+import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/data/repositories/authen_firebase_repositories.dart';
+import 'package:app/modules/candidate/data/repositories/chat_repositories.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
+import 'package:app/modules/recruiter/data/provider/recruiter_provider.dart';
+import 'package:app/modules/recruiter/data/provider/recruitment_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -29,8 +33,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    emailController.text = 'flyedm1202@gmail.com';
-    passwordController.text = '123456';
+    emailController.text = 'freemind@gmail.com';
+    passwordController.text = '12345';
     super.initState();
     initData();
   }
@@ -179,10 +183,29 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPress: () async {
                       provider.setLoadingLogin(true);
                       try {
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        String? type = prefs.getString('account_type');
                         await provider.login(emailController.text.trim(),
                             passwordController.text.trim());
-                        if (provider.isLogged) {
-                          Modular.to.navigate(RoutePath.home);
+
+                        if (type == 'user') {
+                          if (provider.isLogged) {
+                            FirebaseService firebaseService = FirebaseService();
+                            UserModel userModel = await provider.getUserLogin();
+                            await firebaseService.signInFunction(userModel);
+                            Modular.to.navigate(RoutePath.home);
+                          }
+                        } else {
+                          await Modular.get<RecruiterProvider>().findMe();
+                          final recruiter =
+                              Modular.get<RecruiterProvider>().recruiter;
+                          await Modular.get<RecruitmentProvider>()
+                              .getRecruitments(recruiter.id);
+                          await Modular.get<RecruitmentProvider>()
+                              .showListByStatus();
+                          Modular.to.navigate(RoutePath.mainRecruiter);
+                          Modular.to.navigate(RoutePath.mainRecruiter);
                         }
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

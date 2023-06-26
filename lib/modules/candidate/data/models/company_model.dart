@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:app/configs/uri.dart';
+
 Company companyFromJson(String str) => Company.fromJson(json.decode(str));
 
 String companyToJson(Company data) => json.encode(data.toJson());
@@ -36,7 +38,7 @@ class Company {
         contact: json["contact"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
-        avatar: json["avatar"] ?? '',
+        avatar: json["avatar"] ?? kImageDefault,
         info: json["info"] ?? '',
         intro: json["intro"] ?? '',
         address: json["address"] ?? '',
@@ -46,12 +48,12 @@ class Company {
   Map<String, dynamic> toJson() => {
         "name": name,
         "contact": contact,
-        "createdAt": createdAt.toIso8601String(),
-        "updatedAt": updatedAt.toIso8601String(),
+        // "createdAt": createdAt.toIso8601String(),
+        // "updatedAt": updatedAt.toIso8601String(),
         "avatar": avatar,
         "info": info,
         "type": intro,
         "address": address,
-        "id": id,
+        // "id": id,
       };
 }

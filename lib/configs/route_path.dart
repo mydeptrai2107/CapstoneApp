@@ -16,10 +16,13 @@ class RoutePath {
   // Recruiter
   static const String mainRecruiter = '/main';
   static const String homeRecruiter = '/homeRecruiter';
+  static const String notification = '/notification';
+  static const String recruiterAccount = '/recruiterAccount';
   static const String campaign = '/campaign';
   static const String managementCV = '/managementCV';
   static const String recruitment = '/recruitment';
   static const String addRecruitment = '/addRecruitment';
+  static const String deatilRecruitmentScreen = '/deatilRecruitmentScreen';
   static const String listProfile = '/listProfile';
   static const String pdfViewer = '/pdfViewer';
   static const String createCV = '/createCV';
@@ -33,5 +36,6 @@ class RoutePath {
   static const String appliedScreen = '/appliedScreen';
   static const String recruitmentSavedScreen = '/recruitmentSavedScreen';
   static const String accountScreen = '/accountScreen';
-
+  static const String updateAccount = '/updateAccount';
+  static const String chatScreen = '/chatScreen';
 }

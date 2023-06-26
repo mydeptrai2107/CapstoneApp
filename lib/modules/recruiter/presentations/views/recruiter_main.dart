@@ -1,7 +1,10 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:app/modules/candidate/presentations/themes/color.dart';
-import 'package:app/modules/recruiter/domain/repositories/recruitment_provider.dart';
+import 'package:app/modules/recruiter/data/provider/notification_provider.dart';
+import 'package:app/modules/recruiter/data/provider/recruiter_provider.dart';
+import 'package:app/modules/recruiter/data/provider/recruitment_provider.dart';
+import 'package:app/modules/recruiter/presentations/views/chat/home_chat_recuiter_screen.dart';
 import 'package:app/modules/recruiter/presentations/views/management/management_screen.dart';
 import 'package:app/modules/recruiter/presentations/views/recruitment/recruitment_screen.dart';
 import 'package:app/shared/models/menu.dart';
@@ -30,8 +33,8 @@ class _RecruiteMainState extends State<RecruiteMain>
     _load();
   }
 
-  _load() {
-    Modular.get<RecruitmentProvider>().getRecruitments();
+  _load() async {
+    Modular.get<NotificationProvider>().notificationFromFCM();
   }
 
   @override
@@ -42,11 +45,14 @@ class _RecruiteMainState extends State<RecruiteMain>
 
   final tabView = [
     const HomeScreen(),
-    const RecruitmentScreen(),
-    const ManagementScreen(),
+    RecruitmentScreen(),
+    HomeChatRecruiterScreen(
+        currentUserId: Modular.get<RecruiterProvider>().recruiter.id),
+    ManagementScreen(),
   ];
   @override
   Widget build(BuildContext context) {
+    context.watch<RecruitmentProvider>();
     return Scaffold(
       appBar: const CustomAppBar(),
       body: TabBarView(

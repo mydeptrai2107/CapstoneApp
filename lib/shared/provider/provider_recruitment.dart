@@ -32,6 +32,26 @@ class ProviderRecruitment extends ChangeNotifier {
     }
   }
 
+  Future<List<RecruitmentLike>> getListRecruitByCompanyPaging(
+      String idCompany, int numberPage) async {
+    try {
+      _isLoadingGetListRecruit = true;
+      List<RecruitmentLike> list = await getListRecruitByCompany(idCompany);
+      List<RecruitmentLike> listPaging = [];
+      int end = numberPage * 3 > list.length ? list.length : numberPage * 3;
+      for (int i = 0; i < end; i++) {
+        listPaging.add(list[i]);
+      }
+      _isLoadingGetListRecruit = false;
+      notifyListeners();
+      return listPaging;
+    } catch (e) {
+      _isLoadingGetListRecruit = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
   Future<RecruitmentLike> getRecruitById(String id) async {
     try {
       _isLoadingGetListRecruit = true;
@@ -39,7 +59,6 @@ class ProviderRecruitment extends ChangeNotifier {
           await recruitmentRepository.getRecruitById(id);
       RecruitmentLike recruitment = RecruitmentLike.fromJson(responseBody);
       _isLoadingGetListRecruit = false;
-      notifyListeners();
       return recruitment;
     } catch (e) {
       _isLoadingGetListRecruit = false;
@@ -87,9 +106,9 @@ class ProviderRecruitment extends ChangeNotifier {
       Iterable it = responseBody;
       List<RecruitmentLike> list =
           it.map((e) => RecruitmentLike.fromJson(e)).toList();
-      // list.sort(
-      //   (a, b) => a.salary!.compareTo(b.salary!),
-      // );
+      list.sort(
+        (a, b) => b.totalLike.compareTo(a.totalLike),
+      );
       _isLoadingGetListRecruit = false;
       notifyListeners();
       return list;

@@ -6,17 +6,24 @@ import 'package:app/modules/candidate/data/models/hive_models/school_model.dart'
 import 'package:app/modules/candidate/presentations/views/cv_profile/widgets/information_item.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_outline.dart';
+import 'package:app/shared/utils/notiface_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class CreateCVScreen extends StatefulWidget {
-  const CreateCVScreen({super.key, required this.id, required this.name, required this.idUser});
+  const CreateCVScreen(
+      {super.key,
+      required this.id,
+      required this.name,
+      required this.idUser,
+      required this.language});
 
   final String id;
   final String name;
   final String idUser;
+  final String language;
 
   @override
   State<CreateCVScreen> createState() => _CreateCVScreenState();
@@ -96,7 +103,12 @@ class _CreateCVScreenState extends State<CreateCVScreen> {
                       title: 'Thông tin cá nhân',
                       onPress: () {
                         Modular.to.pushNamed(RoutePath.fillSecondInfoCV,
-                            arguments: [widget.id, widget.name, widget.idUser]);
+                            arguments: [
+                              widget.id,
+                              widget.name,
+                              widget.idUser,
+                              widget.language
+                            ]);
                       },
                     ),
                     InformationItem(
@@ -134,6 +146,23 @@ class _CreateCVScreenState extends State<CreateCVScreen> {
               children: [
                 ButtonApp(
                   onPress: () async {
+                    if (_box.get('name').toString().trim() == '' ||
+                        _box.get('name') == null ||
+                        _box.get('position').toString().trim() == '' ||
+                        _box.get('position') == null ||
+                        _box.get('email').toString().trim() == '' ||
+                        _box.get('email') == null ||
+                        _box.get('phoneNumber').toString().trim() == '' ||
+                        _box.get('phoneNumber') == null ||
+                        _box.get('link').toString().trim() == '' ||
+                        _box.get('link') == null ||
+                        _box.get('address').toString().trim() == '' ||
+                        _box.get('address') == null ||
+                        _box.get('info').toString().trim() == '' ||
+                        _box.get('info') == null) {
+                      notifaceError(context, 'Vui lòng điền đầy đủ thông tin.');
+                      return;
+                    }
                     Modular.to.pushNamed(RoutePath.previewCV, arguments: [
                       _box.get('name') ?? '',
                       _box.get('position') ?? '',
@@ -147,7 +176,8 @@ class _CreateCVScreenState extends State<CreateCVScreen> {
                       _experience.values.toList(),
                       _school.values.toList(),
                       widget.id,
-                      widget.name
+                      widget.name,
+                      widget.language
                     ]);
                   },
                   title: 'Xem CV',

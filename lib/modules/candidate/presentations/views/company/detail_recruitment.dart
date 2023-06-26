@@ -5,18 +5,19 @@ import 'dart:convert';
 import 'package:app/configs/font_style_text.dart';
 import 'package:app/configs/image_factory.dart';
 import 'package:app/configs/route_path.dart';
+import 'package:app/configs/uri.dart';
 import 'package:app/modules/candidate/data/models/company_model.dart';
 import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/data/repositories/company_repositories.dart';
-import 'package:app/modules/candidate/domain/providers/provider_apply.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
-import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
+import 'package:app/shared/provider/provider_apply.dart';
+import 'package:app/shared/provider/provider_recruitment.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
+import 'package:app/modules/candidate/presentations/views/company/widgets/comment_rate_item.dart';
 import 'package:app/modules/candidate/presentations/views/company/widgets/info_recuitment_item.dart';
 import 'package:app/modules/candidate/presentations/views/company/widgets/tag_info_widget.dart';
 import 'package:app/modules/candidate/presentations/views/home/widgets/item_recruitment.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
-import 'package:app/modules/candidate/presentations/views/widgets/button_outline.dart';
 import 'package:app/shared/models/recruitment_like_model.dart';
 import 'package:app/shared/models/recruitment_model.dart';
 import 'package:app/shared/utils/notiface_message.dart';
@@ -44,25 +45,40 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
     super.initState();
   }
 
+  UserModel user = Modular.get<ProviderAuth>().user;
+
+
+  bool isLike = false;
+  List<String> listIdSaved = [];
+
   bool checkApplied = false;
+  int countDayApplied = 0;
 
   // true: thong tin | false : Cong ty
   bool isChoose = true;
 
   List<RecruitmentLike> recruitements = [];
+  int numberPaging = 1;
 
   initData() async {
     recruitements = await Modular.get<ProviderRecruitment>()
-        .getListRecruitByCompany(widget.company.id);
-    User user = await Modular.get<ProviderAuth>().getUser();
+        .getListRecruitByCompanyPaging(widget.company.id, numberPaging);
     checkApplied = await Modular.get<ProviderApply>()
-        .checkRecruitmentApplied(widget.recruitment.id, user.userId);
+        .checkRecruitmentApplied(widget.recruitment.id!, user.userId);
+    countDayApplied = await Modular.get<ProviderApply>()
+        .countDayApplied(widget.recruitment.id!, user.userId);
+    listIdSaved = await Modular.get<ProviderRecruitment>()
+        .getListIdRecruitmentSaved(user.userId);
+    isLike = listIdSaved.contains(widget.recruitment.id);
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    context.watch<ProviderRecruitment>();
+    final providerRecruitment = context.watch<ProviderRecruitment>();
+    final providerAuth = context.watch<ProviderAuth>();
+
     context.watch<ProviderApply>();
 
     return Scaffold(
@@ -71,118 +87,135 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
           'Chi tiết việc làm',
           style: textStyleTitleAppBar,
         ),
+        actions: [
+          GestureDetector(
+            onTap: () async {
+              try {
+
+                await providerRecruitment.actionSave(
+                    widget.recruitment.id!, user.userId, true);
+                isLike = !isLike;
+              } catch (e) {
+                notifaceError(context, jsonDecode(e.toString())['message']);
+              }
+            },
+            child: isLike
+                ? SvgPicture.asset(
+                    ImageFactory.bookmark,
+                    width: 23,
+                    height: 20,
+                    color: primaryColor,
+                  )
+                : SvgPicture.asset(
+                    ImageFactory.bookmarkoutline,
+                    width: 23,
+                    height: 20,
+                  ),
+          ),
+          const SizedBox(
+            width: 10,
+          )
+        ],
       ),
       body: SizedBox(
         width: size.width,
         height: size.height,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               padding: EdgeInsets.only(right: 10.h, left: 10, bottom: 5),
-              decoration: const BoxDecoration(
-                  border:
-                      Border(bottom: BorderSide(width: 1, color: Colors.grey))),
-              height: 145.h,
               width: size.width,
               child: Column(
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: 80.h,
-                        width: 80.h,
-                        decoration: BoxDecoration(
-                            image: widget.company.avatar == '' ||
-                                    widget.company.avatar == null
-                                ? const DecorationImage(
-                                    image: AssetImage(ImageFactory.editCV))
-                                : DecorationImage(
-                                    image: NetworkImage(
-                                        CompanyRepository.getAvatar(
-                                            widget.company.avatar!)))),
+                  Container(
+                    height: 80.h,
+                    width: 80.h,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        image: widget.company.avatar == '' ||
+                                widget.company.avatar == null
+                            ? const DecorationImage(
+                                image: AssetImage(ImageFactory.editCV),
+                                fit: BoxFit.cover)
+                            : DecorationImage(
+                                image: NetworkImage(CompanyRepository.getAvatar(
+                                    widget.company.avatar!)),
+                                fit: BoxFit.cover)),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 10, bottom: 10),
+                    alignment: AlignmentDirectional.bottomStart,
+                    child: Center(
+                      child: Text(
+                        '${widget.recruitment.title!.toUpperCase()} - ${widget.recruitment.address!.toUpperCase()}',
+                        style: const TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w700),
                       ),
-                      Container(
-                        padding: EdgeInsets.only(left: 10.h),
-                        height: 80.h,
-                        width: size.width - 100.h,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              alignment: AlignmentDirectional.bottomStart,
-                              height: 40.h,
-                              width: size.width - 100.h,
-                              child: Text(
-                                '${widget.recruitment.title!.toUpperCase()} - ${widget.recruitment.address!.toUpperCase()}',
-                                style: const TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.w700),
-                              ),
-                            ),
-                            Container(
-                              alignment: AlignmentDirectional.topStart,
-                              height: 40.h,
-                              width: size.width - 100.h,
-                              child: Text(
-                                widget.company.name.toUpperCase(),
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black.withOpacity(0.5)),
-                              ),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
+                    ),
+                  ),
+                  Container(
+                    alignment: AlignmentDirectional.topStart,
+                    width: size.width - 100.h,
+                    child: Center(
+                      child: Text(
+                        widget.company.name.toUpperCase(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black.withOpacity(0.5)),
+                      ),
+                    ),
+                  ),
+                  const Divider(
+                    thickness: 1,
                   ),
                   SizedBox(
                     height: 10.h,
                   ),
                   SizedBox(
-                    height: 45.h,
-                    child: Flex(
-                      direction: Axis.horizontal,
+                    child: Row(
                       children: [
-                        Expanded(
-                          flex: 1,
-                          child: ButtonApp(
-                            onPress: () {
-                              setState(() {
-                                isChoose = !isChoose;
-                              });
-                            },
-                            title: 'Thông tin',
-                            paddingvertical: 14,
-                            backGroundColor:
-                                isChoose ? primaryColor : Colors.white,
-                            borderRadius: 100,
-                            fontSize: 13,
-                            textColor: isChoose
-                                ? Colors.white
-                                : Colors.black.withOpacity(0.5),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              isChoose = !isChoose;
+                            });
+                          },
+                          child: Text(
+                            'Thông tin',
+                            style: TextStyle(
+                                color: isChoose ? primaryColor : Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                decorationColor:
+                                    isChoose ? primaryColor : Colors.black,
+                                decoration: isChoose
+                                    ? TextDecoration.underline
+                                    : TextDecoration.none),
                           ),
                         ),
-                        SizedBox(
-                          width: 10.w,
+                        const SizedBox(
+                          width: 16,
                         ),
-                        Expanded(
-                          flex: 1,
-                          child: ButtonApp(
-                            onPress: () {
-                              setState(() {
-                                isChoose = !isChoose;
-                              });
-                            },
-                            title: 'Công ty',
-                            paddingvertical: 14,
-                            backGroundColor:
-                                isChoose ? Colors.white : primaryColor,
-                            borderRadius: 100,
-                            fontSize: 13,
-                            textColor: isChoose
-                                ? Colors.black.withOpacity(0.5)
-                                : Colors.white,
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              isChoose = !isChoose;
+                            });
+                          },
+                          child: Text(
+                            'Công ty',
+                            style: TextStyle(
+                                color: !isChoose ? primaryColor : Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                decorationColor:
+                                    !isChoose ? primaryColor : Colors.black,
+                                decoration: !isChoose
+                                    ? TextDecoration.underline
+                                    : TextDecoration.none),
                           ),
                         )
                       ],
@@ -198,60 +231,87 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
         ),
       ),
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-            border: Border(
-                top: BorderSide(
-                    color: Colors.black.withOpacity(0.6), width: 1))),
-        padding: EdgeInsets.all(10.h),
-        height: 65.h,
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+        height: 50.h,
         width: size.width,
+        color: Colors.white,
         child: Flex(
           direction: Axis.horizontal,
           children: [
             Expanded(
-                flex: 1,
-                child: ButtonOutline(
-                  onPress: () async {
-                    String? encodeQueryParameters(Map<String, String> params) {
-                      return params.entries
-                          .map((MapEntry<String, String> e) =>
-                              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
-                          .join('&');
-                    }
-
-                    final Uri emailLaunchUri = Uri(
-                      scheme: 'mailto',
-                      path: widget.company.contact,
-                      query: encodeQueryParameters(<String, String>{
-                        'subject': 'Example Subject & Symbols are allowed!',
-                      }),
-                    );
-
-                    try {
-                      await launchUrl(emailLaunchUri);
-                    } catch (e) {
-                      notifaceError(
-                          context, jsonDecode(e.toString())['message']);
+                flex: 4,
+                child: ButtonApp(
+                  height: 38,
+                  backGroundColor: countDayApplied >= 0 && countDayApplied <= 6
+                      ? Colors.grey
+                      : primaryColor,
+                  onPress: () {
+                    if (countDayApplied == -1) {
+                      Modular.to.pushNamed(RoutePath.applyScreen,
+                          arguments: [widget.recruitment]);
                     }
                   },
-                  title: 'Nhắn tin',
-                  icon: ImageFactory.chat,
+                  title: checkApplied
+                      ? countDayApplied <= 6
+                          ? "Đã ứng tuyển"
+                          : "Ứng tuyển lại"
+                      : 'Ứng tuyển ngay',
                   borderRadius: 100,
-                  widthBorder: 1.5,
-                  paddingvertical: 14,
                 )),
-            SizedBox(
-              width: 10.h,
-            ),
             Expanded(
-                child: ButtonApp(
-              onPress: () {
-                Modular.to.pushNamed(RoutePath.applyScreen,
-                    arguments: [widget.recruitment]);
-              },
-              title: checkApplied ? "Đã ứng tuyển" : 'Ứng tuyển ngay',
-              borderRadius: 100,
-            ))
+                flex: 1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        String? encodeQueryParameters(
+                            Map<String, String> params) {
+                          return params.entries
+                              .map((MapEntry<String, String> e) =>
+                                  '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+                              .join('&');
+                        }
+
+                        final Uri emailLaunchUri = Uri(
+                          scheme: 'mailto',
+                          path: widget.company.contact,
+                          query: encodeQueryParameters(<String, String>{
+                            'subject': 'Example Subject & Symbols are allowed!',
+                          }),
+                        );
+
+                        try {
+                          await launchUrl(emailLaunchUri);
+                        } catch (e) {
+                          notifaceError(
+                              context, jsonDecode(e.toString())['message']);
+                        }
+                      },
+                      child: SvgPicture.asset(
+                        ImageFactory.gmailIcon,
+                        width: 22,
+                        height: 22,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        Modular.to.pushNamed(RoutePath.chatScreen, arguments: [
+                          Modular.get<ProviderAuth>().user.userId,
+                          widget.company.id,
+                          widget.company.name,
+                          getAvatarCompany(widget.company.avatar.toString())
+                        ]);
+                      },
+                      child: SvgPicture.asset(
+                        ImageFactory.chat,
+                        width: 22,
+                        height: 22,
+                        color: primaryColor,
+                      ),
+                    )
+                  ],
+                ))
           ],
         ),
       ),
@@ -419,22 +479,52 @@ class _DetailRecruitmentState extends State<DetailRecruitment> {
               style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
             ),
           ),
-          SizedBox(
-            width: size.width,
-            height: 240.0 * recruitements.length,
-            child: ListView.separated(
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return ItemRecuitment(
-                    recruitment: recruitements[index].recruitment,
-                    marginHorizontal: 0,
-                  );
-                },
-                separatorBuilder: (context, index) => const SizedBox(
-                      height: 20,
+          Column(
+            children: [
+              SizedBox(
+                width: size.width,
+                height: 230.0 * recruitements.length,
+                child: ListView.separated(
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return ItemRecuitment(
+                        recruitment: recruitements[index].recruitment,
+                        marginHorizontal: 0,
+                      );
+                    },
+                    separatorBuilder: (context, index) => const SizedBox(
+                          height: 20,
+                        ),
+                    itemCount: recruitements.length),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      numberPaging++;
+                      recruitements = await Modular.get<ProviderRecruitment>()
+                          .getListRecruitByCompanyPaging(
+                              widget.company.id, numberPaging);
+                    },
+                    child: const Text(
+                      'Xem thêm',
+                      style: TextStyle(
+                          color: primaryColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500),
                     ),
-                itemCount: recruitements.length),
-          )
+                  ),
+                  SvgPicture.asset(
+                    ImageFactory.chevronDown,
+                    width: 22,
+                    height: 22,
+                    color: primaryColor,
+                  )
+                ],
+              )
+            ],
+          ),
         ],
       ),
     ));

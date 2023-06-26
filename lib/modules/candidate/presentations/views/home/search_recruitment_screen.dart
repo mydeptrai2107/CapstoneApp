@@ -1,7 +1,7 @@
 import 'package:app/configs/image_factory.dart';
 import 'package:app/shared/models/recruitment_like_model.dart';
-import 'package:app/modules/candidate/domain/providers/provider_company.dart';
-import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
+import 'package:app/shared/provider/provider_company.dart';
+import 'package:app/shared/provider/provider_recruitment.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/home/widgets/item_recruitment.dart';
 import 'package:flutter/material.dart';

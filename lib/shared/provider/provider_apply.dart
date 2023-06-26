@@ -1,24 +1,35 @@
+import 'dart:developer';
+
 import 'package:app/modules/candidate/data/models/apply_model.dart';
+import 'package:app/modules/candidate/data/models/company_model.dart';
 import 'package:app/modules/candidate/data/models/profile_model.dart';
 import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/data/repositories/apply_repositories.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
+import 'package:app/shared/models/recruitment_like_model.dart';
+import 'package:app/shared/models/recruitment_model.dart';
+import 'package:app/shared/provider/provider_company.dart';
+import 'package:app/shared/provider/provider_recruitment.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:string_similarity/string_similarity.dart';
 
 class ProviderApply extends ChangeNotifier {
   final ApplyRepository _applyRepository = ApplyRepository();
-  ProviderAuth providerAuth = ProviderAuth();
+  //ProviderAuth providerAuth = ProviderAuth();
+  ProviderRecruitment providerRecruitment = ProviderRecruitment();
+  ProviderCompany providerCompany = ProviderCompany();
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
   Future<Apply> createApply(
-      String idProfile, String idRecruit, String comment) async {
+      String idUser, String idProfile, String idRecruit, String comment) async {
     try {
       _isLoading = true;
       notifyListeners();
-      Map<String, dynamic> responseBody =
-          await _applyRepository.createApply(idProfile, idRecruit, comment);
+      Map<String, dynamic> responseBody = await _applyRepository.createApply(
+          idUser, idProfile, idRecruit, comment);
       Apply apply = Apply.fromJson(responseBody);
       _isLoading = false;
       notifyListeners();
@@ -42,6 +53,39 @@ class ProviderApply extends ChangeNotifier {
     }
   }
 
+  Future<List<Recruitment>> suggestRecuitment(String idUser) async {
+    try {
+      List<Recruitment> list = [];
+      List<Apply> applys = await getListApply(idUser);
+      Apply apply = applys[applys.length - 1];
+      RecruitmentLike recruitment = await Modular.get<ProviderRecruitment>()
+          .getRecruitById(apply.recruitmentId);
+      List<RecruitmentLike> recruitments =
+          await Modular.get<ProviderRecruitment>().getListRecruitment();
+      for (int i = 0; i < recruitments.length; i++) {
+        if (recruitment.recruitment.title
+                    .similarityTo(recruitments[i].recruitment.title) *
+                100 >
+            25) {
+          list.add(recruitments[i].recruitment);
+        }
+      }
+      return list;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Apply>> getListApplyByRecruitment(String id) async {
+    try {
+      final res = await _applyRepository.getApplyByRecruitment(id);
+      return res;
+    } catch (e) {
+      log(e.toString());
+      return [];
+    }
+  }
+
   Future<bool> checkRecruitmentApplied(String rid, String idUser) async {
     try {
       List<Apply> listApply = await getListApply(idUser);
@@ -56,9 +100,26 @@ class ProviderApply extends ChangeNotifier {
     }
   }
 
+  Future<int> countDayApplied(String rid, String idUser) async {
+    try {
+      List<Apply> listApply = await getListApply(idUser);
+
+      for (int i = 0; i < listApply.length; i++) {
+        if (listApply[i].recruitmentId == rid) {
+          return DateTime.now().difference(listApply[i].createdAt).inDays;
+        }
+      }
+      return -1;
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
   Future<int> getCountApply() async {
     try {
-      User user = await providerAuth.getUser();
+      UserModel user = Modular.get<ProviderAuth>().user;
 
       List<Apply> list = await getListApply(user.userId);
       notifyListeners();
@@ -70,8 +131,6 @@ class ProviderApply extends ChangeNotifier {
 
   Future<List<Apply>> getListApply7Day(String idUser) async {
     try {
-      _isLoading = true;
-      notifyListeners();
       List<Apply> listApply = await getListApply(idUser);
       List<Apply> list = [];
       listApply.map((e) {
@@ -80,12 +139,8 @@ class ProviderApply extends ChangeNotifier {
           list.add(e);
         }
       }).toList();
-      _isLoading = false;
-      notifyListeners();
       return list;
     } catch (e) {
-      _isLoading = false;
-      notifyListeners();
       rethrow;
     }
   }
@@ -125,6 +180,26 @@ class ProviderApply extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
       rethrow;
+    }
+  }
+
+  Future<Profile> getProfileByUserId(String id) async {
+    try {
+      final res = await _applyRepository.getApplyByUserId(id);
+      return res;
+    } catch (e) {
+      _isLoading = true;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future updateCv(String id, String status) async {
+    try {
+      final res = await _applyRepository.updateApply(id, status);
+      return res;
+    } catch (e) {
+      log(e.toString());
     }
   }
 }

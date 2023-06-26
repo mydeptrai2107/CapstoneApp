@@ -10,6 +10,7 @@ import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
 import 'package:app/modules/candidate/domain/providers/provider_profile.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/widgets/button_app.dart';
+import 'package:app/shared/utils/notiface_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -140,11 +141,19 @@ class _FillFirstInformationCVState extends State<FillFirstInformationCV> {
                       paddingHorizontal: 50,
                       title: 'Bắt đầu',
                       onPress: () async {
-                        User user = await providerAuth.getUser();
-                        Profile profile = await providerProfile.createProfile(
-                            nameCvController.text, user.userId);
-                        Modular.to.navigate(RoutePath.createCV,
-                            arguments: [profile.id, profile.name, user.userId]);
+                        if (nameCvController.text.trim() == '') {
+                          notifaceError(context, 'Tên CV không được để trống.');
+                        } else {
+                          UserModel user = Modular.get<ProviderAuth>().user;
+                          Profile profile = await providerProfile.createProfile(
+                              nameCvController.text, user.userId);
+                          Modular.to.navigate(RoutePath.createCV, arguments: [
+                            profile.id,
+                            profile.name,
+                            user.userId,
+                            selectLanguge
+                          ]);
+                        }
                       },
                     ),
                   )

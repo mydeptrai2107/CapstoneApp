@@ -15,7 +15,7 @@ class OntapEffect extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      radius: radius,
+      borderRadius: BorderRadius.circular(radius),
       child: child,
     );
   }

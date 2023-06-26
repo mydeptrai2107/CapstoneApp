@@ -3,10 +3,12 @@
 import 'package:app/configs/image_factory.dart';
 import 'package:app/modules/candidate/data/models/company_model.dart';
 import 'package:app/modules/candidate/data/repositories/company_repositories.dart';
+import 'package:app/shared/provider/provider_company.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/modules/candidate/presentations/views/company/intro_company.dart';
 import 'package:app/modules/candidate/presentations/views/company/recruitment_page_company.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -20,9 +22,23 @@ class CompanyHome extends StatefulWidget {
 }
 
 class _CompanyHomeState extends State<CompanyHome> {
+  int countFolllow = 0;
+  initData() async {
+    countFolllow =
+        await Modular.get<ProviderCompany>().getCountFollow(widget.company.id);
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    initData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    context.watch<ProviderCompany>();
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -41,7 +57,8 @@ class _CompanyHomeState extends State<CompanyHome> {
                 child: Stack(
                   children: [
                     Positioned.fill(
-                        child: widget.company.avatar == '' || widget.company.avatar == null
+                        child: widget.company.avatar == '' ||
+                                widget.company.avatar == null
                             ? Image.asset(
                                 ImageFactory.editCV,
                                 fit: BoxFit.cover,
@@ -53,7 +70,7 @@ class _CompanyHomeState extends State<CompanyHome> {
                               )),
                     Positioned.fill(
                         child: Container(
-                      color: Colors.black.withOpacity(0.5),
+                      color: Colors.black.withOpacity(0.7),
                     )),
                     Positioned(
                         top: size.height * 1 / 4 - 70,
@@ -65,7 +82,8 @@ class _CompanyHomeState extends State<CompanyHome> {
                               height: 70,
                               width: 70,
                               decoration: BoxDecoration(
-                                  image: widget.company.avatar == ''  || widget.company.avatar == null
+                                  image: widget.company.avatar == '' ||
+                                          widget.company.avatar == null
                                       ? const DecorationImage(
                                           image:
                                               AssetImage(ImageFactory.editCV))
@@ -100,9 +118,9 @@ class _CompanyHomeState extends State<CompanyHome> {
                                       SizedBox(
                                         width: 8.w,
                                       ),
-                                      const Text(
-                                        '10000+ nhân viên',
-                                        style: TextStyle(
+                                      Text(
+                                        '$countFolllow lượt theo dõi',
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.w400,
                                             fontSize: 12,
                                             color: Colors.white),

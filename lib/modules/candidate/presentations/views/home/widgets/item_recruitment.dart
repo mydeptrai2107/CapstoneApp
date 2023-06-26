@@ -7,10 +7,10 @@ import 'package:app/configs/route_path.dart';
 import 'package:app/modules/candidate/data/models/company_model.dart';
 import 'package:app/modules/candidate/data/models/user_model.dart';
 import 'package:app/modules/candidate/domain/providers/provider_auth.dart';
-import 'package:app/modules/candidate/domain/providers/provider_recruitment.dart';
+import 'package:app/shared/provider/provider_recruitment.dart';
 import 'package:app/shared/models/recruitment_model.dart';
 import 'package:app/modules/candidate/data/repositories/company_repositories.dart';
-import 'package:app/modules/candidate/domain/providers/provider_company.dart';
+import 'package:app/shared/provider/provider_company.dart';
 import 'package:app/modules/candidate/presentations/themes/color.dart';
 import 'package:app/shared/utils/notiface_message.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +46,9 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
       address: '',
       id: '');
 
+    UserModel user = Modular.get<ProviderAuth>().user;
+  
+
   @override
   void initState() {
     initData();
@@ -56,7 +59,6 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
     company = await Modular.get<ProviderCompany>()
         .getCompanyById(widget.recruitment.companyId);
 
-    User user = await Modular.get<ProviderAuth>().getUser();
     listIdSaved = await Modular.get<ProviderRecruitment>()
         .getListIdRecruitmentSaved(user.userId);
     isLike = listIdSaved.contains(widget.recruitment.id);
@@ -71,6 +73,7 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
     context.watch<ProviderCompany>();
     final Size size = MediaQuery.of(context).size;
     final providerRecruitment = context.watch<ProviderRecruitment>();
+    context.watch<ProviderAuth>();
     return GestureDetector(
       onTap: () {
         Modular.to.pushNamed(RoutePath.detailRecruitment,
@@ -80,7 +83,7 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
         margin: EdgeInsets.symmetric(horizontal: widget.marginHorizontal ?? 15),
         padding: const EdgeInsets.all(15),
         width: size.width,
-        height: 220,
+        //height: 220,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
@@ -125,11 +128,9 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
                 Expanded(child: Container()),
                 GestureDetector(
                   onTap: () async {
-                    try {
-                      User user = await Modular.get<ProviderAuth>().getUser();
-
+                    try {                 
                       await providerRecruitment.actionSave(
-                          widget.recruitment.id, user.userId, true);
+                          widget.recruitment.id!, user.userId, true);
                       isLike = !isLike;
                     } catch (e) {
                       notifaceError(
@@ -137,7 +138,6 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
                     }
                     if (widget.loadCount != null) widget.loadCount!();
                     if (widget.onLoading != null) widget.onLoading!();
-
                   },
                   child: Icon(
                     isLike ? Icons.bookmark : Icons.bookmark_outline,
@@ -147,6 +147,9 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
                 )
               ],
             ),
+            const SizedBox(
+              height: 5,
+            ),
             Text(
               company.name,
               style: const TextStyle(fontWeight: FontWeight.w400),
@@ -154,7 +157,7 @@ class _ItemRecuitmentState extends State<ItemRecuitment> {
             Row(
               children: [
                 Container(
-                  margin: const EdgeInsets.only(top: 10),
+                  margin: const EdgeInsets.only(top: 5),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                   decoration: BoxDecoration(

@@ -1,30 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final Widget icon;
-  const CustomTextField(
-      {super.key,
-      required this.controller,
-      required this.hintText,
-      required this.icon});
+  final TextInputType? keyboardType;
+  const CustomTextField({
+    super.key,
+    required this.controller,
+    required this.hintText,
+    required this.icon,
+    this.keyboardType,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(20)),
-      child: TextField(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: TextFormField(
         controller: controller,
+        keyboardType: keyboardType,
+        maxLines: keyboardType != null ? null : 1,
         decoration: InputDecoration(
-            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16.0),
+                borderSide: BorderSide.none),
+            filled: true,
+            fillColor: Colors.white,
             icon: icon,
-            hintText: hintText,
-            hintStyle: const TextStyle(color: Colors.grey)),
+            labelText: hintText,
+            floatingLabelBehavior: FloatingLabelBehavior.auto,
+            floatingLabelStyle: const TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.normal,
+                fontSize: 16)),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return '$hintText không được bỏ trống';
+          }
+          return null;
+        },
       ),
     );
   }

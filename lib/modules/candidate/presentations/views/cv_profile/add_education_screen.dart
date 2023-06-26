@@ -42,10 +42,12 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
     var provider = context.watch<ProviderApp>();
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text('Thêm học vấn'),
         centerTitle: true,
       ),
       body: Container(
+        color: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 15),
         height: size.height,
         width: size.width,
